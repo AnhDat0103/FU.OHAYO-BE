@@ -1,5 +1,85 @@
 package vn.fu_ohayo.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.Gender;
+import vn.fu_ohayo.enums.MembershipLevel;
+import vn.fu_ohayo.enums.Provider;
+import vn.fu_ohayo.enums.UserStatus;
+
+import java.util.Date;
+
+
+@Entity
+@Table(name = "Users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "phone")
+        },
+        indexes = {
+                @Index(columnList = "email", unique = true,
+                        name = "email_index"),
+                @Index(columnList = "phone", unique = true,
+                        name = "phone_index"),
+        }
+)
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class User {
+    @Id @GeneratedValue(
+             strategy = GenerationType.AUTO
+    )
+    @Column(name = "user_id")
+    private String userId;
+
+    @Email
+    @Column(unique = true)
+    @NotNull
+    @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    private String email;
+
+    @NotNull
+    @Size(min = 5)
+    @Column(unique = true)
+    private String password;
+
+    @NotNull
+    private String fullName;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Pattern(regexp = "^0[0-9]{9,10}$")
+    private String phone;
+
+    private String address;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "membership_level")
+    private MembershipLevel membershipLevel;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    @Size(max = 255)
+    private String avatar;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
 }

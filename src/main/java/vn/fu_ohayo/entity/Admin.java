@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Admins")
@@ -18,7 +19,7 @@ import java.util.Set;
 public class Admin {
 
     @Id @GeneratedValue(
-            strategy = jakarta.persistence.GenerationType.IDENTITY
+            strategy = GenerationType.IDENTITY
     )
     private int adminId;
 

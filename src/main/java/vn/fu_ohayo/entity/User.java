@@ -36,10 +36,10 @@ import java.util.Date;
 @Builder
 public class User {
     @Id @GeneratedValue(
-             strategy = GenerationType.AUTO
+             strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
-    private String userId;
+    private int userId;
 
     @Email
     @Column(unique = true)

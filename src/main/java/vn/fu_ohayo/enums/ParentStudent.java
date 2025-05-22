@@ -28,7 +28,6 @@ public class ParentStudent {
     @NotNull
     private String studentId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "relationship")
     private String relationship;
 

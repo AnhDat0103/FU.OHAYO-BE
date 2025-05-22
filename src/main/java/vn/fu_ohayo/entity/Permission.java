@@ -28,6 +28,6 @@ public class Permission {
 
     private String description;
 
-        @ManyToMany(mappedBy = "permissions")
+    @ManyToMany(mappedBy = "permissions")
     private Set<Role> roles;
 }

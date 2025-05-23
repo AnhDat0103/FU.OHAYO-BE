@@ -44,12 +44,11 @@ public class User {
     @Email
     @Column(unique = true)
     @NotNull
-    @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
 
     @NotNull
     @Size(min = 5)
-    @Column(unique = true)
     private String password;
 
     @NotNull
@@ -59,6 +58,7 @@ public class User {
     private Gender gender;
 
     @Pattern(regexp = "^0[0-9]{9,10}$")
+    @Column(unique = true)
     private String phone;
 
     private String address;

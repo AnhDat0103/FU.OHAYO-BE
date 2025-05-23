@@ -3,10 +3,13 @@ package vn.fu_ohayo.controller;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.UserRegister;
+import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.service.UserService;
 
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.status;
 
 @RestController()
 @RequestMapping("/users")
@@ -19,8 +22,13 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers() {
-        return userService.getAllUsers();
+    public ApiResponse<List<UserResponse>> getAllUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code("200")
+                .status("OK")
+                .message("Get all users successfully")
+                .data(userService.getAllUsers())
+                .build();
     }
 
     @PostMapping

@@ -25,7 +25,7 @@ public class UserController {
     public ApiResponse<List<UserResponse>> getAllUsers() {
         return ApiResponse.<List<UserResponse>>builder()
                 .code("200")
-                .status("OK")
+                .status("success")
                 .message("Get all users successfully")
                 .data(userService.getAllUsers())
                 .build();

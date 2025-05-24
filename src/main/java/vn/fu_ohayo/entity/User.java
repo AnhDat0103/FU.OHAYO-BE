@@ -9,10 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.enums.Gender;
-import vn.fu_ohayo.enums.MembershipLevel;
-import vn.fu_ohayo.enums.Provider;
-import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
 
@@ -43,24 +40,26 @@ public class User {
 
     @Email
     @Column(unique = true)
-    @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
 
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
+    @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @NotNull
+    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
+    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^0[0-9]{9,10}$")
+    @Pattern(regexp = "^0[0-9]{9,10}$", message = ErrorEnum.INVALID_PHONE)
     @Column(unique = true)
     private String phone;
 
+    @Size(max = 255, message = ErrorEnum.INVALID_ADDRESS)
     private String address;
 
     @Enumerated(EnumType.STRING)
@@ -73,7 +72,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    @Size(max = 255)
+    @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String avatar;
 
     @Column(name = "created_at")

@@ -11,13 +11,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.validation.PasswordMatchConstant;
 
 @PasswordMatchConstant(
         field = "password",
-        fieldMatch = "confirmPassword",
-        message = "Password and Confirm Password do not match"
+        fieldMatch = "confirmPassword"
 )
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,27 +25,30 @@ import vn.fu_ohayo.validation.PasswordMatchConstant;
 @Builder
 public class UserRegister {
 
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     @Email
+    @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
     private String email;
 
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
+    @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
+    @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String confirmPassword;
 
-    @NotNull
+    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
+    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^0[0-9]{9,10}$")
+    @Pattern(regexp = "^0[0-9]{9,10}$", message = ErrorEnum.INVALID_PHONE)
     private String phone;
 
+    @Size(max = 255, message = ErrorEnum.INVALID_ADDRESS)
     private String address;
 
 }

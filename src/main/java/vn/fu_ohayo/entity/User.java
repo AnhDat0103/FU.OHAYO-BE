@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -80,5 +82,24 @@ public class User {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "User_Subjects",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+    private Set<Subject> subjects;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 
 }

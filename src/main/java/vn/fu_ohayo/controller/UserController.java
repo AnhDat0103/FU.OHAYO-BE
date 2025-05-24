@@ -9,7 +9,6 @@ import vn.fu_ohayo.service.UserService;
 
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.status;
 
 @RestController()
 @RequestMapping("/users")

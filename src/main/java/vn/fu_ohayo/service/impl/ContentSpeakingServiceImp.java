@@ -2,27 +2,26 @@ package vn.fu_ohayo.service.impl;
 
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
+import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.enums.ContentTypeEnum;
-import vn.fu_ohayo.repository.ContentRepository;
+import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
-import vn.fu_ohayo.service.ContentService;
 import vn.fu_ohayo.service.ContentSpeakingService;
 
 import java.util.List;
 
 @Service
 public class ContentSpeakingServiceImp implements ContentSpeakingService {
-    private final ContentService contentService;
-    private final ContentSpeakingService contentSpeakingService;
-    private ContentRepository contentRepository;
-    private ContentSpeakingRepository contentSpeakingRepository;
+    private final ContentSpeakingRepository contentSpeakingRepository;
+    private final ContentMapper contentMapper;
 
-    public ContentSpeakingServiceImp(ContentRepository contentRepository, ContentService contentService, ContentSpeakingService contentSpeakingService) {
-        this.contentRepository = contentRepository;
-        this.contentService = contentService;
-        this.contentSpeakingService = contentSpeakingService;
+    public ContentSpeakingServiceImp(ContentSpeakingRepository contentSpeakingRepository, ContentMapper contentMapper) {
+        this.contentSpeakingRepository = contentSpeakingRepository;
+        this.contentMapper = contentMapper;
     }
 
     @Override
@@ -31,8 +30,8 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     }
 
     @Override
-    public ContentSpeaking getContentSpeakingById(long id) {
-        return contentSpeakingRepository.findById(id).orElse(null);
+    public ContentSpeaking getContentSpeakingById(long id) throws AppException {
+        return contentSpeakingRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.INVALID_CONTENT_SPEAKING));
     }
 
     @Override
@@ -60,8 +59,29 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     }
 
     @Override
-    public ContentSpeaking handleSaveContentSpeaking(ContentSpeaking contentSpeaking) {
-        return contentSpeakingRepository.save(contentSpeaking);
+    public ContentSpeakingResponse updatePutContentSpeaking(long id, ContentSpeakingRequest request) {
+        ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        if(contentSpeaking != null) {
+             contentSpeakingRepository.save(contentMapper.contentSpeakingRequestToContentSpeaking(contentSpeaking, request));
+        }
+        return contentMapper.toContentSpeakingResponse(contentSpeaking);
+    }
+    @Override
+    public ContentSpeakingResponse updatePatchContentSpeaking(long id, ContentSpeakingRequest request) {
+        ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        if(contentSpeaking != null){
+            if (request.getTitle() != null) {
+                contentSpeaking.setTitle(request.getTitle());
+            }
+            if (request.getImage() != null) {
+                contentSpeaking.setImage(request.getImage());
+            }
+            if (request.getCategory() != null) {
+                contentSpeaking.setCategory(request.getCategory());
+            }
+            contentSpeakingRepository.save(contentSpeaking);
+        }
+        return contentMapper.toContentSpeakingResponse(contentSpeaking);
     }
 
 

@@ -21,9 +21,8 @@ public enum ErrorEnum {
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
-    POST_NOT_FOUND("4003"," Post not found" );
+    INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" );
 
-    ;
 
     // 5xxx - server error
 

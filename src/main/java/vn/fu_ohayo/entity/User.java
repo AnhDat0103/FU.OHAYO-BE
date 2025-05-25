@@ -91,6 +91,12 @@ public class User {
     )
     private Set<Subject> subjects;
 
+    @OneToMany(mappedBy = "parent")
+    private List<ParentStudent> children;
+
+    @OneToMany(mappedBy = "student")
+    private List<ParentStudent> parents;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -101,5 +107,4 @@ public class User {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-
 }

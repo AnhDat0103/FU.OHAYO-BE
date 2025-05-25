@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.entity.Subject;
 
 import java.util.List;
@@ -28,5 +29,14 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     GROUP BY s.subjectId, s.subjectName, s.subjectCode, s.description
 """)
     Object[] getSubjectDetail(@Param("subjectId") int subjectId);
+
+    @Query("""
+    SELECT new vn.fu_ohayo.dto.response.SubjectResponse(
+        s.subjectId, s.subjectCode, s.subjectName, s.description, s.status,
+        COUNT(DISTINCT su.userId), s.updatedAt
+    ) FROM Subject s LEFT JOIN s.users su
+    GROUP BY s.subjectId, s.subjectCode, s.subjectName, s.description, s.status, s.updatedAt
+""")
+    List<SubjectResponse> findAllSubjectWithUserCount();
 
 }

@@ -28,9 +28,17 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public List<SubjectResponse> getAllSubjects() {
-        return subjectRepository.findAll()
+        return subjectRepository.findAllSubjectWithUserCount()
                 .stream()
-            .map(subjectMapper::toSubjectResponse)
+            .map(subject -> SubjectResponse.builder()
+                    .subjectCode(subject.getSubjectCode())
+                    .subjectName(subject.getSubjectName())
+                    .subjectId(subject.getSubjectId())
+                    .description(subject.getDescription())
+                    .status(subject.getStatus())
+                    .updatedAt(subject.getUpdatedAt())
+                    .countUsers(subject.getCountUsers())
+                    .build())
                 .toList();
     }
 

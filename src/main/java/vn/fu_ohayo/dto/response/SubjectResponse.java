@@ -26,5 +26,18 @@ public class SubjectResponse {
 
     private SubjectStatus status;
 
+    private int countUsers;
+
     private Date updatedAt;
+
+    public SubjectResponse(int subjectId, String subjectCode, String subjectName, String description,SubjectStatus status, long countUsers, Date updatedAt) {
+        this.subjectId = subjectId;
+        this.subjectCode = subjectCode;
+        this.subjectName = subjectName;
+        this.description = description;
+        this.status = status;
+        this.countUsers = (int) countUsers;
+        this.updatedAt = updatedAt;
+    }
+
 }

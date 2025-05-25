@@ -1,6 +1,5 @@
 package vn.fu_ohayo.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import vn.fu_ohayo.enums.ErrorEnum;
 @NoArgsConstructor
 @Builder
 public class SubjectRequest {
-
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_SUBJECT_CODE)
     private String subjectCode;

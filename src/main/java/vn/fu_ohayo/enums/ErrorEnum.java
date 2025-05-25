@@ -39,7 +39,11 @@ public enum ErrorEnum {
     public static final String INVALID_URL_AVATAR = "Avatar URL must be less than 255 characters";
     public static final String NOT_EMPTY_USER = "User cannot be null";
     public static final String MAX_LENGTH_IMAGE = "Image URL must be less than 255 characters";
-
+    public static final String NOT_EMPTY_TITLE = "Title cannot null";
+    public static final String NOT_EMPTY_CONTENT_TYPE = "Content type cannot be null";
+    public static final String NOT_EMPTY_CATEGORY = "Category cannot be null";
+    public static final String NOT_EMPTY_IMAGE = "Image cannot be null";
+    public static final String NOT_EMPTY_URL = "File URL can not null";
     private final String code;
     private final String message;
 }

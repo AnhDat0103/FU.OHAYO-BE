@@ -42,6 +42,19 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_SUBJECT_CODE = "Subject code must not be empty";
     public static final String NOT_EMPTY_SUBJECT_NAME = "Subject name must not be empty";
     public static final String INVALID_SUBJECT_NAME = "Subject name must be less than 50 characters";
+    public static final String NOT_EMPTY_JLPT_LEVEL = "JLPT level must not be empty";
+    public static final String NOT_EMPTY_PART_OF_SPEECH = "Part of speech must not be empty";
+    public static final String Not_EMPTY_MEANING = "Meaning must not be null";
+    public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
+
+    public static final String NOT_EMPTY_KANA = "Kana must not be empty";
+    public static final String MAX_LENGTH_50 = "input be less than 50 characters";
+    public static final String NOT_EMPTY_KANJI = "Kanji must not be empty";
+    public static final String NOT_EMPTY_TITLE = "Title must not be empty";
+    public static final String MAX_LENGTH_100 = "input must be less than 100 characters";
+    public static final String NOT_EMPTY_STRUCTURE = "Structure must not be empty";
+    public static final String MAX_LENGTH_200 = "input must be less than 200 characters";
+    public static final String MAX_LENGTH_500 = "input must be less than 500 characters";
 
     private final String code;
     private final String message;

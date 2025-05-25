@@ -48,6 +48,12 @@ public class Lesson {
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.Set<Vocabulary> vocabularies;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.Set<Grammar> grammars;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();

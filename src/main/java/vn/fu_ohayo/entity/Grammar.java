@@ -49,6 +49,7 @@ public class Grammar {
     private String meaning;
 
     @Size(max = 500, message = ErrorEnum.MAX_LENGTH_500)
+    @Column(name = "usage_description")
     private String usage;
 
     @Size(max = 500, message = ErrorEnum.MAX_LENGTH_500)

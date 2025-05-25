@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.SubjectStatus;
+
+import java.util.Date;
 
 @AllArgsConstructor
 @Data
@@ -21,7 +24,7 @@ public class SubjectResponse {
 
     private String description;
 
-    private int countOfStudents;
+    private SubjectStatus status;
 
-    private int countOfLessons;
+    private Date updatedAt;
 }

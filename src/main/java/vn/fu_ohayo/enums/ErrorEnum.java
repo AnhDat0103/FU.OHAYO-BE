@@ -21,7 +21,9 @@ public enum ErrorEnum {
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
-    POST_NOT_FOUND("4003"," Post not found" );
+    POST_NOT_FOUND("4003"," Post not found" ),
+    SUBJECT_NOT_FOUND("4004", "Subject not found"),
+    SUBJECT_CODE_EXISTS("4004", "Subject code is existed" );
 
     ;
 

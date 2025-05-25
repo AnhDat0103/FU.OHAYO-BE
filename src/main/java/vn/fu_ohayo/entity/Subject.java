@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Date;
 import java.util.Set;
@@ -41,6 +42,9 @@ public class Subject {
     private String subjectName;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private SubjectStatus status;
 
     @Column(name = "created_at")
     private Date createdAt;

@@ -1,10 +1,7 @@
 package vn.fu_ohayo.service;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Scanner;
 import java.security.MessageDigest;
@@ -29,6 +26,11 @@ public class PRService {
     }
 
     public void createAndSendToken(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            System.out.println("Email not found.");
+            return;
+        }
         String token = generateToken(email);
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
         tokenStore.put(token, new TokenInfo(email, expiryTime));

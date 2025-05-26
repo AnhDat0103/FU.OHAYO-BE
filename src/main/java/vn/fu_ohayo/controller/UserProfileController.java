@@ -1,6 +1,5 @@
 package vn.fu_ohayo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.entity.UserProfileDTO;
 import vn.fu_ohayo.service.UserService;

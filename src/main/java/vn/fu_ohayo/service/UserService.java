@@ -1,6 +1,4 @@
 package vn.fu_ohayo.service;
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.UserProfileDTO;

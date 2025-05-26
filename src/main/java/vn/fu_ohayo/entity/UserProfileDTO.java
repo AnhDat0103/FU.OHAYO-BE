@@ -1,5 +1,4 @@
 package vn.fu_ohayo.entity;
-import lombok.Builder;
 import lombok.Data;
 import vn.fu_ohayo.enums.*;
 

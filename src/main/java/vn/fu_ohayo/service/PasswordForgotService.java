@@ -1,10 +1,12 @@
 package vn.fu_ohayo.service;
 
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.Validate.PasswordResetValidate;
-import org.springframework.stereotype.Service;
-import java.util.Scanner;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -13,7 +15,13 @@ import java.util.*;
 @Service
 public class PasswordForgotService {
     public final Map<String, TokenInfo> tokenStore = new HashMap<>();
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final JavaMailSender mailSender;
+
+    public PasswordForgotService(UserRepository userRepository, JavaMailSender mailSender) {
+        this.userRepository = userRepository;
+        this.mailSender = mailSender;
+    }
 
     public static class TokenInfo {
         String email;
@@ -34,7 +42,15 @@ public class PasswordForgotService {
         String token = generateToken(email);
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
         tokenStore.put(token, new TokenInfo(email, expiryTime));
-        System.out.println("A digit token has been sent to " + email + ": " + token);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Your Password Reset Code");
+        message.setText("Your password reset code is: " + token);
+        message.setFrom("no-reply@fu-ohayo.vn");
+        mailSender.send(message);
+
+        System.out.printf("A password reset token has been sent to %s: %s%n", email, token);
     }
 
     public void userInputPassword() {
@@ -79,7 +95,7 @@ public class PasswordForgotService {
 
     public boolean resetPassword(String token, String newPassword) {
         TokenInfo tokenInfo = tokenStore.get(token);
-        if (PasswordResetValidate.isTokenValid(token, tokenStore)) {
+        if (tokenInfo == null || PasswordResetValidate.isTokenValid(token, tokenStore)) {
             System.out.println("Invalid or expired token.");
             return false;
         }

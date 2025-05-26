@@ -9,11 +9,11 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class UserService {
     private UserRepository userRepository;
-    public UserProfileDTO getUserProfileDTO(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(()
+    public UserProfileDTO getUserProfileDTO(String fullname) {
+        User user = userRepository.findByFullName(fullname).orElseThrow(()
                 -> new RuntimeException("User not found"));
         UserProfileDTO dto = new UserProfileDTO();
-        dto.setUsername(username);
+        dto.setFullName(fullname);
         dto.setEmail(user.getEmail());
         dto.setFullName(user.getFullName());
         dto.setPhoneNumber(user.getPhone());

@@ -1,10 +1,14 @@
 package vn.fu_ohayo.service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.Validate.PasswordResetValidate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@RestController
+@RequestMapping("/api/profile/change-password")
 public class PasswordChangeService {
     public boolean ChangePassword(String email, String newPassword, String confirmPassword, UserRepository userRepository) {
         User user = userRepository.findByEmail(email).orElse(null);
@@ -34,11 +38,13 @@ public class PasswordChangeService {
         System.out.println("Password changed successfully.");
         return true;
     }
-
+    //ma hoa mat khau bang sha-256
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
+            //bam mat khau thanh mang byte
             byte[] hash = md.digest(password.getBytes());
+            //chuyen doi mang byte thanh chuoi hex
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.SubjectStatus;
 
 @AllArgsConstructor
 @Data
@@ -22,5 +23,7 @@ public class SubjectRequest {
     private String subjectName;
 
     private String description;
+
+    private SubjectStatus status;
 
 }

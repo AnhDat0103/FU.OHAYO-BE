@@ -48,7 +48,6 @@ public class SubjectServiceImp implements SubjectService {
             throw new AppException(ErrorEnum.SUBJECT_CODE_EXISTS);
         }
         Subject subject = subjectMapper.toSubject(subjectRequest);
-        subject.setStatus(SubjectStatus.ACTIVE);
         return subjectMapper.toSubjectResponse(subjectRepository.save(subject));
     }
 

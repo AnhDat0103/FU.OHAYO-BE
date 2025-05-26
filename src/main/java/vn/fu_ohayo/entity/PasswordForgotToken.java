@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasswordResetToken {
+public class PasswordForgotToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

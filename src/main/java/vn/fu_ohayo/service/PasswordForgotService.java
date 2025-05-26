@@ -50,7 +50,7 @@ public class PasswordForgotService {
             }
             System.out.print("Enter the token you received:");
             token = scanner.nextLine();
-            if (!PasswordResetValidate.isTokenValid(token, tokenStore)) {
+            if (PasswordResetValidate.isTokenValid(token, tokenStore)) {
                 System.out.println("Invalid or expired token. Please try again.");
                 attempts++;
             } else {
@@ -79,7 +79,7 @@ public class PasswordForgotService {
 
     public boolean resetPassword(String token, String newPassword) {
         TokenInfo tokenInfo = tokenStore.get(token);
-        if (!PasswordResetValidate.isTokenValid(token, tokenStore)) {
+        if (PasswordResetValidate.isTokenValid(token, tokenStore)) {
             System.out.println("Invalid or expired token.");
             return false;
         }

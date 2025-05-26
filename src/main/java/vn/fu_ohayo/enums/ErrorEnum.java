@@ -23,10 +23,10 @@ public enum ErrorEnum {
     ROLE_NOT_FOUND("4002","Role not found"),
     SUBJECT_NOT_FOUND("4004", "Subject not found"),
     SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
-    EXERCISE_NOT_FOUND("4005", "Exercise not found");
+    EXERCISE_NOT_FOUND("4005", "Exercise not found"),
 
-    ;
-
+    SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
+    SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted");
     // 5xxx - server error
 
     //message validation

@@ -1,5 +1,7 @@
 package vn.fu_ohayo.repository;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,5 +40,13 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     GROUP BY s.subjectId, s.subjectCode, s.subjectName, s.description, s.status, s.updatedAt
 """)
     List<SubjectResponse> findAllSubjectWithUserCount();
+
+    boolean existsBySubjectName(String subjectName);
+
+    @Query("SELECT COUNT(DISTINCT su.userId) FROM Subject s " +
+            "LEFT JOIN s.users su" +
+            " WHERE s.subjectId = :subjectId"
+    )
+    int countUsersBySubjectId(@Param("subjectId") int subjectId);
 
 }

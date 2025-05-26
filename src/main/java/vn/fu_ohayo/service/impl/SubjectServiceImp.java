@@ -47,6 +47,9 @@ public class SubjectServiceImp implements SubjectService {
         if (subjectRepository.existsBySubjectCode(subjectRequest.getSubjectCode())) {
             throw new AppException(ErrorEnum.SUBJECT_CODE_EXISTS);
         }
+        if(subjectRepository.existsBySubjectName(subjectRequest.getSubjectName())) {
+            throw new AppException(ErrorEnum.SUBJECT_NAME_EXISTS);
+        }
         Subject subject = subjectMapper.toSubject(subjectRequest);
         return subjectMapper.toSubjectResponse(subjectRepository.save(subject));
     }
@@ -56,13 +59,22 @@ public class SubjectServiceImp implements SubjectService {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
         if(subjectRequest.getSubjectCode() != null){
+            if (subjectRepository.existsBySubjectCode(subjectRequest.getSubjectCode())) {
+                throw new AppException(ErrorEnum.SUBJECT_CODE_EXISTS);
+            }
             subject.setSubjectCode(subjectRequest.getSubjectCode());
         }
         if(subjectRequest.getSubjectName() != null){
+            if(subjectRepository.existsBySubjectName(subjectRequest.getSubjectName())) {
+                throw new AppException(ErrorEnum.SUBJECT_NAME_EXISTS);
+            }
             subject.setSubjectName(subjectRequest.getSubjectName());
         }
         if(subjectRequest.getDescription() != null){
             subject.setDescription(subjectRequest.getDescription());
+        }
+        if(subjectRequest.getStatus() != null){
+            subject.setStatus(subjectRequest.getStatus());
         }
         Subject updatedSubject = subjectRepository.save(subject);
         return subjectMapper.toSubjectResponse(updatedSubject);
@@ -72,6 +84,9 @@ public class SubjectServiceImp implements SubjectService {
     public void deleteSubject(int id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+        if(subjectRepository.countUsersBySubjectId(id) > 0) {
+            throw new AppException(ErrorEnum.SUBJECT_IN_USE);
+        }
         subjectRepository.delete(subject);
     }
 

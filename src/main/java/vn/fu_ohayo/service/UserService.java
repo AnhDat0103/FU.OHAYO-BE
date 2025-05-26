@@ -1,4 +1,5 @@
 package vn.fu_ohayo.service;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
@@ -10,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class UserService {
     private UserRepository userRepository;
-
     public UserProfileDTO getUserProfileDTO(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()
                 -> new RuntimeException("User not found"));

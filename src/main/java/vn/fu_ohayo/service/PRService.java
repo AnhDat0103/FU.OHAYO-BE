@@ -6,7 +6,7 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.Scanner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -16,7 +16,6 @@ import java.util.*;
 public class PRService {
     public final Map<String, TokenInfo> tokenStore = new HashMap<>();
 
-    @Autowired
     private UserRepository userRepository;
 
     static class TokenInfo {
@@ -33,15 +32,54 @@ public class PRService {
         String token = generateToken(email);
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
         tokenStore.put(token, new TokenInfo(email, expiryTime));
-        System.out.println("Token created for " + email + ": " + token);
+        System.out.println("A digit token has been sent to " + email + ": " + token);
     }
 
+    public void userInputPassword() {
+        Scanner scanner = new Scanner(System.in);
+        String token;
+        TokenInfo tokenInfo = null;
+        int attempts = 0;
+        final int MAX_ATTEMPTS = 6;
+        //limit attempts to 6
+        while (true) {
+            if (attempts >= MAX_ATTEMPTS) {
+                System.out.println("Maximum attempts reached.");
+                scanner.close();
+                return;
+            }
+            System.out.print("Enter the token you received: ");
+            token = scanner.nextLine();
+            tokenInfo = tokenStore.get(token);
+            if (tokenInfo == null || tokenInfo.expiryTime.isBefore(LocalDateTime.now())) {
+                System.out.println("Invalid or expired token. Please try again.");
+                attempts++;
+            } else {
+                break;
+            }
+        }
+            while (true){
+            System.out.print("Enter your new password: ");
+            String newPassword = scanner.nextLine();
+
+            boolean result = resetPassword(token, newPassword);
+            if (result) {
+                System.out.println("Password reset successful.");
+                break;
+            } else {
+                System.out.println("Password reset failed. Please try again.");
+            }
+        }
+        scanner.close();
+    }
     public boolean resetPassword(String token, String newPassword) {
         TokenInfo tokenInfo = tokenStore.get(token);
+//tonken check
         if (tokenInfo == null || tokenInfo.expiryTime.isBefore(LocalDateTime.now())) {
             System.out.println("Invalid or expired token.");
             return false;
         }
+//new password check not empty and at least 8 characters
         if (newPassword == null || newPassword.isEmpty()) {
             System.out.println("New password cannot be empty.");
             return false;
@@ -53,7 +91,12 @@ public class PRService {
         Optional<User> userOpt = userRepository.findByEmail(tokenInfo.email);
         if (userOpt.isEmpty()) return false;
         User user = userOpt.get();
-        user.setPassword(hashPassword(newPassword));
+        String newHashed = hashPassword(newPassword);
+        if(newHashed.equals(user.getPassword())) {
+            System.out.println("New password cannot be the same as the old password.");
+            return false;
+        }
+        user.setPassword(newHashed);
         userRepository.save(user);
         tokenStore.remove(token);
         System.out.println("Password reset successfully for " + tokenInfo.email);
@@ -71,8 +114,10 @@ public class PRService {
     }
 
     public String generateToken(String email) {
-        String token = UUID.randomUUID().toString();
-        return hashPassword(token + email);
+        Random random = new Random();
+        int number = random.nextInt(900000) + 100000;
+        return String.valueOf(number);
     }
 }
+
 

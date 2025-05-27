@@ -1,59 +1,46 @@
 package vn.fu_ohayo.service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
-import vn.fu_ohayo.Validate.PasswordResetValidate;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
-@RestController
-@RequestMapping("/api/profile/change-password")
+@Service
 public class PasswordChangeService {
-    public boolean ChangePassword(String email, String newPassword, String confirmPassword, UserRepository userRepository) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            System.out.println("User not found.");
-            return false;
+
+    private final UserRepository userRepository;
+
+    public PasswordChangeService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public boolean changePassword(User user, String currentPassword, String newPassword, String confirmPassword) {
+        String currentHashed = hashPassword(currentPassword);
+        if (!currentHashed.equals(user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect.");
         }
-        if (!PasswordResetValidate.isPasswordConfirmed(newPassword, confirmPassword)) {
-            System.out.println("Passwords do not match.");
-            return false;
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("New passwords do not match.");
         }
-        if (!PasswordResetValidate.isPasswordNotEmpty(newPassword)) {
-            System.out.println("New password cannot be empty.");
-            return false;
-        }
-        if (!PasswordResetValidate.isPasswordLengthValid(newPassword, 8)) {
-            System.out.println("New password must be at least 8 characters long.");
-            return false;
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("New password must be at least 8 characters.");
         }
         String newHashed = hashPassword(newPassword);
-        if (!PasswordResetValidate.isNewPasswordDifferent(newHashed, user.getPassword())) {
-            System.out.println("New password cannot be the same as the old password.");
-            return false;
-        }
         user.setPassword(newHashed);
         userRepository.save(user);
-        System.out.println("Password changed successfully.");
         return true;
     }
-    //ma hoa mat khau bang sha-256
-    private String hashPassword(String password) {
+
+    private String hashPassword(String plainPassword) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            //bam mat khau thanh mang byte
-            byte[] hash = md.digest(password.getBytes());
-            //chuyen doi mang byte thanh chuoi hex
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
+            byte[] hashedBytes = md.digest(plainPassword.getBytes());
+            return Base64.getEncoder().encodeToString(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error hashing password", e);
         }
     }
 }

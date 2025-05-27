@@ -1,4 +1,4 @@
-package vn.fu_ohayo.enums;
+package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.scheduling.support.SimpleTriggerContext;
+import vn.fu_ohayo.enums.Relationship;
 
 @Entity
 @Table(name = "Parent_Students")
@@ -20,16 +20,19 @@ public class ParentStudent {
     )
     private int id;
 
-    @Column(name = "parent_id")
     @NotNull
-    private String parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", referencedColumnName = "user_id")
+    private User parent;
 
-    @Column(name = "student_id")
     @NotNull
-    private String studentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", referencedColumnName = "user_id")
+    private User student;
 
     @Column(name = "relationship")
-    private String relationship;
+    @Enumerated(EnumType.STRING)
+    private Relationship relationship;
 
     @Column(name = "is_verified")
     private boolean isVerified;

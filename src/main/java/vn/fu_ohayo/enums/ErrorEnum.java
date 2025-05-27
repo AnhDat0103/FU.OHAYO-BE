@@ -21,7 +21,7 @@ public enum ErrorEnum {
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
-    INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" );
+    INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" ),
 
     SUBJECT_NOT_FOUND("4004", "Subject not found"),
     SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
@@ -43,7 +43,6 @@ public enum ErrorEnum {
     public static final String INVALID_URL_AVATAR = "Avatar URL must be less than 255 characters";
     public static final String NOT_EMPTY_USER = "User cannot be null";
     public static final String MAX_LENGTH_IMAGE = "Image URL must be less than 255 characters";
-    public static final String NOT_EMPTY_TITLE = "Title cannot null";
     public static final String NOT_EMPTY_CONTENT_TYPE = "Content type cannot be null";
     public static final String NOT_EMPTY_CATEGORY = "Category cannot be null";
     public static final String NOT_EMPTY_IMAGE = "Image cannot be null";

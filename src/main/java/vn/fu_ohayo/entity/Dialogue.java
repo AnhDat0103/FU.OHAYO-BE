@@ -23,12 +23,9 @@ public class Dialogue {
     @Column(name = "dialogue_id")
     private long dialogueId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "content_speaking_id")
     private ContentSpeaking contentSpeaking;
-
-    @Min(value = 0, message = "sequence start from 0")
-    private int sequence;
 
     @Column(name = "questiont_jp")
     private String questiontJp;

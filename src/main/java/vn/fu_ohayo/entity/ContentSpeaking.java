@@ -1,5 +1,6 @@
 package vn.fu_ohayo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,7 +28,12 @@ public class ContentSpeaking {
     @Column(name = "content_speaking_id")
     private int contentSpeakingId;
 
+    @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
+    @Enumerated(EnumType.STRING)
+    private CategorySpeakingEnum category;
+
     @OneToMany(mappedBy = "contentSpeaking")
+    @JsonIgnore
     private List<Dialogue> Dialogues;
 
     @Column(name = "created_at")
@@ -49,9 +55,6 @@ public class ContentSpeaking {
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String image;
 
-    @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
-    @Enumerated(EnumType.STRING)
-    private CategorySpeakingEnum category;
 
     @PrePersist
     protected void onCreate() {

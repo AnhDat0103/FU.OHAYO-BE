@@ -1,6 +1,7 @@
 package vn.fu_ohayo.service.impl;
 
 import jakarta.servlet.ServletContext;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.service.UploadService;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Service
 public class UploadServiceImp implements UploadService {
 
     private final ServletContext servletContext;

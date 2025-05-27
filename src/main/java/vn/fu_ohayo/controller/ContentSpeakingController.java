@@ -10,23 +10,28 @@ import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
+import vn.fu_ohayo.service.UploadService;
+
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/contents")
-public class ContentController {
+@RequestMapping("/content_speaking")
+public class ContentSpeakingController {
     private final ContentSpeakingService contentSpeakingService;
     private final ContentSpeakingRepository contentSpeakingRepository;
+    private final UploadService uploadService;
 
-    public ContentController( ContentSpeakingService contentSpeakingService, ContentSpeakingRepository contentSpeakingRepository) {
+    public ContentSpeakingController(ContentSpeakingService contentSpeakingService,
+                                     ContentSpeakingRepository contentSpeakingRepository, UploadService uploadService) {
         this.contentSpeakingService = contentSpeakingService;
         this.contentSpeakingRepository = contentSpeakingRepository;
+        this.uploadService = uploadService;
     }
 
     @GetMapping
     public ApiResponse<List<ContentSpeaking>> getContentSpeakings() {
-        return ApiResponse .<List<ContentSpeaking>>builder()
+        return ApiResponse .    <List<ContentSpeaking>>builder()
                 .code("200")
                 .status("success")
                 .message("success")

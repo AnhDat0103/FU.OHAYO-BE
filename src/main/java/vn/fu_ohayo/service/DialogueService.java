@@ -9,4 +9,7 @@ public interface DialogueService {
     Dialogue getDialogueById(long id);
     Dialogue handleSaveDialogue(Dialogue dialogue);
     void deleteDialogueById(long id);
+//    Dialogue updatePutDialogue(Dialogue dialogue, long id);
+    Dialogue updatePatchDialogue(long id, Dialogue dialogue);
+    List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId);
 }

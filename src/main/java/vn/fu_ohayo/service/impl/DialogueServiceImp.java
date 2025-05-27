@@ -1,10 +1,12 @@
 package vn.fu_ohayo.service.impl;
 
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.repository.DialogueRepository;
+import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
@@ -13,12 +15,14 @@ import java.util.List;
 public class DialogueServiceImp implements DialogueService {
 
     private final DialogueRepository dialogueRepository;
-    private final ContentSpeakingRepository contentSpeakingRepository;
+    private final ContentSpeakingService contentSpeakingService;
 
-    public DialogueServiceImp(DialogueRepository dialogueRepository, ContentSpeakingRepository contentSpeakingRepository) {
+    public DialogueServiceImp(DialogueRepository dialogueRepository, ContentSpeakingService contentSpeakingService) {
         this.dialogueRepository = dialogueRepository;
-        this.contentSpeakingRepository = contentSpeakingRepository;
+        this.contentSpeakingService = contentSpeakingService;
     }
+
+
     @Override
     public List<Dialogue> getAllDialogues() {
         return dialogueRepository.findAll();
@@ -30,8 +34,15 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public Dialogue handleSaveDialogue(Dialogue dialogue) {
-        return dialogueRepository.save(dialogue);
+    public Dialogue handleSaveDialogue(DialogueRequest dialogueRequest) {
+        Dialogue newDialogue = Dialogue.builder()
+                .contentSpeaking(contentSpeakingService.getContentSpeakingById(dialogueRequest.getContentSpeakingId()))
+                .answerJp(dialogueRequest.getAnswerJp())
+                .answerVn(dialogueRequest.getAnswerVn())
+                .questiontJp(dialogueRequest.getQuestiontJp())
+                .questiontVn(dialogueRequest.getQuestiontVn())
+                .build();
+        return dialogueRepository.save(newDialogue);
     }
 
     @Override
@@ -69,7 +80,7 @@ public class DialogueServiceImp implements DialogueService {
 
     @Override
     public List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId) {
-        ContentSpeaking contentSpeaking = contentSpeakingRepository.findById(contentSpeakingId).orElse(null);
+        ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
         return dialogueRepository.findByContentSpeaking(contentSpeaking);
     }
 }

@@ -1,6 +1,7 @@
 package vn.fu_ohayo.controller;
 
 import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.entity.Dialogue;
 import vn.fu_ohayo.service.DialogueService;
@@ -25,8 +26,8 @@ public class DialogueController {
     }
 
     @PostMapping()
-    public ApiResponse<Dialogue> createDialogue( @RequestBody Dialogue dialogue) {
-        Dialogue newDialogue = dialogueService.handleSaveDialogue(dialogue);
+    public ApiResponse<Dialogue> createDialogue( @RequestBody DialogueRequest dialogueRequest) {
+        Dialogue newDialogue = dialogueService.handleSaveDialogue(dialogueRequest);
         return ApiResponse.<Dialogue>builder()
                 .code("201")
                 .status("success")

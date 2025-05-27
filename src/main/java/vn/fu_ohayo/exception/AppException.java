@@ -19,7 +19,6 @@ public class AppException extends RuntimeException {
         this.code = errorCode.getCode();
     }
 
-
     public AppException(String message, String code, List<FieldValidateException> fieldValidateExceptions) {
         super(message);
         this.code = code;

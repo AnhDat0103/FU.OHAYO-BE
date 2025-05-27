@@ -1,5 +1,5 @@
 package vn.fu_ohayo.service;
-
+import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -12,25 +12,27 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+
+@AllArgsConstructor
 @Service
 public class PasswordForgotService {
     public final Map<String, TokenInfo> tokenStore = new HashMap<>();
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
 
-    public PasswordForgotService(UserRepository userRepository, JavaMailSender mailSender) {
-        this.userRepository = userRepository;
-        this.mailSender = mailSender;
-    }
-
+//    public PasswordForgotService(UserRepository userRepository, JavaMailSender mailSender) {
+//        this.userRepository = userRepository;
+//        this.mailSender = mailSender;
+//    }
+    @AllArgsConstructor
     public static class TokenInfo {
-        String email;
+        public String email;
         public LocalDateTime expiryTime;
 
-        public TokenInfo(String email, LocalDateTime expiryTime) {
-            this.email = email;
-            this.expiryTime = expiryTime;
-        }
+//        public TokenInfo(String email, LocalDateTime expiryTime) {
+//            this.email = email;
+//            this.expiryTime = expiryTime;
+//        }
     }
 
     public void createAndSendToken(String email) {
@@ -50,8 +52,7 @@ public class PasswordForgotService {
 //        message.setFrom("no-reply@fu-ohayo.vn");
         message.setFrom("thai110504@gmail.com");
         mailSender.send(message);
-
-        System.out.printf("A password reset token has been sent to %s: %s%n", email, token);
+//        System.out.printf("A password reset token has been sent to %s: %s%n", email, token);
     }
 
     public void userInputPassword() {

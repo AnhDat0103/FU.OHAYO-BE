@@ -47,7 +47,8 @@ public class PasswordForgotService {
         message.setTo(email);
         message.setSubject("Your Password Reset Code");
         message.setText("Your password reset code is: " + token);
-        message.setFrom("no-reply@fu-ohayo.vn");
+//        message.setFrom("no-reply@fu-ohayo.vn");
+        message.setFrom("thai110504@gmail.com");
         mailSender.send(message);
 
         System.out.printf("A password reset token has been sent to %s: %s%n", email, token);

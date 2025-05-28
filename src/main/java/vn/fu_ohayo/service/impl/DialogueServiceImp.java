@@ -1,24 +1,35 @@
 package vn.fu_ohayo.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
+import vn.fu_ohayo.repository.ContentRepository;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.repository.DialogueRepository;
+import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DialogueServiceImp implements DialogueService {
 
     private final DialogueRepository dialogueRepository;
-    private final ContentSpeakingRepository contentSpeakingRepository;
+    private final ContentSpeakingService contentSpeakingService;
+    private final ContentRepository contentRepository;
 
-    public DialogueServiceImp(DialogueRepository dialogueRepository, ContentSpeakingRepository contentSpeakingRepository) {
+    public DialogueServiceImp(DialogueRepository dialogueRepository, ContentSpeakingService contentSpeakingService, ContentRepository contentRepository) {
         this.dialogueRepository = dialogueRepository;
-        this.contentSpeakingRepository = contentSpeakingRepository;
+        this.contentSpeakingService = contentSpeakingService;
+        this.contentRepository = contentRepository;
     }
+
+
     @Override
     public List<Dialogue> getAllDialogues() {
         return dialogueRepository.findAll();
@@ -30,8 +41,15 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public Dialogue handleSaveDialogue(Dialogue dialogue) {
-        return dialogueRepository.save(dialogue);
+    public Dialogue handleSaveDialogue(DialogueRequest dialogueRequest) {
+        Dialogue newDialogue = Dialogue.builder()
+                .contentSpeaking(contentSpeakingService.getContentSpeakingById(dialogueRequest.getContentSpeakingId()))
+                .answerJp(dialogueRequest.getAnswerJp())
+                .answerVn(dialogueRequest.getAnswerVn())
+                .questionJp(dialogueRequest.getQuestionJp())
+                .questionVn(dialogueRequest.getQuestionVn())
+                .build();
+        return dialogueRepository.save(newDialogue);
     }
 
     @Override
@@ -57,11 +75,11 @@ public class DialogueServiceImp implements DialogueService {
             if (dialogueRequest.getAnswerVn() != null) {
                 dialogue.setAnswerVn(dialogueRequest.getAnswerVn());
             }
-            if (dialogueRequest.getQuestiontJp() != null) {
-                dialogue.setQuestiontJp(dialogueRequest.getQuestiontJp());
+            if (dialogueRequest.getQuestionJp() != null) {
+                dialogue.setQuestionJp(dialogueRequest.getQuestionJp());
             }
-            if (dialogueRequest.getQuestiontVn() != null) {
-                dialogue.setQuestiontVn(dialogueRequest.getQuestiontVn());
+            if (dialogueRequest.getQuestionVn() != null) {
+                dialogue.setQuestionVn(dialogueRequest.getQuestionVn());
             }
         }
         return dialogueRepository.save(dialogue);
@@ -69,7 +87,15 @@ public class DialogueServiceImp implements DialogueService {
 
     @Override
     public List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId) {
-        ContentSpeaking contentSpeaking = contentSpeakingRepository.findById(contentSpeakingId).orElse(null);
+        ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
         return dialogueRepository.findByContentSpeaking(contentSpeaking);
+    }
+
+    @Override
+    public Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
+        Page<Dialogue> dialoguePage = dialogueRepository.findAllByContentSpeaking(contentSpeaking, pageable);
+        return dialoguePage;
     }
 }

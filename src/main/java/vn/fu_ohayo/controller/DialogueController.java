@@ -1,6 +1,8 @@
 package vn.fu_ohayo.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.entity.Dialogue;
 import vn.fu_ohayo.service.DialogueService;
@@ -14,8 +16,8 @@ public class DialogueController {
     public DialogueController(DialogueService dialogueService) {
         this.dialogueService = dialogueService;
     }
-    @GetMapping()
-    public ApiResponse<List<Dialogue>> getDialogues() {
+    @GetMapping("/all")
+    public ApiResponse<List<Dialogue>> getDialogueByContentSpeakingIdPage() {
         return ApiResponse.<List<Dialogue>>builder()
                 .code("200")
                 .status("success")
@@ -24,9 +26,9 @@ public class DialogueController {
                 .build();
     }
 
-    @PostMapping()
-    public ApiResponse<Dialogue> createDialogue( @RequestBody Dialogue dialogue) {
-        Dialogue newDialogue = dialogueService.handleSaveDialogue(dialogue);
+        @PostMapping()
+    public ApiResponse<Dialogue> createDialogue( @RequestBody DialogueRequest dialogueRequest) {
+        Dialogue newDialogue = dialogueService.handleSaveDialogue(dialogueRequest);
         return ApiResponse.<Dialogue>builder()
                 .code("201")
                 .status("success")
@@ -44,8 +46,20 @@ public class DialogueController {
                 .data(dialogueService.getDialogueById(id))
                 .build();
     }
-
     @GetMapping("/content_speaking/{contentSpeakingId}")
+    public ApiResponse<Page<Dialogue>> getDialoguesByContentSpeakingIdPage(
+            @RequestParam(defaultValue="1" ) int page,
+            @RequestParam(defaultValue = "5") int size,
+            @PathVariable long contentSpeakingId) {
+        Page<Dialogue> dialogues = dialogueService.getDialoguePage(page, size, contentSpeakingId);
+        return ApiResponse.<Page<Dialogue>>builder()
+                .code("200")
+                .status("success")
+                .message("Get dialogues by content speaking id successfully")
+                .data(dialogues)
+                .build();
+    }
+    @GetMapping("/content_speakingAll/{contentSpeakingId}")
     public ApiResponse<List<Dialogue>> getDialoguesByContentSpeakingId(@PathVariable long contentSpeakingId) {
         List<Dialogue> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentSpeakingId);
         return ApiResponse.<List<Dialogue>>builder()

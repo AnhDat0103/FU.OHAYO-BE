@@ -1,5 +1,8 @@
 package vn.fu_ohayo.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
@@ -13,6 +16,7 @@ import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContentSpeakingServiceImp implements ContentSpeakingService {
@@ -82,6 +86,14 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
             contentSpeakingRepository.save(contentSpeaking);
         }
         return contentMapper.toContentSpeakingResponse(contentSpeaking);
+    }
+
+    @Override
+    public Page<ContentSpeakingResponse> getContentSpeakingPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+         Page<ContentSpeaking> prs = contentSpeakingRepository.findAll(pageable);
+        Page<ContentSpeakingResponse> responsePage = prs.map(contentMapper::toContentSpeakingResponse);
+        return responsePage;
     }
 
 

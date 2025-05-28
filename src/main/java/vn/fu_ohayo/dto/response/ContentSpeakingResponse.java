@@ -22,6 +22,8 @@ public class ContentSpeakingResponse {
     private CategorySpeakingEnum category;
     private Date createdAt;
     private Date updatedAt;
+    private int totalPage;
+    private int currentPage;
 
 
 

@@ -1,41 +1,46 @@
 package vn.fu_ohayo.controller;
 
 import jakarta.validation.Valid;
-
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
-import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
-import vn.fu_ohayo.service.UploadService;
-
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/content_speaking")
 public class ContentSpeakingController {
     private final ContentSpeakingService contentSpeakingService;
-    private final ContentSpeakingRepository contentSpeakingRepository;
-    private final UploadService uploadService;
 
-    public ContentSpeakingController(ContentSpeakingService contentSpeakingService,
-                                     ContentSpeakingRepository contentSpeakingRepository, UploadService uploadService) {
+    public ContentSpeakingController(ContentSpeakingService contentSpeakingService) {
         this.contentSpeakingService = contentSpeakingService;
-        this.contentSpeakingRepository = contentSpeakingRepository;
-        this.uploadService = uploadService;
+
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse<List<ContentSpeaking>> getContentSpeakings() {
         return ApiResponse .    <List<ContentSpeaking>>builder()
                 .code("200")
                 .status("success")
                 .message("success")
-                .data(contentSpeakingRepository.findAll())
+                .data(contentSpeakingService.getAllContentSpeakings())
+                .build();
+    }
+
+    @GetMapping()
+    public ApiResponse<Page<ContentSpeakingResponse>> getContentSpeakingPage(
+            @RequestParam(defaultValue="1" ) int page,
+            @RequestParam(defaultValue = "5") int size                                                                             ) {
+        return ApiResponse .    <Page<ContentSpeakingResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("success")
+                .data(contentSpeakingService.getContentSpeakingPage(page, size))
                 .build();
     }
 
@@ -74,7 +79,7 @@ public class ContentSpeakingController {
     @PutMapping("/{id}")
     public ApiResponse<ContentSpeakingResponse> updateContentSpeaking(
             @PathVariable Long id,
-            @RequestBody ContentSpeakingRequest request) {
+            @Valid @RequestBody ContentSpeakingRequest request) {
         ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePutContentSpeaking(id,request );
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")
@@ -87,7 +92,7 @@ public class ContentSpeakingController {
     @PatchMapping("/{id}")
     public  ApiResponse<ContentSpeakingResponse> patchContentSpeaking(
             @PathVariable Long id,
-            @RequestBody ContentSpeakingRequest request){
+            @Valid @RequestBody ContentSpeakingRequest request){
         ContentSpeakingResponse ContentSpeakingResponse = contentSpeakingService.updatePatchContentSpeaking(id,request );
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")

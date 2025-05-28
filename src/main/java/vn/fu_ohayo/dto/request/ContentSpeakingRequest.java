@@ -1,5 +1,8 @@
 package vn.fu_ohayo.dto.request;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,10 +16,13 @@ import vn.fu_ohayo.enums.ErrorEnum;
 @Data
 @Builder
 public class ContentSpeakingRequest {
-    @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
+    @NotBlank(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
     @NotNull(message = ErrorEnum.NOT_EMPTY_IMAGE)
     private String image;
+    @Enumerated(EnumType.STRING)
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     private CategorySpeakingEnum category;
+
+
 }

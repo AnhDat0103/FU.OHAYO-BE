@@ -1,9 +1,11 @@
 package vn.fu_ohayo.service;
 
+import org.springframework.data.domain.Page;
 import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.entity.Dialogue;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DialogueService {
     List<Dialogue> getAllDialogues();
@@ -13,4 +15,5 @@ public interface DialogueService {
 //    Dialogue updatePutDialogue(Dialogue dialogue, long id);
     Dialogue updatePatchDialogue(long id, Dialogue dialogue);
     List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId);
+    Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId);
 }

@@ -28,7 +28,8 @@ public enum ErrorEnum {
     EXERCISE_NOT_FOUND("4005", "Exercise not found"),
 
     SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
-    SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted");
+    SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted"),
+    INVALID_PAGE("4008","Page is not exist" );
     // 5xxx - server error
 
     //message validation

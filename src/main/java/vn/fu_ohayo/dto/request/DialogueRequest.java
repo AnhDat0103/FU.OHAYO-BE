@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class DialogueRequest {
-    private String questiontJp;
+    private String questionJp;
 
-    private String questiontVn;
+    private String questionVn;
 
     private String answerVn;
 

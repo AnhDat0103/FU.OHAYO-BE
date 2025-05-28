@@ -13,6 +13,8 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "Vocabularies",
         uniqueConstraints = {
@@ -80,6 +82,9 @@ public class Vocabulary {
 
     @Column(name = "updated_at")
     private java.util.Date updatedAt;
+
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private Set<ContentReading> contentReadings;
 
     @PrePersist
     protected void onCreate() {

@@ -13,6 +13,7 @@ import vn.fu_ohayo.enums.CategorySpeakingEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Content_Readings")
@@ -47,7 +48,8 @@ public class ContentReading {
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
 
-    private String url;
+    @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
+    private String audioFile;
 
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String image;
@@ -61,6 +63,22 @@ public class ContentReading {
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)
     private CategoryReadingEnum category;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ContentReading_Vocabulary",
+            joinColumns = @JoinColumn(name = "content_reading_id"),
+            inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
+    )
+    private Set<Vocabulary> vocabularies;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ContentReading_Grammar",
+            joinColumns = @JoinColumn(name = "content_reading_id"),
+            inverseJoinColumns = @JoinColumn(name = "grammar_id")
+    )
+    private Set<Grammar> grammars;
 
     @PrePersist
     protected void onCreate() {

@@ -20,7 +20,6 @@ public class ContentSpeakingRequest {
     private String title;
     @NotNull(message = ErrorEnum.NOT_EMPTY_IMAGE)
     private String image;
-    @Enumerated(EnumType.STRING)
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     private CategorySpeakingEnum category;
 

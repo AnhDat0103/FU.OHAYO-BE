@@ -12,6 +12,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Grammars",
@@ -69,6 +70,9 @@ public class Grammar {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
+    private Set<ContentReading> contentReadings;
 
     @PrePersist
     protected void onCreate() {

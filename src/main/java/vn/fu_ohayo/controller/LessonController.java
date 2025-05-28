@@ -20,11 +20,11 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
-    @GetMapping("/{subjectId}")
+    @GetMapping
     public ApiResponse<Page<LessonResponse>> getAllLessons(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @PathVariable int subjectId
+            @RequestParam int subjectId
         ) {
         Page<LessonResponse> lessons = lessonService.getAllLessons(subjectId,page, size);
         return ApiResponse.<Page<LessonResponse>>builder()
@@ -34,7 +34,7 @@ public class LessonController {
                 .build();
     }
 
-    @PostMapping("")
+    @PostMapping
     public ApiResponse<LessonResponse> createLesson(@Valid @RequestBody LessonRequest lessonRequest) {
         LessonResponse createdLesson = lessonService.createLesson(lessonRequest);
         return ApiResponse.<LessonResponse>builder()

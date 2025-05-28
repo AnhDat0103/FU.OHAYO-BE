@@ -4,20 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.service.PasswordForgotService;
+import vn.fu_ohayo.service.impl.PasswordForgotImp;
 import vn.fu_ohayo.repository.UserRepository;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class ForgotPasswordController {
 
-    private final PasswordForgotService passwordForgotService;
+    private final PasswordForgotImp PasswordForgotImp;
     private final UserRepository userRepository;
 
-//    public AuthController(PasswordForgotService passwordForgotService, UserRepository userRepository) {
+//    public ForgotPasswordController(PasswordForgotService passwordForgotService, UserRepository userRepository) {
 //        this.passwordForgotService = passwordForgotService;
 //        this.userRepository = userRepository;
 //    }
@@ -27,13 +26,13 @@ public class AuthController {
         if (!userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.status(404).body("Email not found");
         }
-        passwordForgotService.createAndSendToken(request.getEmail());
+        PasswordForgotImp.createAndSendToken(request.getEmail());
         return ResponseEntity.ok("Reset code sent if email exists");
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-        boolean result = passwordForgotService.resetPassword(request.getToken(), request.getNewPassword());
+        boolean result = PasswordForgotImp.resetPassword(request.getToken(), request.getNewPassword());
         if (result) {
             return ResponseEntity.ok("Password reset successful");
         } else {

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
-import vn.fu_ohayo.service.PasswordChangeService;
+import vn.fu_ohayo.service.impl.PasswordChangeImp;
 
 @RestController
 @RequestMapping("/api/user")
@@ -15,7 +15,7 @@ import vn.fu_ohayo.service.PasswordChangeService;
 public class ChangePasswordController {
 
     private final UserRepository userRepository;
-    private final PasswordChangeService passwordChangeService;
+    private final PasswordChangeImp passwordChangeImp;
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
@@ -24,7 +24,7 @@ public class ChangePasswordController {
             return ResponseEntity.status(404).body("User not found");
         }
         try {
-            passwordChangeService.changePassword(
+            passwordChangeImp.changePassword(
                     user,
                     request.getCurrentPassword(),
                     request.getNewPassword(),

@@ -1,34 +1,24 @@
 package vn.fu_ohayo.service;
-import org.springframework.stereotype.Service;
-import vn.fu_ohayo.entity.User;
+
+import vn.fu_ohayo.dto.request.CompleteProfileRequest;
+import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.SignInRequest;
+import vn.fu_ohayo.dto.request.SearchUserRequest;
+import vn.fu_ohayo.dto.request.UserRegister;
+import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.UserProfileDTO;
-import vn.fu_ohayo.repository.UserRepository;
 
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-@Service
-public class UserService {
-    private UserRepository userRepository;
-    public UserProfileDTO getUserProfileDTO(String fullname) {
-        User user = userRepository.findByFullName(fullname).orElseThrow(()
-                -> new RuntimeException("User not found"));
-        UserProfileDTO dto = new UserProfileDTO();
-        dto.setFullName(fullname);
-        dto.setEmail(user.getEmail());
-        dto.setFullName(user.getFullName());
-        dto.setPhoneNumber(user.getPhone());
-        dto.setAddress(user.getAddress());
-        dto.setStatus(user.getStatus());
-        dto.setMembershipLevel(user.getMembershipLevel());
-        dto.setProvider(user.getProvider());
-        dto.setProfilePicture(user.getAvatar());
-        if (user.getCreatedAt() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            dto.setMemberSince("Member since " + user.getCreatedAt().toInstant()
-                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-                    .format(formatter));
-        }
-        dto.setHasSettingsAccsees(true);
-        return dto;
-    }
+public interface UserService {
+    UserProfileDTO getUserProfileDTO(String email);
+    List<UserResponse> getAllUsers();
+
+    void registerInitial(InitialRegisterRequest initialRegisterRequest);
+
+    UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email);
+
+    List<UserResponse> searchUsersByName(SearchUserRequest request);
+
+    UserResponse registerUser(UserRegister userRegister);
 }

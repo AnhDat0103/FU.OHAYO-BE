@@ -9,12 +9,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.enums.*;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -34,7 +45,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-public class User {
+public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY
     )
@@ -43,38 +54,89 @@ public class User {
 
     @Email
     @Column(unique = true)
-    @NotNull
-    @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
 
-    @NotNull
-    @Size(min = 5)
-    @Column(unique = true)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
+    @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @NotNull
+
+    @Column(name = "full_name")
+    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^0[0-9]{9,10}$")
+    @Pattern(regexp = "^0[0-9]{9,10}$", message = ErrorEnum.INVALID_PHONE)
+    @Column(unique = true)
     private String phone;
 
+    @Size(max = 255, message = ErrorEnum.INVALID_ADDRESS)
     private String address;
 
+    private Date dob;
+
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.INACTIVE;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "membership_level")
-    private MembershipLevel membershipLevel;
+    private MembershipLevel membershipLevel = MembershipLevel.NORMAL;
 
     @Enumerated(EnumType.STRING)
-    private Provider provider;
+    @Column(nullable = false)
+    private Provider provider = Provider.LOCAL;
 
-    @Size(max = 255)
-    private String avatar;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserStatus.ACTIVE.equals(this.status);
+    }
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "User_Subjects",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+    private Set<Subject> subjects;
+
+    @OneToMany(mappedBy = "parent")
+    private List<ParentStudent> children;
+
+    @OneToMany(mappedBy = "student")
+    private List<ParentStudent> parents;
 
     @Column(name = "created_at")
     private Date createdAt;
@@ -82,4 +144,14 @@ public class User {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 }

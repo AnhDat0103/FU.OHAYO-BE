@@ -7,7 +7,11 @@ import vn.fu_ohayo.dto.request.LessonPatchRequest;
 import vn.fu_ohayo.dto.request.LessonRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.LessonResponse;
+import vn.fu_ohayo.enums.LessonStatus;
+import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.service.LessonService;
+
+import java.util.List;
 
 
 @RestController
@@ -60,6 +64,17 @@ public class LessonController {
         return ApiResponse.<Void>builder()
                 .status("success")
                 .message("Lesson deleted successfully")
+                .build();
+    }
+
+    @GetMapping("/status")
+    public ApiResponse<List<LessonStatus>> getLessonStatuses() {
+        List<LessonStatus> statuses = List.of(LessonStatus.values());
+        return ApiResponse.<List<LessonStatus>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched lesson statuses successfully")
+                .data(statuses)
                 .build();
     }
 }

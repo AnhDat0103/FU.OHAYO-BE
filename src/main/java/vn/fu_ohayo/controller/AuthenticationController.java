@@ -16,7 +16,9 @@ import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.AuthUrlResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
@@ -74,7 +76,7 @@ public ResponseEntity<AuthUrlResponse> socialAuth(@RequestParam("login_type") St
 
     @GetMapping
     public ResponseEntity<ApiResponse<String>> checkUserStatus(@RequestParam("email") String email) {
-        var user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         if (user == null ) {
             throw new IllegalArgumentException();
@@ -143,7 +145,7 @@ public ResponseEntity<AuthUrlResponse> socialAuth(@RequestParam("login_type") St
                 );
             }
             String email = authentication.getName();
-            var user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
             if (user == null) {
                 return ResponseEntity.status(404).body(
                         ApiResponse.<User>builder()

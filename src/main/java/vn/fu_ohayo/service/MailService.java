@@ -9,6 +9,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.UserRepository;
 
 import java.io.IOException;
@@ -41,7 +44,7 @@ public class MailService {
         }
     }
     public void sendEmailAgain(String email) {
-        var user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
         String token = jwtService.generateAccessToken(user.getUserId(), email, null);
         sendEmail(email,token);
     }

@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.AuthenticationService;
 import vn.fu_ohayo.service.JwtService;
@@ -75,7 +77,7 @@ public class AuthenticationServiceImp implements AuthenticationService{
         } catch (AuthenticationException e) {
             throw new AccessDeniedException(e.getMessage());
         }
-        var user = userRepository.findByEmail(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -93,7 +95,7 @@ public class AuthenticationServiceImp implements AuthenticationService{
         try {
             var email = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
             if (email != null && userRepository.existsByEmail(email)) {
-                User user =  userRepository.findByEmail(email);
+                User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
                 return true;

@@ -10,14 +10,18 @@ import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.entity.UserProfileDTO;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.Provider;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.UserService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 @RequiredArgsConstructor
 @Service
@@ -83,7 +87,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email){
-        var user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
         if (user == null) {
             throw new IllegalArgumentException("User not found");
         }
@@ -99,6 +103,29 @@ public class UserServiceImp implements UserService {
 
 
 
+    }
+
+    public UserProfileDTO getUserProfileDTO(String fullname) {
+        User user = userRepository.findByFullName(fullname).orElseThrow(()
+                -> new RuntimeException("User not found"));
+        UserProfileDTO dto = new UserProfileDTO();
+        dto.setFullName(fullname);
+        dto.setEmail(user.getEmail());
+        dto.setFullName(user.getFullName());
+        dto.setPhoneNumber(user.getPhone());
+        dto.setAddress(user.getAddress());
+        dto.setStatus(user.getStatus());
+        dto.setMembershipLevel(user.getMembershipLevel());
+        dto.setProvider(user.getProvider());
+//        dto.setProfilePicture(user.getAvatar());
+        if (user.getCreatedAt() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            dto.setMemberSince("Member since " + user.getCreatedAt().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                    .format(formatter));
+        }
+        dto.setHasSettingsAccsees(true);
+        return dto;
     }
 
 

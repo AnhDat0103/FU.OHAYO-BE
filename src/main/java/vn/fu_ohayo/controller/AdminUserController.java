@@ -9,6 +9,7 @@ import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.service.UserService;
+import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/admin/users")
 public class AdminUserController {
-
     UserService userService;
 
     @GetMapping

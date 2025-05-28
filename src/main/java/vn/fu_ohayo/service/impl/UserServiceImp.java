@@ -3,9 +3,11 @@ package vn.fu_ohayo.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-import vn.fu_ohayo.config.Configuration;
+import vn.fu_ohayo.config.AuthConfig;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.SearchUserRequest;
+import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.MembershipLevel;
@@ -25,7 +27,7 @@ public class UserServiceImp implements UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
-    Configuration configuration;
+    AuthConfig configuration;
     MailService mailService;
     JwtService jwtService;
 
@@ -38,6 +40,30 @@ public class UserServiceImp implements UserService {
                 .stream()
                 .map(userMapper::toUserResponse)
                 .toList();
+    }
+
+
+    @Override
+    public List<UserResponse> searchUsersByName(SearchUserRequest request) {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> request.getFullName() == null
+                        || user.getFullName().toLowerCase().contains(request.getFullName().toLowerCase()))
+                .filter(user -> request.getMembershipLevel() == null
+                        || user.getMembershipLevel() == request.getMembershipLevel())
+                .filter(user -> request.getStatus() == null
+                        || user.getStatus() == request.getStatus())
+                .filter(user -> request.getRegisteredFrom() == null
+                        || !user.getCreatedAt().before(request.getRegisteredFrom()))
+                .filter(user -> request.getRegisteredTo() == null
+                        || !user.getCreatedAt().after(request.getRegisteredTo()))
+                .map(userMapper::toUserResponse)
+                .toList();
+    }
+
+    @Override
+    public UserResponse registerUser(UserRegister userRegister) {
+        return null;
     }
 
 

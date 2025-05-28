@@ -11,7 +11,6 @@ import vn.fu_ohayo.service.UserService;
 
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.status;
 
 @RestController()
 @RequestMapping("/users")
@@ -30,7 +29,7 @@ public class UserController {
     public ApiResponse<List<UserResponse>> getAllUsers() {
         return ApiResponse.<List<UserResponse>>builder()
                 .code("200")
-                .status("OK")
+                .status("success")
                 .message("Get all users successfully")
                 .data(userService.getAllUsers())
                 .build();

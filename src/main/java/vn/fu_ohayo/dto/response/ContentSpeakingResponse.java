@@ -1,0 +1,30 @@
+package vn.fu_ohayo.dto.response;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.CategorySpeakingEnum;
+
+import java.util.Date;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ContentSpeakingResponse {
+
+    private int contentSpeakingId;
+    private String title;
+    private String image;
+    private CategorySpeakingEnum category;
+    private Date createdAt;
+    private Date updatedAt;
+    private int totalPage;
+    private int currentPage;
+
+
+
+}

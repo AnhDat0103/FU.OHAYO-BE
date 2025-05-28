@@ -17,12 +17,15 @@ import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.enums.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -51,24 +54,27 @@ public class User implements UserDetails, Serializable {
 
     @Email
     @Column(unique = true)
-    @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
 
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
+    @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
 
+    @Column(name = "full_name")
+    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^0[0-9]{9,10}$")
+    @Pattern(regexp = "^0[0-9]{9,10}$", message = ErrorEnum.INVALID_PHONE)
     @Column(unique = true)
     private String phone;
 
+    @Size(max = 255, message = ErrorEnum.INVALID_ADDRESS)
     private String address;
 
     private Date dob;
@@ -84,18 +90,6 @@ public class User implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Provider provider = Provider.LOCAL;
-
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
 
 
     @Override
@@ -130,4 +124,34 @@ public class User implements UserDetails, Serializable {
     }
 
 
+    @ManyToMany
+    @JoinTable(
+            name = "User_Subjects",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+    private Set<Subject> subjects;
+
+    @OneToMany(mappedBy = "parent")
+    private List<ParentStudent> children;
+
+    @OneToMany(mappedBy = "student")
+    private List<ParentStudent> parents;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 }

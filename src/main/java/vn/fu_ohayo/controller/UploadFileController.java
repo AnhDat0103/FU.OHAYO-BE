@@ -1,0 +1,31 @@
+package vn.fu_ohayo.controller;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.service.UploadService;
+
+import java.io.File;
+import java.util.List;
+
+@RestController
+@RequestMapping("/uploadfile")
+public class UploadFileController {
+    private final UploadService uploadService;
+
+    public UploadFileController(UploadService uploadService) {
+        this.uploadService = uploadService;
+    }
+
+    @PostMapping
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        String url = uploadService.handleUploadFile(file, "content_speaking") ;
+            return ApiResponse.<String>builder()
+                    .code("200")
+                    .status("success")
+                    .message("File uploaded successfully")
+                    .data(url)
+                    .build();
+        }
+    }
+

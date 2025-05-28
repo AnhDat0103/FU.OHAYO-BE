@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordMatchConstant {
 
-    String message() default "Password fields do not match";
+    String message() default "Password and Confirm Password do not match";
 
     String field();
 

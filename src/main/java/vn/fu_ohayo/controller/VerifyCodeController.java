@@ -4,20 +4,20 @@
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.*;
 //import vn.fu_ohayo.Validate.PasswordResetValidate;
-//import vn.fu_ohayo.service.PasswordForgotService;
+//import vn.fu_ohayo.service.impl.PasswordForgotImp;
 //
 //@RestController
 //@RequestMapping("/api/auth")
 //@RequiredArgsConstructor
 //public class VerifyCodeController {
 //
-//    private final PasswordForgotService passwordForgotService;
+//    private final PasswordForgotImp PasswordForgotImp;
 //
 //    @PostMapping("/verify-reset-code")
 //    public ResponseEntity<?> verifyResetCode(@RequestBody VerifyCodeRequest request) {
 //        System.out.println("Verifying code: " + request.getCode() + " for email: " + request.getEmail());
-//        PasswordForgotService.TokenInfo tokenInfo = passwordForgotService.tokenStore.get(request.getCode());
-//        if (PasswordResetValidate.isTokenValid(request.getCode(), passwordForgotService.tokenStore)) {
+//        PasswordForgotImp.TokenInfo tokenInfo = PasswordForgotImp.tokenStore.get(request.getCode());
+//        if (PasswordResetValidate.isTokenValid(request.getCode(), PasswordForgotImp.tokenStore)) {
 //            return ResponseEntity.status(400).body("Invalid or expired code");
 //        }
 //        if (!tokenInfo.email.equals(request.getEmail())) {

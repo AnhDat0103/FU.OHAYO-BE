@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
+import vn.fu_ohayo.enums.LessonStatus;
+import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.service.SubjectService;
 
 import java.util.List;
@@ -61,4 +63,14 @@ public class SubjectController {
                 .build();
     }
 
+    @GetMapping("/status")
+    public ApiResponse<List<SubjectStatus>> getLessonStatuses() {
+        List<SubjectStatus> statuses = List.of(SubjectStatus.values());
+        return ApiResponse.<List<SubjectStatus>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched lesson statuses successfully")
+                .data(statuses)
+                .build();
+    }
 }

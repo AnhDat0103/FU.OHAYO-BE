@@ -15,6 +15,7 @@ public enum ErrorEnum {
     EMAIL_EXIST("2001","Email is used to register" ),
     PHONE_EXIST("2002", "Phone is used to register."),
     EMAIL_OR_PASSWORD_INCORRECT("2004", "Email or password is incorrect."),
+
     // 3xxx - authorization
 
 
@@ -30,6 +31,13 @@ public enum ErrorEnum {
     SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
     SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted"),
     INVALID_PAGE("4008","Page is not exist" );
+
+    LESSON_NOT_FOUND("4008",  "Lesson not found"),
+    LESSON_NAME_EXIST( "4009", "Lesson is exited with this name." ),
+    LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
+    LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" );
+
+>>>>>>> src/main/java/vn/fu_ohayo/enums/ErrorEnum.java
     // 5xxx - server error
 
     //message validation

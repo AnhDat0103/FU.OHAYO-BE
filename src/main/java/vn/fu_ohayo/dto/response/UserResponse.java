@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
+import vn.fu_ohayo.enums.UserStatus;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -28,7 +30,6 @@ public class UserResponse {
 
     private MembershipLevel membershipLevel;
 
-    private String avatar;
-
+    private UserStatus status;
 
 }

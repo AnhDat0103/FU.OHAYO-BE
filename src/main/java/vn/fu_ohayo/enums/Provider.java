@@ -1,5 +1,5 @@
 package vn.fu_ohayo.enums;
 
 public enum Provider {
-    LOCAL, GOOGLE
+    LOCAL, GOOGLE, FACEBOOK, GITHUB
 }

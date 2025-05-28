@@ -50,6 +50,7 @@ public class User {
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
+    @Column(name = "full_name")
     @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
     @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;

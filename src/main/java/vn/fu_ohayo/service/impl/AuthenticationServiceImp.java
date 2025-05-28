@@ -76,11 +76,11 @@ public class AuthenticationServiceImp implements AuthenticationService{
             throw new AccessDeniedException(e.getMessage());
         }
         var user = userRepository.findByEmail(request.getEmail());
-        if (user == null || user.getStatus().equals(UserStatus.ACTIVE)) {
+        if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
-        String refreshToken = jwtService.generateRefreshToken(1, request.getEmail(), null);
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
     }
 
@@ -135,5 +135,6 @@ public class AuthenticationServiceImp implements AuthenticationService{
                 "&response_type=" + responseType +
                 "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8);
     }
+
 
 }

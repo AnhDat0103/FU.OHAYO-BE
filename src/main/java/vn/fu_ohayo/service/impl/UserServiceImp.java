@@ -40,6 +40,7 @@ public class UserServiceImp implements UserService {
                 .toList();
     }
 
+
     @Override
     public void registerInitial(InitialRegisterRequest initialRegisterRequest) {
 

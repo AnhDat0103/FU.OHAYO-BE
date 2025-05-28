@@ -1,6 +1,5 @@
 package vn.fu_ohayo.service;
 
-import io.jsonwebtoken.Jwt;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;

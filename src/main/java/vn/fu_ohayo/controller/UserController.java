@@ -36,10 +36,6 @@ public class UserController {
                 .build();
     }
 
-//    @PostMapping
-//    public UserResponse registerUser(@Valid @RequestBody UserRegister userRegister) {
-//        return userService.registerUser(userRegister);
-//    }
 
     @PostMapping
     public TokenResponse signInUser(@Valid @RequestBody SignInRequest sign) {

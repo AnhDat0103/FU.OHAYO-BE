@@ -6,5 +6,4 @@ import vn.fu_ohayo.dto.response.TokenResponse;
 public interface AuthenticationService {
     TokenResponse getAccessToken(SignInRequest request);
     TokenResponse getRefreshToken(String request);
-
 }

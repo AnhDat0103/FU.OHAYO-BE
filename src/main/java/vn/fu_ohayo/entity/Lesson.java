@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.LessonStatus;
 
 import java.util.Date;
 
@@ -43,6 +44,9 @@ public class Lesson {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    private LessonStatus status;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)

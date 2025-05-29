@@ -8,10 +8,14 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Subject;
 
+import java.util.Optional;
+
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
     boolean existsByName(String name);
 
     Page<Lesson> findAllBySubject(Subject subject, Pageable pageable);
+
+    Optional<Lesson> getLessonByLessonId(int lessonId);
 }

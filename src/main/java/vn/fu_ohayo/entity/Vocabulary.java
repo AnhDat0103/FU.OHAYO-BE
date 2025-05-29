@@ -51,15 +51,15 @@ public class Vocabulary {
     private String romaji; // e.g., "kōkō" for 高校
 
     @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
-    @Size(max = 100, message = "Meaning must be less than 100 characters")
+    @Size(max = 100, message =  ErrorEnum.MAX_LENGTH_100)
     private String meaning;
 
 
-    @Size(max = 500, message = "Description must be less than 500 characters")
+    @Size(max = 500, message =  ErrorEnum.MAX_LENGTH_500)
     private String description;
 
 
-    @Size(max = 500, message = "Example must be less than 500 characters")
+    @Size(max = 500, message =  ErrorEnum.MAX_LENGTH_500)
     private String example;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_PART_OF_SPEECH)

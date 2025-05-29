@@ -1,6 +1,7 @@
 package vn.fu_ohayo.service.impl;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.entity.Lesson;
@@ -60,7 +61,12 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
-    public Page<VocabularyResponse> getVocabularyPage(int page, int size) {
-        return null;
+    public Page<VocabularyResponse> getVocabularyPage(int page, int size, int lessonId) {
+
+        Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+        return vocabularyRepository.findAllByLesson(PageRequest.of(page, size), lesson)
+                .map(vocabularyMapper::toVocabularyResponse);
     }
 }

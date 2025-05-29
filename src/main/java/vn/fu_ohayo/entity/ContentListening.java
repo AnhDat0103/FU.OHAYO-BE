@@ -45,7 +45,7 @@ public class ContentListening {
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
 
-    private String url;
+    private String audioFile;
 
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String image;
@@ -54,7 +54,7 @@ public class ContentListening {
     private String scriptJp;
 
     @Column(name = "script_vn")
-    private String script_vn;
+    private String scriptVn;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)

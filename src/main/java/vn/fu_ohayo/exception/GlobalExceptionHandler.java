@@ -1,15 +1,19 @@
 package vn.fu_ohayo.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import vn.fu_ohayo.dto.response.ApiErrorResponse;
 import vn.fu_ohayo.enums.ErrorEnum;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,6 +51,42 @@ public class GlobalExceptionHandler {
                 .message(ErrorEnum.INVALID_FIELDS.getMessage())
                 .data(errors)
                 .build();
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<FieldValidateException> errors = ex.getConstraintViolations()
+                .stream()
+                .map(cv -> new FieldValidateException(
+                        cv.getPropertyPath().toString(),
+                        cv.getMessage()
+                ))
+                .collect(Collectors.toList());
+
+        ApiErrorResponse errorResponse = ApiErrorResponse.<FieldValidateException>builder()
+                .code(ErrorEnum.INVALID_FIELDS.getCode())
+                .message(ErrorEnum.INVALID_FIELDS.getMessage())
+                .data(errors)
+                .build();
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse<FieldValidateException>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        String msg = ex.getRootCause() != null
+                ? ex.getRootCause().getMessage()
+                : ex.getMessage();
+
+        // Tạo một lỗi duy nhất cho toàn bộ request body
+        FieldValidateException error = new FieldValidateException("requestBody", msg);
+
+        ApiErrorResponse<FieldValidateException> errorResponse = ApiErrorResponse.<FieldValidateException>builder()
+                .code(ErrorEnum.INVALID_FIELDS.getCode())
+                .message("Malformed JSON request or missing body")
+                .data(List.of(error))
+                .build();
+
         return ResponseEntity.badRequest().body(errorResponse);
     }
 }

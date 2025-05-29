@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
+import vn.fu_ohayo.enums.JlptLevel;
+import vn.fu_ohayo.enums.LessonStatus;
+import vn.fu_ohayo.enums.PartOfSpeech;
 import vn.fu_ohayo.service.VocabularyService;
+
+import java.util.List;
 
 
 @RestController
@@ -65,4 +70,27 @@ public class VocabularyController {
                 .data(null)
                 .build();
     }
+
+    @GetMapping("/levels")
+    public ApiResponse<List<JlptLevel>> getLessonLevels() {
+        List<JlptLevel> levels = List.of(JlptLevel.values());
+        return ApiResponse.<List<JlptLevel>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched lesson statuses successfully")
+                .data(levels)
+                .build();
+    }
+
+    @GetMapping("/part-of-speech")
+    public ApiResponse<List<PartOfSpeech>> getLessonPartOfSpeech() {
+        List<PartOfSpeech> partOfSpeeches = List.of(PartOfSpeech.values());
+        return ApiResponse.<List<PartOfSpeech>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched lesson statuses successfully")
+                .data(partOfSpeeches)
+                .build();
+    }
+
 }

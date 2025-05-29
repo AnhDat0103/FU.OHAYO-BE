@@ -2,6 +2,9 @@ package vn.fu_ohayo.repository;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.entity.Subject;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -48,5 +52,4 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             " WHERE s.subjectId = :subjectId"
     )
     int countUsersBySubjectId(@Param("subjectId") int subjectId);
-
 }

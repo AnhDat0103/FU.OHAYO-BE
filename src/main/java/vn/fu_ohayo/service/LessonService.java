@@ -19,4 +19,6 @@ public interface LessonService {
     void deleteLesson(Integer id);
 
     Page<LessonResponse> getAllLessons(int subjectId, int page, int size);
+
+    LessonResponse getLessonById(int id);
 }

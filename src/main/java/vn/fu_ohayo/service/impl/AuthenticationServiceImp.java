@@ -1,15 +1,9 @@
 package vn.fu_ohayo.service.impl;
 
-import com.fasterxml.jackson.core.io.JsonEOFException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
+
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.entity.User;
@@ -33,7 +28,7 @@ import vn.fu_ohayo.service.JwtService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-
+@Slf4j(topic = "AUTHENTICATION-SERVICE")
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
@@ -44,11 +39,11 @@ public class AuthenticationServiceImp implements AuthenticationService{
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     String googleRedirectUri;
 
-//    @Value("${spring.security.oauth2.client.registration.github.client-id}")
-//     String githubClientId;
-//
-//    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
-//     String githubRedirectUri;
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+     String githubClientId;
+
+    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
+     String githubRedirectUri;
 
     @Value("${spring.security.oauth2.client.registration.facebook.client-id}")
      String facebookClientId;
@@ -88,12 +83,28 @@ public class AuthenticationServiceImp implements AuthenticationService{
 
     @Override
     public TokenResponse getRefreshToken(String request) {
-        return null;
+        log.info("Get refresh token");
+
+        if (!StringUtils.hasLength(request)) {
+            throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
+        }
+
+        try {
+            String userName = jwtService.extractUsername(request, TokenType.REFRESH_TOKEN);
+
+            User user = userRepository.findByEmail(userName)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userName));
+            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
+            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
+        } catch (Exception e) {
+            log.error("Error generating refresh token: {}", e.getMessage());
+            throw new AppException(ErrorEnum.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public boolean extractToken(String token) {
+    public boolean extractToken(String token, TokenType type) {
         try {
-            var email = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+            var email = jwtService.extractUsername(token, type);
             if (email != null && userRepository.existsByEmail(email)) {
                 User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
@@ -127,9 +138,17 @@ public class AuthenticationServiceImp implements AuthenticationService{
                 redirectUri = "http://localhost:8080/auth/code/facebook";
                 scope = "email";
                 break;
+
+           case "github":
+                baseUrl = "https://github.com/login/oauth/authorize";
+                clientId = githubClientId;
+                redirectUri = "http://localhost:8080/auth/code/github";
+                scope = "user:email";
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported OAuth provider: " + type);
         }
+        log.info("Generating auth URL for type: {}", type);
 
         return baseUrl + "?" +
                 "client_id=" + clientId +

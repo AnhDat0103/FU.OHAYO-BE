@@ -61,7 +61,7 @@ public class JwtServiceImp implements JwtService {
 
     private Claims extractAllClaims(String token, TokenType type) {
         try {
-            return Jwts.parser().setSigningKey(accessKey).parseClaimsJws(token).getBody();
+            return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
         }catch (SignatureException | ExpiredJwtException e) {
             throw new AccessDeniedException(e.getMessage());
 }

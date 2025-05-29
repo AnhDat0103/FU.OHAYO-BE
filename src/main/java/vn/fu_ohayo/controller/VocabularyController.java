@@ -54,4 +54,15 @@ public class VocabularyController {
                 .data(updatedVocabulary)
                 .build();
     }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteVocabulary(@PathVariable int id) {
+        vocabularyService.deleteVocabularyById(id);
+        return ApiResponse.<Void>builder()
+                .code("204")
+                .message("Vocabulary deleted successfully")
+                .status("success")
+                .data(null)
+                .build();
+    }
 }

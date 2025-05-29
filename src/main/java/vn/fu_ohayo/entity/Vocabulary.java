@@ -3,7 +3,6 @@ package vn.fu_ohayo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +16,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Vocabularies",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"kanji", "lesson_id"})
-        },
         indexes = {
                 @Index(columnList = "kanji", name = "kanji_index"),
                 @Index(columnList = "jlpt_level", name = "jlpt_level_index")

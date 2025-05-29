@@ -1,6 +1,6 @@
 package vn.fu_ohayo.Validate;
 
-import vn.fu_ohayo.service.PasswordForgotService.TokenInfo;
+import vn.fu_ohayo.service.impl.PasswordForgotImp.TokenInfo;
 
 import java.time.LocalDateTime;
 import java.util.Map;

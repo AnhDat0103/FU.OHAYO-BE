@@ -35,7 +35,10 @@ public enum ErrorEnum {
     LESSON_NOT_FOUND("4008",  "Lesson not found"),
     LESSON_NAME_EXIST( "4009", "Lesson is exited with this name." ),
     LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
-    LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" );
+    LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" ),
+
+    VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
+    VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." );
 
     // 5xxx - server error
 

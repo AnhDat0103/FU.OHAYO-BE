@@ -1,5 +1,7 @@
 package vn.fu_ohayo.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.SubjectResponse;
@@ -27,19 +29,9 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getAllSubjects() {
-        return subjectRepository.findAllSubjectWithUserCount()
-                .stream()
-            .map(subject -> SubjectResponse.builder()
-                    .subjectCode(subject.getSubjectCode())
-                    .subjectName(subject.getSubjectName())
-                    .subjectId(subject.getSubjectId())
-                    .description(subject.getDescription())
-                    .status(subject.getStatus())
-                    .updatedAt(subject.getUpdatedAt())
-                    .countUsers(subject.getCountUsers())
-                    .build())
-                .toList();
+    public Page<SubjectResponse> getAllSubjects(int page, int size) {
+        return subjectRepository.findAll(PageRequest.of(page, size))
+                .map(subjectMapper::toSubjectResponse);
     }
 
     @Override

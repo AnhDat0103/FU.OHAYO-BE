@@ -77,4 +77,15 @@ public class LessonController {
                 .data(statuses)
                 .build();
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<LessonResponse> getLessonById(@PathVariable int id) {
+        LessonResponse lesson = lessonService.getLessonById(id);
+        return ApiResponse.<LessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched lesson by ID successfully")
+                .data(lesson)
+                .build();
+    }
 }

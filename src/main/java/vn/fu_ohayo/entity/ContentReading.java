@@ -27,7 +27,7 @@ public class ContentReading {
             strategy = GenerationType.IDENTITY
     )
     @Column(name = "content_reading_id")
-    private int contentReadingId;
+    private long contentReadingId;
 
     @Column(name = "created_at")
     private Date createdAt;

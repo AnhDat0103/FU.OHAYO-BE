@@ -18,7 +18,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 public class ContentSpeakingRequest {
     @NotBlank(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
-    @NotNull(message = ErrorEnum.NOT_EMPTY_IMAGE)
+    @NotBlank(message = ErrorEnum.NOT_EMPTY_IMAGE)
     private String image;
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     private CategorySpeakingEnum category;

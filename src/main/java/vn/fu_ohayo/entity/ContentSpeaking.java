@@ -26,7 +26,7 @@ public class ContentSpeaking {
             strategy = GenerationType.IDENTITY
     )
     @Column(name = "content_speaking_id")
-    private int contentSpeakingId;
+    private long contentSpeakingId;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)

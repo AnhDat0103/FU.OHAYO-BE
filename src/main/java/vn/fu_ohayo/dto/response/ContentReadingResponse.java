@@ -15,13 +15,13 @@ import java.util.Date;
 @Data
 @Builder
 public class ContentReadingResponse {
-    private int contentSpeakingId;
+    private long contentReadingId;
     private String title;
     private String image;
     private CategoryReadingEnum category;
     private Date createdAt;
     private Date updatedAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date timeNew;
     private String scriptJp;
     private String scriptVn;

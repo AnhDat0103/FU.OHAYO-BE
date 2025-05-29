@@ -24,7 +24,7 @@ public class ContentListening {
             strategy = GenerationType.IDENTITY
     )
     @Column(name = "content_listening_id")
-    private int contentListeningId;
+    private long contentListeningId;
 
     //practiceID
 //    @OneToMany(mappedBy = "Exercise")

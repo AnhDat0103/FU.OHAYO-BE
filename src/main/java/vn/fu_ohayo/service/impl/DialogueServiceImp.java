@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +22,10 @@ public class DialogueServiceImp implements DialogueService {
 
     private final DialogueRepository dialogueRepository;
     private final ContentSpeakingService contentSpeakingService;
-    private final ContentRepository contentRepository;
-
-    public DialogueServiceImp(DialogueRepository dialogueRepository, ContentSpeakingService contentSpeakingService, ContentRepository contentRepository) {
+//    @Lazy khiến Spring chỉ khởi tạo ContentSpeakingService khi thật sự cần, tránh lỗi vòng tròn.
+    public DialogueServiceImp( DialogueRepository dialogueRepository,@Lazy ContentSpeakingService contentSpeakingService) {
         this.dialogueRepository = dialogueRepository;
         this.contentSpeakingService = contentSpeakingService;
-        this.contentRepository = contentRepository;
     }
 
 
@@ -97,5 +96,11 @@ public class DialogueServiceImp implements DialogueService {
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
         Page<Dialogue> dialoguePage = dialogueRepository.findAllByContentSpeaking(contentSpeaking, pageable);
         return dialoguePage;
+    }
+
+    @Override
+    public void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking) {
+         List<Dialogue> dialogues = dialogueRepository.findByContentSpeaking(contentSpeaking);
+        dialogueRepository.deleteAll(dialogues);
     }
 }

@@ -39,7 +39,7 @@ public class ContentReadingRequest {
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_DATE)
     @PastOrPresent(message = "Time can not over today")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date timeNew;
 
 }

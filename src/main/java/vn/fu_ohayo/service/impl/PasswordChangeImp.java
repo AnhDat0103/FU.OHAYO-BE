@@ -13,10 +13,12 @@ import java.util.Base64;
 @Service
 @AllArgsConstructor
 public class PasswordChangeImp implements PasswordChangeService {
-
+    // dung bien final vi userRepository la mot dependency
     private final UserRepository userRepository;
 
     @Override
+    //khi nguoi dung dang nhap vao profile cua minh va muon doi mat khau
+    //doi mat khau cho nguoi dung trong profile
     public boolean changePassword(User user, String currentPassword, String newPassword, String confirmPassword) {
         String currentHashed = hashPassword(currentPassword);
         if (!currentHashed.equals(user.getPassword())) {

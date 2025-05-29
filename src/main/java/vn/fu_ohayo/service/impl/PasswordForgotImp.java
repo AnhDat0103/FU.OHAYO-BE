@@ -28,6 +28,7 @@ public class PasswordForgotImp implements PasswordForgotService {
     }
 
     @Override
+    // tao va gui ma xac nhan den email cua nguoi dung
     public void createAndSendToken(String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
@@ -48,51 +49,18 @@ public class PasswordForgotImp implements PasswordForgotService {
 
     @Override
     public void userInputPassword() {
-//        Scanner scanner = new Scanner(System.in);
-//        String token;
-//        int attempts = 0;
-//        final int MAX_ATTEMPTS = 6;
-//        while (true) {
-//            if (PasswordResetValidate.isAttemptLimitExceeded(attempts, MAX_ATTEMPTS)) {
-//                System.out.println("Limit is 6");
-//                scanner.close();
-//                return;
-//            }
-//            System.out.print("Enter the token you received:");
-//            token = scanner.nextLine();
-//            if (PasswordResetValidate.isTokenValid(token, tokenStore)) {
-//                System.out.println("Invalid or expired token. Please try again.");
-//                attempts++;
-//            } else {
-//                break;
-//            }
-//        }
-//        while (true) {
-//            System.out.print("Enter your new password:");
-//            String newPassword = scanner.nextLine();
-//            System.out.print("Confirm your new password:");
-//            String confirmPassword = scanner.nextLine();
-//            if (!PasswordResetValidate.isPasswordConfirmed(newPassword, confirmPassword)) {
-//                System.out.println("Passwords do not match. Please try again.");
-//                continue;
-//            }
-//            boolean result = resetPassword(token, newPassword);
-//            if (result) {
-//                System.out.println("Password reset successful.");
-//                break;
-//            } else {
-//                System.out.println("Password reset failed. Please try again.");
-//            }
-//        }
-//        scanner.close();
+
     }
-@   Override
+    @Override
+    // doi mat khau cho nguoi dung khi nhap token
     public boolean resetPassword(String token, String newPassword) {
         TokenInfo tokenInfo = tokenStore.get(token);
+        // kiem tra token co hop le va chua het han hay khong
         if (tokenInfo == null || PasswordResetValidate.isTokenValid(token, tokenStore)) {
             System.out.println("Invalid or expired token.");
             return false;
         }
+        // neu hop le thi cho phep nguoi dung nhap mat khau moi
         if (!PasswordResetValidate.isPasswordNotEmpty(newPassword)) {
             System.out.println("New password cannot be empty.");
             return false;
@@ -109,6 +77,7 @@ public class PasswordForgotImp implements PasswordForgotService {
             System.out.println("New password cannot be the same as the old password.");
             return false;
         }
+        //luu mat khau moi vao db va xoa token
         user.setPassword(newHashed);
         userRepository.save(user);
         tokenStore.remove(token);
@@ -128,6 +97,7 @@ public class PasswordForgotImp implements PasswordForgotService {
     }
 
     @Override
+    // tao ma xac nhan ngau nhien 6 so de gui den email
     public String generateToken(String email) {
         Random random = new Random();
         int number = random.nextInt(900000) + 100000;

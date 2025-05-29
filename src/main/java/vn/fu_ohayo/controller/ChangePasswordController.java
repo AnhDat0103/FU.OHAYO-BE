@@ -18,8 +18,10 @@ public class ChangePasswordController {
     private final PasswordChangeImp passwordChangeImp;
 
     @PostMapping("/change-password")
+    //doi mat khau trong tai khoan
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        //statius 404 la tra ve "not found"
         if (user == null) {
             return ResponseEntity.status(404).body("User not found");
         }

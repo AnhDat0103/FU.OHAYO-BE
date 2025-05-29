@@ -1,10 +1,9 @@
 package vn.fu_ohayo.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.service.VocabularyService;
@@ -31,6 +30,17 @@ public class VocabularyController {
                 .message("Get all vocabularies successfully")
                 .status("success")
                 .data(vocabularyService.getVocabularyPage(page, size, lessonId))
+                .build();
+    }
+
+    @PostMapping
+    public ApiResponse<VocabularyResponse> createVocabulary(@Valid @RequestBody VocabularyRequest vocabularyRequest) {
+        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(vocabularyRequest.getLessonId(), vocabularyRequest);
+        return ApiResponse.<VocabularyResponse>builder()
+                .code("201")
+                .message("Vocabulary created successfully")
+                .status("success")
+                .data(createdVocabulary)
                 .build();
     }
 }

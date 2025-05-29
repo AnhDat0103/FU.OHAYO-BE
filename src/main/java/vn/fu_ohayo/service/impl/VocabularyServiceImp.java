@@ -3,8 +3,10 @@ package vn.fu_ohayo.service.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.entity.Lesson;
+import vn.fu_ohayo.entity.Vocabulary;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.VocabularyMapper;
@@ -41,17 +43,36 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
-    public VocabularyResponse handleSaveVocabulary(int lessonId, VocabularyResponse vocabularyResponse) {
+    public VocabularyResponse handleSaveVocabulary(int lessonId, VocabularyRequest vocabularyRequest) {
+        Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+
+        if(vocabularyRepository.existsByKanjiAndLesson(vocabularyRequest.getKanji(), lesson)){
+            throw new AppException(ErrorEnum.VOCABULARY_KANJI_EXISTS);
+        }
+        Vocabulary vocabulary = Vocabulary.builder()
+                .kana(vocabularyRequest.getKana())
+                .kanji(vocabularyRequest.getKanji())
+                .meaning(vocabularyRequest.getMeaning())
+                .romaji(vocabularyRequest.getRomaji())
+                .partOfSpeech(vocabularyRequest.getPartOfSpeech())
+                .jlptLevel(vocabularyRequest.getJlptLevel())
+                .example(vocabularyRequest.getExample())
+                .description(vocabularyRequest.getDescription())
+                .lesson(lesson)
+                .build();
+        vocabularyRepository.save(vocabulary);
+        return vocabularyMapper.toVocabularyResponse(vocabulary);
+    }
+
+    @Override
+    public VocabularyResponse updatePutVocabulary(int lessonId, VocabularyRequest vocabularyRequest) {
         return null;
     }
 
     @Override
-    public VocabularyResponse updatePutVocabulary(int lessonId, VocabularyResponse vocabularyResponse) {
-        return null;
-    }
-
-    @Override
-    public VocabularyResponse updatePatchVocabulary(String id, VocabularyResponse vocabularyResponse) {
+    public VocabularyResponse updatePatchVocabulary(String id, VocabularyRequest vocabularyRequest) {
         return null;
     }
 

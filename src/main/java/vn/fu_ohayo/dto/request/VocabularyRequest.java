@@ -1,6 +1,7 @@
 package vn.fu_ohayo.dto.request;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +19,8 @@ import vn.fu_ohayo.enums.PartOfSpeech;
 @Builder
 public class VocabularyRequest {
 
+    @NotEmpty(message = ErrorEnum.NOT_EMPTY_KANJI)
+    @NotBlank(message = ErrorEnum.NOT_EMPTY_KANJI)
     private String kanji;
 
     @NotEmpty(message = ErrorEnum.NOT_EMPTY_KANA)

@@ -17,4 +17,6 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
     Collection<Vocabulary> findAllByLesson(Lesson lesson);
 
     Page<Vocabulary> findAllByLesson(Pageable pageable, Lesson lesson);
+
+    boolean existsByKanjiAndLesson(String kanji, Lesson lesson);
 }

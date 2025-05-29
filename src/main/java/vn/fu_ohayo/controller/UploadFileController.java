@@ -19,7 +19,7 @@ public class UploadFileController {
 
     @PostMapping
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        String url = uploadService.handleUploadFile(file, "content_speaking") ;
+        String url = uploadService.handleUploadFile(file, "images/content_speaking") ;
             return ApiResponse.<String>builder()
                     .code("200")
                     .status("success")

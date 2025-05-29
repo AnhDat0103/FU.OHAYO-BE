@@ -58,7 +58,7 @@ public class ContentReading {
     private String scriptJp;
 
     @Column(name = "script_vn")
-    private String script_vn;
+    private String scriptVn;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)

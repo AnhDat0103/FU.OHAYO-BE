@@ -10,7 +10,7 @@ public enum ErrorEnum {
     // 1xxx - validation
     INVALID_FIELDS("1001","Invalid fields"),
     INVALID_EMAIL("1002","Email is invalid"),
-
+    INVALID_CATEGORY_CONTENT_READING("1003","Choose right category contentt" ),
     // 2xxx - authentication
     EMAIL_EXIST("2001","Email is used to register" ),
     PHONE_EXIST("2002", "Phone is used to register."),
@@ -37,6 +37,7 @@ public enum ErrorEnum {
     LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" );
 
+
     // 5xxx - server error
 
     //message validation
@@ -49,6 +50,8 @@ public enum ErrorEnum {
     public static final String INVALID_PHONE = "Phone number must be between 10 and 12 digits";
     public static final String INVALID_ADDRESS = "Address must be less than 255 characters";
     public static final String INVALID_URL_AVATAR = "Avatar URL must be less than 255 characters";
+    public static final String INVALID_URL_AUDIO = "File audio must be less than 255 characters";
+
     public static final String NOT_EMPTY_USER = "User cannot be null";
     public static final String MAX_LENGTH_IMAGE = "Image URL must be less than 255 characters";
     public static final String NOT_EMPTY_CONTENT_TYPE = "Content type cannot be null";
@@ -62,6 +65,8 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_PART_OF_SPEECH = "Part of speech must not be empty";
     public static final String Not_EMPTY_MEANING = "Meaning must not be null";
     public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
+    public static final String NOT_EMPTY_SCRIPT = "script can not null";
+    public static final String NOT_EMPTY_DATE = "Date can not null";
 
     public static final String NOT_EMPTY_KANA = "Kana must not be empty";
     public static final String MAX_LENGTH_50 = "input be less than 50 characters";

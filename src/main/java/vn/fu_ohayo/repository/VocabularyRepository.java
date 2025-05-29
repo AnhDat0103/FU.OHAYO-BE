@@ -8,6 +8,7 @@ import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Vocabulary;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
@@ -18,5 +19,7 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
 
     Page<Vocabulary> findAllByLesson(Pageable pageable, Lesson lesson);
 
-    boolean existsByKanjiAndLesson(String kanji, Lesson lesson);
+    boolean existsByKanjiAndKanaAndMeaningAndLesson(String kanji,String kana, String meaning, Lesson lesson);
+
+    Optional<Vocabulary> findByKanjiAndKanaAndMeaningAndLesson(String kanji, String kana, String meaning, Lesson lesson);
 }

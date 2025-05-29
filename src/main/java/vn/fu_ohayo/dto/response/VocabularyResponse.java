@@ -1,5 +1,6 @@
 package vn.fu_ohayo.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VocabularyResponse {
 
     private String vocabularyId;
@@ -33,5 +35,5 @@ public class VocabularyResponse {
 
     private JlptLevel jlptLevel;
 
-    private Date updateAt;
+    private Date updatedAt;
 }

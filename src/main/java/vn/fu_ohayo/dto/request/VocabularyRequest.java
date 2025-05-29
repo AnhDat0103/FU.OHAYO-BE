@@ -19,19 +19,19 @@ import vn.fu_ohayo.enums.PartOfSpeech;
 @Builder
 public class VocabularyRequest {
 
-    @NotEmpty(message = ErrorEnum.NOT_EMPTY_KANJI)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_KANJI)
     @NotBlank(message = ErrorEnum.NOT_EMPTY_KANJI)
     private String kanji;
 
-    @NotEmpty(message = ErrorEnum.NOT_EMPTY_KANA)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_KANA)
     @Size(max = 50, message = ErrorEnum.MAX_LENGTH_50)
     private String kana; // e.g., "こうこう" for 高校
 
-    @NotEmpty(message = ErrorEnum.NOT_EMPTY_ROMAJI)
+    @NotNull(message = ErrorEnum.NOT_EMPTY_ROMAJI)
     @Size(max = 50, message = ErrorEnum.MAX_LENGTH_50)
     private String romaji; // e.g., "kōkō" for 高校
 
-    @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
+    @NotNull(message = ErrorEnum.Not_EMPTY_MEANING)
     @Size(max = 100, message = ErrorEnum.MAX_LENGTH_100)
     private String meaning;
 

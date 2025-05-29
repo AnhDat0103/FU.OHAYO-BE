@@ -43,4 +43,15 @@ public class VocabularyController {
                 .data(createdVocabulary)
                 .build();
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<VocabularyResponse> updateVocabulary(@PathVariable int id, @Valid @RequestBody VocabularyRequest vocabularyRequest) {
+        VocabularyResponse updatedVocabulary = vocabularyService.updatePutVocabulary(id, vocabularyRequest);
+        return ApiResponse.<VocabularyResponse>builder()
+                .code("200")
+                .message("Vocabulary updated successfully")
+                .status("success")
+                .data(updatedVocabulary)
+                .build();
+    }
 }

@@ -38,18 +38,16 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
-    public VocabularyResponse getVocabularyById(String id) {
-        return null;
-    }
-
-    @Override
     public VocabularyResponse handleSaveVocabulary(int lessonId, VocabularyRequest vocabularyRequest) {
         Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
 
-        if(vocabularyRepository.existsByKanjiAndLesson(vocabularyRequest.getKanji(), lesson)){
-            throw new AppException(ErrorEnum.VOCABULARY_KANJI_EXISTS);
+        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLesson(vocabularyRequest.getKanji(),
+                vocabularyRequest.getKana(),
+                vocabularyRequest.getMeaning(),
+                lesson)){
+            throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         Vocabulary vocabulary = Vocabulary.builder()
                 .kana(vocabularyRequest.getKana())
@@ -67,17 +65,58 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
-    public VocabularyResponse updatePutVocabulary(int lessonId, VocabularyRequest vocabularyRequest) {
+    public VocabularyResponse updatePutVocabulary(int vocabularyId, VocabularyRequest vocabularyRequest) {
+        Lesson lesson = lessonRepository.getLessonByLessonId(vocabularyRequest.getLessonId()).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+
+        Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
+                () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
+        );
+        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLesson(vocabularyRequest.getKanji(),
+                    vocabularyRequest.getKana(),
+                    vocabularyRequest.getMeaning(),
+                    lesson)){
+                throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
+        }
+        if(vocabularyRequest.getKanji() != null) {
+            vocabulary.setKanji(vocabularyRequest.getKanji());
+        }
+        if(vocabularyRequest.getKana() != null) {
+            vocabulary.setKana(vocabularyRequest.getKana());
+        }
+        if(vocabularyRequest.getRomaji() != null) {
+            vocabulary.setRomaji(vocabularyRequest.getRomaji());
+        }
+        if(vocabularyRequest.getMeaning() != null) {
+            vocabulary.setMeaning(vocabularyRequest.getMeaning());
+        }
+        if(vocabularyRequest.getDescription() != null) {
+            vocabulary.setDescription(vocabularyRequest.getDescription());
+        }
+        if(vocabularyRequest.getExample() != null) {
+            vocabulary.setExample(vocabularyRequest.getExample());
+        }
+        if(vocabularyRequest.getPartOfSpeech() != null) {
+            vocabulary.setPartOfSpeech(vocabularyRequest.getPartOfSpeech());
+        }
+        if(vocabularyRequest.getJlptLevel() != null) {
+            vocabulary.setJlptLevel(vocabularyRequest.getJlptLevel());
+        }
+        return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(vocabulary));
+    }
+
+    @Override
+    public VocabularyResponse updatePatchVocabulary(int vocabularyId, VocabularyRequest vocabularyRequest) {
         return null;
     }
 
     @Override
-    public VocabularyResponse updatePatchVocabulary(String id, VocabularyRequest vocabularyRequest) {
-        return null;
-    }
-
-    @Override
-    public void deleteVocabularyById(String id) {
+    public void deleteVocabularyById(int vocabularyId) {
+        Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
+                () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
+        );
+        vocabularyRepository.delete(vocabulary);
 
     }
 

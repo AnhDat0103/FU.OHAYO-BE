@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.UserRepository;
 
@@ -45,7 +46,7 @@ public class MailService {
     }
     public void sendEmailAgain(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
-        String token = jwtService.generateAccessToken(user.getUserId(), email, null);
+        String token = jwtService.generateAccessToken(user.getUserId(), email, null, Provider.LOCAL);
         sendEmail(email,token);
     }
 

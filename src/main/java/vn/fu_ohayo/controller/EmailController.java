@@ -31,16 +31,6 @@ public class EmailController {
         } else {
             return "error";
         }
-
-    }@GetMapping()
-    public ApiResponse<String> sendMailAgain(@RequestParam("email") String email) {
-        mailService.sendEmailAgain(email);
-        return  ApiResponse.<String>builder()
-                .code("200")
-                .status("OK")
-                .message("User registered")
-                .data("succes")
-                .build();
     }
 }
 

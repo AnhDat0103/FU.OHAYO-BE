@@ -6,19 +6,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
-import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.AuthUrlResponse;
-import vn.fu_ohayo.dto.response.TokenResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.exception.AppException;
@@ -28,8 +29,10 @@ import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 
+import java.io.IOException;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -55,24 +58,12 @@ public class AuthenticationController {
         );
     }
 
-    //    @PostMapping("/google")
-//    public ResponseEntity<?> googleLogin(@RequestBody GoogleUserData googleData) {
-//        Optional<User> existingUser = userRepository.findByEmail(googleData.getEmail());
-//
-//        User user;
-//        if (existingUser.isPresent()) {
-//            user = existingUser.get();
-//        } else {
-//            user = new User();
-//            user.setEmail(googleData.getEmail());
-//            user.setName(googleData.getName());
-//            user.setProvider("google");
-//            userRepository.save(user);
-//        }
-//
-//        String jwt = jwtService.generateToken(user); // tự viết hoặc dùng thư viện
-//        return ResponseEntity.ok(Map.of("token", jwt));
-//    }
+    @GetMapping("/mailAgain")
+    public ResponseEntity<String> sendMailAgain(@RequestParam("emailAgain") String email) {
+        mailService.sendEmailAgain(email);
+        return ResponseEntity.ok("oke");
+    }
+
     @GetMapping("/social-login")
     public ResponseEntity<AuthUrlResponse> socialAuth(@RequestParam("login_type") String type) {
         String url = authenticationService.generateAuthURL(type);
@@ -143,11 +134,11 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<User>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
 
-        var email = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
-        if(email == null) {
+        var response = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        if (response == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(response.getEmail(), response.getProvider()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         return ResponseEntity.ok(
                 ApiResponse.<User>builder()
                         .code("200")
@@ -156,6 +147,29 @@ public class AuthenticationController {
                         .data(user)
                         .build()
         );
+    }
+
+    @PostMapping("/getOAuthToken")
+    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestParam("email") String email,
+                                                                 @RequestParam("provider") Provider provider) {
+        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(email, provider);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(60 * 60 * 24 * 7)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<TokenResponse>builder()
+                        .code("200")
+                        .status("OK")
+                        .message("User logged in successfully")
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .build());
+
     }
     @GetMapping("/check-login")
     public ResponseEntity<ApiResponse<TokenResponse>> checkLogin(HttpServletRequest request) {
@@ -179,8 +193,8 @@ public class AuthenticationController {
                             .build()
             );
         }
-        String email = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
-        if (email == null) {
+        ExtractTokenResponse response = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
+        if (response.getEmail() == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
         TokenResponse tokenResponse = authenticationService.getRefreshToken(refreshToken);
@@ -194,9 +208,9 @@ public class AuthenticationController {
         );
 
     }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        // Xóa cookie refreshToken bằng cách tạo cookie mới với maxAge = 0
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
         cookie.setSecure(true); // Chỉ nếu dùng HTTPS
@@ -207,5 +221,20 @@ public class AuthenticationController {
         return ResponseEntity.ok("Logged out successfully");
     }
 
-//    @GetMapping("/code/git")
+    @GetMapping("/code/{provider}")
+    public void handleOuthCallback(@PathVariable String provider,
+                                   @RequestParam("code") String code,
+                                   HttpServletResponse response) throws IOException {
+        String accessToken = authenticationService.getAccesTokenFromProvider(provider, code);
+        UserFromProvider user = authenticationService.getUserInfoFromProvider(provider, accessToken);
+
+        String email = user.getEmail();
+        boolean exist = user.isExist(); // hoặc logic kiểm tra trong DB
+
+
+        String redirectUrl = "http://localhost:5173/oauth-callback?email=" + email + "&exist=" + exist;
+
+        response.sendRedirect(redirectUrl);
+    }
+
 }

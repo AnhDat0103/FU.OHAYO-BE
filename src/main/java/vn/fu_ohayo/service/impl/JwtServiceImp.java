@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.response.ExtractTokenResponse;
+import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.service.JwtService;
 
@@ -35,28 +37,31 @@ public class JwtServiceImp implements JwtService {
     private long expiryDay;
 
     @Override
-    public String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities, Provider provider) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
         claims.put("role", authorities);
+        claims.put("provider", provider);
         return generateAccessToken(claims, email);
     }
 
     @Override
-    public String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities, Provider provider) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
         claims.put("role", authorities);
+        claims.put("provider", provider);
         return generateRefreshToken(claims, email);
     }
 
     @Override
-    public String extractUsername(String token, TokenType type) {
-        return extractClaims(type, token, Claims :: getSubject);
-    }
-    private <T> T extractClaims(TokenType type, String token, Function<Claims, T> claimsExtractor) {
-        final Claims claims = extractAllClaims(token, type);
-        return claimsExtractor.apply(claims);
+    public ExtractTokenResponse extractUsername(String token, TokenType type) {
+        Claims claims = extractAllClaims(token, type);
+        String email = claims.get("email", String.class);
+        String provider = claims.get("provider", String.class);
+        Provider providerEnum = Provider.valueOf(provider);
+
+        return new ExtractTokenResponse(email, providerEnum);
     }
 
     private Claims extractAllClaims(String token, TokenType type) {

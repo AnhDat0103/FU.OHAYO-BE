@@ -3,6 +3,8 @@ package vn.fu_ohayo.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.Provider;
+
 import java.util.Optional;
 import java.util.List;
 
@@ -13,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailOrFullName(String email, String fullName);
     boolean existsByEmail(String email);
     boolean existsByFullName(String fullName);
+    Optional<User> findByEmailAndProvider(String email, Provider provider);
+
 }

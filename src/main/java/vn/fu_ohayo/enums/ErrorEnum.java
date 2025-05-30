@@ -22,6 +22,9 @@ public enum ErrorEnum {
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
+    INVALID_TOKEN("4003", "Invalid token"),
+    REFRESH_TOKEN_NOT_FOUND ("4003", "Refresh token not found"),
+    INTERNAL_SERVER_ERROR("5000", "Internal server error"),
     INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" ),
 
     SUBJECT_NOT_FOUND("4004", "Subject not found"),

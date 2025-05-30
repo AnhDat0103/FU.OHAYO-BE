@@ -20,7 +20,6 @@ import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.enums.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +30,10 @@ import java.util.Set;
 @Table(name = "Users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email"),
-                @UniqueConstraint(columnNames = "phone")
+                @UniqueConstraint(columnNames = "phone"),
+                @UniqueConstraint(columnNames = {"email", "provider"})
         },
+
         indexes = {
                 @Index(columnList = "email", unique = true,
                         name = "email_index"),
@@ -52,12 +53,10 @@ public class User implements UserDetails, Serializable {
     private int userId;
 
     @Email
-    @Column(unique = true)
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
 
-    @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 

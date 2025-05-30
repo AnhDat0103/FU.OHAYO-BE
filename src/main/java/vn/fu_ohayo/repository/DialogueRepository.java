@@ -14,4 +14,6 @@ public interface DialogueRepository extends JpaRepository<Dialogue, Long> {
     List<Dialogue> findByContentSpeaking(ContentSpeaking contentSpeaking);
 
     Page<Dialogue> findAllByContentSpeaking(ContentSpeaking contentSpeaking, Pageable pageable);
+
+    void deleteDialogueByContentSpeaking(ContentSpeaking contentSpeaking);
 }

@@ -1,6 +1,5 @@
 package vn.fu_ohayo.enums;
 
 public enum CategoryReadingEnum {
-    LOVE,
-    LEARNING
+    TECHNOLOGY, SCIENCE, HEALTH, EDUCATION, BUSINESS, ENVIRONMENT, POLITICS, SPORTS, ENTERTAINMENT, TRAVEL
 }

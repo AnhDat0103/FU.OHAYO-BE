@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.AuthConfig;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.AddUserRequest;
+import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
 import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
+import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.UserProfileDTO;
@@ -15,14 +18,19 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.exception.AppException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
+import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.UserService;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
@@ -34,8 +42,8 @@ public class UserServiceImp implements UserService {
     AuthConfig configuration;
     MailService mailService;
     JwtService jwtService;
-
-
+    AdminUpdateUserMapper adminUpdateUserMapper;
+    private final SearchUserMapper searchUserMapper;
 
 
     @Override
@@ -46,9 +54,8 @@ public class UserServiceImp implements UserService {
                 .toList();
     }
 
-
     @Override
-    public List<UserResponse> searchUsersByName(SearchUserRequest request) {
+    public List<SearchUserResponse> searchUsersByName(SearchUserRequest request) {
         return userRepository.findAll()
                 .stream()
                 .filter(user -> request.getFullName() == null
@@ -61,9 +68,10 @@ public class UserServiceImp implements UserService {
                         || !user.getCreatedAt().before(request.getRegisteredFrom()))
                 .filter(user -> request.getRegisteredTo() == null
                         || !user.getCreatedAt().after(request.getRegisteredTo()))
-                .map(userMapper::toUserResponse)
+                .map(searchUserMapper::toSearchUserResponse)
                 .toList();
     }
+
 
     @Override
     public UserResponse registerUser(UserRegister userRegister) {
@@ -126,6 +134,54 @@ public class UserServiceImp implements UserService {
         }
         dto.setHasSettingsAccsees(true);
         return dto;
+    }
+
+
+    @Override
+    public UserResponse deleteUser(Long userId) {
+        UserResponse userResponse = userMapper.toUserResponse(
+                userRepository.findById(userId)
+                        .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND))
+        );
+        userRepository.deleteById(userId);
+        return userResponse;
+    }
+
+    @Override
+    public UserResponse updateUser(Long userId, AdminUpdateUserRequest adminUpdateUserRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+
+        if (adminUpdateUserRequest.getFullName() != null)
+            user.setFullName(adminUpdateUserRequest.getFullName());
+
+        if (adminUpdateUserRequest.getEmail() != null)
+            user.setEmail(adminUpdateUserRequest.getEmail());
+
+        if (adminUpdateUserRequest.getStatus() != null)
+            user.setStatus(UserStatus.valueOf(adminUpdateUserRequest.getStatus()));
+
+        if (adminUpdateUserRequest.getMembershipLevel() != null)
+            user.setMembershipLevel(MembershipLevel.valueOf(adminUpdateUserRequest.getMembershipLevel()));
+
+        return adminUpdateUserMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponse addUser(AddUserRequest addUserRequest) {
+        if (userRepository.existsByEmail(addUserRequest.getEmail())) {
+            throw new AppException(ErrorEnum.EMAIL_EXIST);
+        }
+
+        if (userRepository.existsByUsername(addUserRequest.getUsername())) {
+            throw new AppException(ErrorEnum.USERNAME_EXIST);
+        }
+
+        if (userRepository.existsByPhone(addUserRequest.getPhone())) {
+            throw new AppException(ErrorEnum.PHONE_EXIST);
+        }
+
+        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(addUserRequest)));
     }
 
 

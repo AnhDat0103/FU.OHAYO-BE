@@ -14,6 +14,7 @@ public enum ErrorEnum {
     // 2xxx - authentication
     EMAIL_EXIST("2001","Email is used to register" ),
     PHONE_EXIST("2002", "Phone is used to register."),
+    USERNAME_EXIST("2003","Username is used to register" ),
     EMAIL_OR_PASSWORD_INCORRECT("2004", "Email or password is incorrect."),
 
     // 3xxx - authorization
@@ -47,6 +48,8 @@ public enum ErrorEnum {
     // 5xxx - server error
 
     //message validation
+    public static final String INVALID_STATUS_MS = "Status is invalid";
+    public static final String INVALID_MEMBERSHIP_MS = "Membership level is invalid";
     public static final String INVALID_EMAIL_MS = "Email is invalid";
     public static final String NOT_EMPTY_EMAIL = "Email must not be empty";
     public static final String NOT_EMPTY_PASSWORD = "Password must not be empty";

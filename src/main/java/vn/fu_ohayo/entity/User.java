@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.List;
 import java.util.Set;
 
 
@@ -64,8 +63,14 @@ public class User implements UserDetails, Serializable {
 
 
     @Column(name = "full_name")
+    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
     @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
+
+    @Column(name = "user_name")
+    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
+    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
+    private String username;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -88,20 +93,8 @@ public class User implements UserDetails, Serializable {
     private MembershipLevel membershipLevel = MembershipLevel.NORMAL;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Provider provider = Provider.LOCAL;
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return "";
-    }
-
+    @Column(name = "provider")
+    private Provider provider;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -123,6 +116,15 @@ public class User implements UserDetails, Serializable {
         return UserStatus.ACTIVE.equals(this.status);
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
     @ManyToMany
     @JoinTable(
@@ -148,6 +150,12 @@ public class User implements UserDetails, Serializable {
     protected void onCreate() {
         createdAt = new Date();
         updatedAt = new Date();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Return user roles/authorities here. Example:
+        return List.of();
     }
 
     @PreUpdate

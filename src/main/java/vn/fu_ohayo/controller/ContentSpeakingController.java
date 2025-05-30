@@ -45,7 +45,7 @@ public class ContentSpeakingController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ContentSpeaking> getContentSpeaking(@PathVariable  int id) {
+    public ApiResponse<ContentSpeaking> getContentSpeaking(@PathVariable  long id) {
         return  ApiResponse.<ContentSpeaking>builder()
                 .code("200")
                 .status("success")

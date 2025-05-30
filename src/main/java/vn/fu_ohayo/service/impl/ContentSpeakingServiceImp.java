@@ -13,7 +13,9 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
+import vn.fu_ohayo.repository.DialogueRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
+import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +24,12 @@ import java.util.Optional;
 public class ContentSpeakingServiceImp implements ContentSpeakingService {
     private final ContentSpeakingRepository contentSpeakingRepository;
     private final ContentMapper contentMapper;
+    private final DialogueService dialogueService;
 
-    public ContentSpeakingServiceImp(ContentSpeakingRepository contentSpeakingRepository, ContentMapper contentMapper) {
+    public ContentSpeakingServiceImp(ContentSpeakingRepository contentSpeakingRepository, ContentMapper contentMapper, DialogueService dialogueService) {
         this.contentSpeakingRepository = contentSpeakingRepository;
         this.contentMapper = contentMapper;
+        this.dialogueService = dialogueService;
     }
 
     @Override
@@ -54,6 +58,7 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
 
     @Override
     public void deleteContentSpeakingById(long id) {
+        dialogueService.deleteDialogueByContenSpeaking(getContentSpeakingById(id));
        contentSpeakingRepository.deleteById(id);
     }
 

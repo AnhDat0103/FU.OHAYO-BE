@@ -27,7 +27,7 @@ public class ContentReading {
             strategy = GenerationType.IDENTITY
     )
     @Column(name = "content_reading_id")
-    private int contentReadingId;
+    private long contentReadingId;
 
     @Column(name = "created_at")
     private Date createdAt;
@@ -58,7 +58,7 @@ public class ContentReading {
     private String scriptJp;
 
     @Column(name = "script_vn")
-    private String script_vn;
+    private String scriptVn;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)

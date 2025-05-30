@@ -74,6 +74,13 @@ public class LessonServiceImp implements LessonService {
     }
 
     @Override
+    public LessonResponse getLessonById(int id) {
+        return lessonMapper.toLessonResponse(lessonRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        ));
+    }
+
+    @Override
     public LessonResponse updateLesson(Integer id, LessonPatchRequest lessonRequest) {
         Lesson lesson = lessonRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)

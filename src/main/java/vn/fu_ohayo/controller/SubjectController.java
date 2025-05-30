@@ -1,6 +1,7 @@
 package vn.fu_ohayo.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
@@ -22,13 +23,16 @@ public class SubjectController {
     }
 
     @GetMapping
-    public ApiResponse<List<SubjectResponse>> getAllSubjects() {
+    public ApiResponse<Page<SubjectResponse>> getAllSubjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
         
-        return ApiResponse.<List<SubjectResponse>>builder()
+        return ApiResponse.<Page<SubjectResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllSubjects())
+                .data(subjectService.getAllSubjects(page, size))
                 .build();
     }
 

@@ -3,7 +3,6 @@ package vn.fu_ohayo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +16,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Vocabularies",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"kanji", "lesson_id"})
-        },
         indexes = {
                 @Index(columnList = "kanji", name = "kanji_index"),
                 @Index(columnList = "jlpt_level", name = "jlpt_level_index")
@@ -51,15 +47,15 @@ public class Vocabulary {
     private String romaji; // e.g., "kōkō" for 高校
 
     @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
-    @Size(max = 100, message = "Meaning must be less than 100 characters")
+    @Size(max = 100, message =  ErrorEnum.MAX_LENGTH_100)
     private String meaning;
 
 
-    @Size(max = 500, message = "Description must be less than 500 characters")
+    @Size(max = 500, message =  ErrorEnum.MAX_LENGTH_500)
     private String description;
 
 
-    @Size(max = 500, message = "Example must be less than 500 characters")
+    @Size(max = 500, message =  ErrorEnum.MAX_LENGTH_500)
     private String example;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_PART_OF_SPEECH)

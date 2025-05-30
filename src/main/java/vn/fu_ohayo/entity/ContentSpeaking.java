@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.CategorySpeakingEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
@@ -18,7 +15,10 @@ import java.util.List;
 @Table(name = "Content_Speakings")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = "dialogues")
+@ToString(exclude = "dialogues")
 @Builder
 public class ContentSpeaking {
     @Id
@@ -34,7 +34,7 @@ public class ContentSpeaking {
 
     @OneToMany(mappedBy = "contentSpeaking")
     @JsonIgnore
-    private List<Dialogue> Dialogues;
+    private List<Dialogue> dialogues;
 
     @Column(name = "created_at")
     private Date createdAt;

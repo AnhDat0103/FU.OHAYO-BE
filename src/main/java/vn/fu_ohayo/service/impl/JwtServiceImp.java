@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +22,7 @@ import java.security.Key;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
-
+@Slf4j(topic = "JwtServiceImp")
 @Service
 public class JwtServiceImp implements JwtService {
     @Value("${jwt.accessKey}")
@@ -56,11 +57,11 @@ public class JwtServiceImp implements JwtService {
 
     @Override
     public ExtractTokenResponse extractUsername(String token, TokenType type) {
+        log.info("Extracting username from token: {}", token);
         Claims claims = extractAllClaims(token, type);
-        String email = claims.get("email", String.class);
+        String email = claims.getSubject();
         String provider = claims.get("provider", String.class);
         Provider providerEnum = Provider.valueOf(provider);
-
         return new ExtractTokenResponse(email, providerEnum);
     }
 
@@ -69,7 +70,7 @@ public class JwtServiceImp implements JwtService {
             return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
         }catch (SignatureException | ExpiredJwtException e) {
             throw new AccessDeniedException(e.getMessage());
-}
+        }
     }
 
     private String generateAccessToken(Map<String, Object> claims, String email) {

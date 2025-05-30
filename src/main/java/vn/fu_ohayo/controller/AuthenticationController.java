@@ -100,6 +100,7 @@ public class AuthenticationController {
 
     @PostMapping("/complete-profile")
     public ApiResponse<String> completeProfile(@RequestParam String email, @RequestBody CompleteProfileRequest completeProfileRequest) {
+        log.info(email);
         userService.completeProfile(completeProfileRequest, email);
         return ApiResponse.<String>builder()
                 .code("200")
@@ -151,7 +152,7 @@ public class AuthenticationController {
 
     @PostMapping("/getOAuthToken")
     public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestParam("email") String email,
-                                                                 @RequestParam("provider") Provider provider) {
+                                                                    @RequestParam("provider") Provider provider) {
         TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(email, provider);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
@@ -236,5 +237,4 @@ public class AuthenticationController {
 
         response.sendRedirect(redirectUrl);
     }
-
 }

@@ -98,7 +98,7 @@ public class UserServiceImp implements UserService {
         if (user == null) {
             throw new IllegalArgumentException("User not found");
         }
-
+        user.setStatus(UserStatus.ACTIVE);
         user.setFullName(completeProfileRequest.getFullName());
         user.setGender(completeProfileRequest.getGender());
         user.setAddress(completeProfileRequest.getAddress());

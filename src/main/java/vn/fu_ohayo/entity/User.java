@@ -28,7 +28,7 @@ import java.util.Set;
 @Table(name = "Users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "phone"),
-                @UniqueConstraint(columnNames = {"email", "provider"})
+
         },
 
         indexes = {

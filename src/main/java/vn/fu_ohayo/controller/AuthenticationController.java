@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.OAuthRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.User;
@@ -151,9 +152,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/getOAuthToken")
-    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestParam("email") String email,
-                                                                    @RequestParam("provider") Provider provider) {
-        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(email, provider);
+    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
+        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
                 .httpOnly(true)
@@ -168,10 +168,10 @@ public class AuthenticationController {
                         .code("200")
                         .status("OK")
                         .message("User logged in successfully")
-                        .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null))
                         .build());
-
     }
+
     @GetMapping("/check-login")
     public ResponseEntity<ApiResponse<TokenResponse>> checkLogin(HttpServletRequest request) {
         String refreshToken = null;
@@ -214,9 +214,9 @@ public class AuthenticationController {
     public ResponseEntity<String> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Chỉ nếu dùng HTTPS
+        cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(0); // <-- Xoá cookie
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
 
         return ResponseEntity.ok("Logged out successfully");
@@ -229,11 +229,7 @@ public class AuthenticationController {
         String accessToken = authenticationService.getAccesTokenFromProvider(provider, code);
         UserFromProvider user = authenticationService.getUserInfoFromProvider(provider, accessToken);
 
-        String email = user.getEmail();
-        boolean exist = user.isExist();
-
-
-        String redirectUrl = "http://localhost:5173/oauth-callback?email=" + email + "&exist=" + exist;
+        String redirectUrl = "http://localhost:5173/oauth-callback?email=" + user.getEmail() + "&exist=" + user.isExist();
 
         response.sendRedirect(redirectUrl);
     }

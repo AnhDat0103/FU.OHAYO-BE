@@ -223,14 +223,14 @@ public class AuthenticationController {
     }
 
     @GetMapping("/code/{provider}")
-    public void handleOuthCallback(@PathVariable String provider,
+    public void handleOAuthCallback(@PathVariable String provider,
                                    @RequestParam("code") String code,
                                    HttpServletResponse response) throws IOException {
         String accessToken = authenticationService.getAccesTokenFromProvider(provider, code);
         UserFromProvider user = authenticationService.getUserInfoFromProvider(provider, accessToken);
 
         String email = user.getEmail();
-        boolean exist = user.isExist(); // hoặc logic kiểm tra trong DB
+        boolean exist = user.isExist();
 
 
         String redirectUrl = "http://localhost:5173/oauth-callback?email=" + email + "&exist=" + exist;

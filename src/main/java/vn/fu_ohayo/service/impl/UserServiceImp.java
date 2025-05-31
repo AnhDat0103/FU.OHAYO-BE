@@ -72,7 +72,6 @@ public class UserServiceImp implements UserService {
                 .toList();
     }
 
-
     @Override
     public UserResponse registerUser(UserRegister userRegister) {
         return null;
@@ -171,10 +170,6 @@ public class UserServiceImp implements UserService {
     public UserResponse addUser(AddUserRequest addUserRequest) {
         if (userRepository.existsByEmail(addUserRequest.getEmail())) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
-        }
-
-        if (userRepository.existsByUsername(addUserRequest.getUsername())) {
-            throw new AppException(ErrorEnum.USERNAME_EXIST);
         }
 
         if (userRepository.existsByPhone(addUserRequest.getPhone())) {

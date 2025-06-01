@@ -17,7 +17,7 @@ public interface UserService {
     UserProfileDTO getUserProfileDTO(String email);
     List<UserResponse> getAllUsers();
 
-    void registerInitial(InitialRegisterRequest initialRegisterRequest);
+    boolean registerInitial(InitialRegisterRequest initialRegisterRequest);
 
     UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email);
 

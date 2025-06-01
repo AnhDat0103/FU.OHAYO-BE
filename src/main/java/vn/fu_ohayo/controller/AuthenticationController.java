@@ -48,15 +48,25 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
-        userService.registerInitial(initialRegisterRequest);
-        return ResponseEntity.ok(
-                ApiResponse.<InitialRegisterRequest>builder()
-                        .code("200")
-                        .status("OK")
-                        .message("User registered successfully")
-                        .data(initialRegisterRequest)
-                        .build()
-        );
+        if(userService.registerInitial(initialRegisterRequest)) {
+            return ResponseEntity.ok(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("200")
+                            .status("OK")
+                            .message("User registered successfully")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        } else {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("400")
+                            .status("Failed")
+                            .message("User registration failed")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        }
     }
 
     @GetMapping("/mailAgain")
@@ -74,11 +84,8 @@ public class AuthenticationController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<String>> checkUserStatus(@RequestParam("email") String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (user == null) {
-            throw new IllegalArgumentException();
-        }
         if (user.getStatus().equals(UserStatus.ACTIVE)) {
             return ResponseEntity.ok(
                     ApiResponse.<String>builder()
@@ -119,6 +126,7 @@ public class AuthenticationController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
+                .sameSite("None")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
 
@@ -129,6 +137,28 @@ public class AuthenticationController {
                         .status("OK")
                         .message("User logged in successfully")
                         .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .build());
+    }
+
+    @PostMapping("/getOAuthToken")
+    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
+        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("None")
+                .maxAge(60 * 60 * 24 * 7)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<TokenResponse>builder()
+                        .code("200")
+                        .status("OK")
+                        .message("User logged in successfully")
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null))
                         .build());
     }
 
@@ -151,26 +181,7 @@ public class AuthenticationController {
         );
     }
 
-    @PostMapping("/getOAuthToken")
-    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
-        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(60 * 60 * 24 * 7)
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(ApiResponse.<TokenResponse>builder()
-                        .code("200")
-                        .status("OK")
-                        .message("User logged in successfully")
-                        .data(new TokenResponse(tokenResponse.getAccessToken(), null))
-                        .build());
-    }
 
     @GetMapping("/check-login")
     public ResponseEntity<ApiResponse<TokenResponse>> checkLogin(HttpServletRequest request) {

@@ -48,15 +48,25 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
-        userService.registerInitial(initialRegisterRequest);
-        return ResponseEntity.ok(
-                ApiResponse.<InitialRegisterRequest>builder()
-                        .code("200")
-                        .status("OK")
-                        .message("User registered successfully")
-                        .data(initialRegisterRequest)
-                        .build()
-        );
+        if(userService.registerInitial(initialRegisterRequest)) {
+            return ResponseEntity.ok(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("200")
+                            .status("OK")
+                            .message("User registered successfully")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        } else {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("400")
+                            .status("Failed")
+                            .message("User registration failed")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        }
     }
 
     @GetMapping("/mailAgain")
@@ -74,11 +84,8 @@ public class AuthenticationController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<String>> checkUserStatus(@RequestParam("email") String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (user == null) {
-            throw new IllegalArgumentException();
-        }
         if (user.getStatus().equals(UserStatus.ACTIVE)) {
             return ResponseEntity.ok(
                     ApiResponse.<String>builder()

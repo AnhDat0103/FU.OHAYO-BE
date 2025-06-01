@@ -82,4 +82,11 @@ public class SubjectServiceImp implements SubjectService {
         subjectRepository.delete(subject);
     }
 
+    @Override
+    public SubjectResponse getSubjectById(int id) {
+        return subjectRepository.findById(id)
+                .map(subjectMapper::toSubjectResponse)
+                .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+    }
+
 }

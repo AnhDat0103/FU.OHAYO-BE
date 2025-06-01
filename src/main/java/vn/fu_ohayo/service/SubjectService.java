@@ -13,4 +13,6 @@ public interface SubjectService {
      SubjectResponse createSubject(SubjectRequest subjectRequest);
      SubjectResponse updateSubject(int id, SubjectRequest subjectRequest);
      void deleteSubject(int id);
+
+    SubjectResponse getSubjectById(int id);
 }

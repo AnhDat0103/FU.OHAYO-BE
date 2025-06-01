@@ -81,7 +81,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         } catch (AuthenticationException e) {
             throw new AccessDeniedException(e.getMessage());
         }
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -127,8 +127,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public boolean extractToken(String token, TokenType type) {
         try {
             var response = jwtService.extractUsername(token, type);
-            if (response.getEmail() != null && userRepository.existsByEmail(response.getEmail())) {
-                User user = userRepository.findByEmail(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            if (userRepository.existsByEmailAndProvider(response.getEmail(), Provider.LOCAL)) {
+                User user = userRepository.findByEmailAndProvider(response.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
                 return true;

@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
@@ -29,9 +27,8 @@ import java.util.Set;
 @Entity
 @Table(name = "Users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "email"),
                 @UniqueConstraint(columnNames = "phone"),
-                @UniqueConstraint(columnNames = {"email", "provider"})
+
         },
 
         indexes = {
@@ -62,14 +59,9 @@ public class User implements UserDetails, Serializable {
 
 
     @Column(name = "full_name")
-    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
     @Size(max = 50, message = ErrorEnum.INVALID_NAME)
     private String fullName;
 
-    @Column(name = "user_name")
-    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
-    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
-    private String username;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -93,7 +85,7 @@ public class User implements UserDetails, Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider")
-    private Provider provider;
+    private Provider provider = Provider.LOCAL;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -122,8 +114,9 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return username;
+        return "";
     }
+
 
     @ManyToMany
     @JoinTable(

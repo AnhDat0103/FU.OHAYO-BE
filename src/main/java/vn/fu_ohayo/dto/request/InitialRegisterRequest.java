@@ -18,10 +18,11 @@ public class InitialRegisterRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 6)
+    @Size(min = 6, max = 30)
     private String password;
 
     @NotBlank
+    @Size(min = 6, max = 30)
     private String confirmPassword;
 }
 

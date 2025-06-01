@@ -77,4 +77,14 @@ public class SubjectController {
                 .data(statuses)
                 .build();
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<SubjectResponse> getSubjectById(@PathVariable("id") int id) {
+        return ApiResponse.<SubjectResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched subject successfully")
+                .data(subjectService.getSubjectById(id))
+                .build();
+    }
 }

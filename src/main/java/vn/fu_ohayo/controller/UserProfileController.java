@@ -7,7 +7,7 @@ import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.entity.User;
 
 @RestController
-@RequestMapping("/api/user/profile")
+@RequestMapping("/api/user")
 public class UserProfileController {
 
     private final UserRepository userRepository;

@@ -12,7 +12,7 @@ import vn.fu_ohayo.repository.UserRepository;
 public class UserServiceDetail {
     private final UserRepository userRepository;
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }

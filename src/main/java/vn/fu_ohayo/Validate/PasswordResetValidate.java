@@ -12,13 +12,13 @@ public class PasswordResetValidate {
         return tokenInfo == null || !tokenInfo.expiryTime.isAfter(LocalDateTime.now());
     }
 
-    public static boolean isAttemptLimitExceeded(int attempts, int maxAttempts) {
-        return attempts >= maxAttempts;
-    }
-
-    public static boolean isPasswordConfirmed(String password, String confirmPassword) {
-        return password != null && password.equals(confirmPassword);
-    }
+//    public static boolean isAttemptLimitExceeded(int attempts, int maxAttempts) {
+//        return attempts >= maxAttempts;
+//    }
+//
+//    public static boolean isPasswordConfirmed(String password, String confirmPassword) {
+//        return password != null && password.equals(confirmPassword);
+//    }
 
     public static boolean isPasswordNotEmpty(String password) {
         return password != null && !password.isEmpty();
@@ -28,7 +28,7 @@ public class PasswordResetValidate {
         return password != null && password.length() >= minLength;
     }
 
-    public static boolean isNewPasswordDifferent(String newHashed, String oldHashed) {
-        return !newHashed.equals(oldHashed);
-    }
+//    public static boolean isNewPasswordDifferent(String newHashed, String oldHashed) {
+//        return !newHashed.equals(oldHashed);
+//    }
 }

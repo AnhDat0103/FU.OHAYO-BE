@@ -19,9 +19,9 @@ public class VerifyCodeController {
     @PostMapping("/verify-reset-code")
     public ResponseEntity<?> verifyResetCode(@RequestBody VerifyCodeRequest request) {
         System.out.println("Verifying code: " + request.getCode() + " for email: " + request.getEmail());
-        PasswordForgotImp.TokenInfo tokenInfo = PasswordForgotImp.tokenStore.get(request.getCode());
-        if (PasswordResetValidate.isTokenValid(request.getCode(), PasswordForgotImp.tokenStore)) {
-            return ResponseEntity.status(404).body("Invalid or expired code");
+        PasswordForgotImp.TokenInfo tokenInfo = PasswordForgotImp.getTokenStore().get(request.getCode());
+        if (PasswordResetValidate.isTokenValid(request.getCode(), PasswordForgotImp.getTokenStore())) {
+            return ResponseEntity.status(404).body("Invalid code");
         }
         if (!tokenInfo.email.equals(request.getEmail())) {
             return ResponseEntity.status(404).body("Code does not match email");

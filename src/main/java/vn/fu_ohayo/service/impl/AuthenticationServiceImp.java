@@ -127,8 +127,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public boolean extractToken(String token, TokenType type) {
         try {
             var response = jwtService.extractUsername(token, type);
-            if (userRepository.existsByEmailAndProvider(response.getEmail(), Provider.LOCAL)) {
-                User user = userRepository.findByEmailAndProvider(response.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            if (response.getEmail() != null && userRepository.existsByEmailAndProvider(response.getEmail(),response.getProvider())) {
+                User user = userRepository.findByEmail(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
                 return true;
@@ -228,24 +228,25 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 throw new IllegalArgumentException("Unsupported provider: " + provider);
         }
         ResponseEntity<Map> response  = null;
-        if(providerEnum == Provider.FACEBOOK) {
+
              response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        }
-        else {
-              response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        }
+
         Map<String, Object> userInfo = response.getBody();
         String email = (String) userInfo.get("email");
         boolean userExist = userRepository.existsByEmail(email);
         User user = new User();
         if(userExist) {
-            user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-            if(Provider.LOCAL.equals(user.getProvider()) && Provider.GOOGLE.equals(providerEnum) && user.getStatus().equals(UserStatus.ACTIVE)) {
-                return UserFromProvider.builder().email(email).isExist(false).build();
-            }
-            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
-                return UserFromProvider.builder().email(email).isExist(false).build();
-            }
+            return UserFromProvider.builder().email(email).isExist(true).build();
+//              user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+//            if (!user.getProvider().equals(providerEnum)
+//                    && Provider.GOOGLE.equals(providerEnum)
+//                    && user.getProvider().equals(Provider.LOCAL)
+//                    && user.getStatus().equals(UserStatus.ACTIVE)) {
+//                return UserFromProvider.builder().email(email).isExist(false).build();
+//            }
+//            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
+//                return UserFromProvider.builder().email(email).isExist(false).build();
+//            }
         }
         user.setEmail(email);
         user.setProvider(providerEnum);

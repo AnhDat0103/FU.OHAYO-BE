@@ -45,6 +45,8 @@ public class AuthenticationController {
     UserRepository userRepository;
     AuthenticationServiceImp authenticationService;
     JwtService jwtService;
+    String tokenName = "refreshToken";
+    long timeCookie = (long)60 * 60 * 24 * 7; // 7 days
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
@@ -122,12 +124,12 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
         TokenResponse tokenResponse = authenticationService.getAccessToken(signInRequest);
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(tokenName, tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(timeCookie)
                 .build();
 
         return ResponseEntity.ok()
@@ -144,12 +146,12 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
         TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(tokenName, tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(timeCookie)
                 .build();
 
         return ResponseEntity.ok()
@@ -223,7 +225,7 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
+        Cookie cookie = new Cookie(tokenName, null);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");

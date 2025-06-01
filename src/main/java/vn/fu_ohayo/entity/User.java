@@ -28,11 +28,10 @@ import java.util.Set;
 @Table(name = "Users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "phone"),
-
         },
 
         indexes = {
-                @Index(columnList = "email", unique = true,
+                @Index(columnList = "email",
                         name = "email_index"),
                 @Index(columnList = "phone", unique = true,
                         name = "phone_index"),

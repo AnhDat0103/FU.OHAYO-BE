@@ -51,7 +51,7 @@ public class PasswordForgotImp implements PasswordForgotService {
         mailSender.send(message);
     }
 
-//    @Override
+    //    @Override
     public void userInputPassword() {
 
     }
@@ -118,3 +118,4 @@ public class PasswordForgotImp implements PasswordForgotService {
         return String.valueOf(number);
     }
 }
+

@@ -17,7 +17,7 @@ public class ForgotPasswordController {
     private final PasswordForgotImp passwordForgotImp;
     private final UserRepository userRepository;
 
-//    public ForgotPasswordController(PasswordForgotService passwordForgotService, UserRepository userRepository) {
+    //    public ForgotPasswordController(PasswordForgotService passwordForgotService, UserRepository userRepository) {
 //        this.passwordForgotService = passwordForgotService;
 //        this.userRepository = userRepository;
 //    }

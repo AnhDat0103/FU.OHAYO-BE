@@ -14,10 +14,6 @@ public class UserUpdateController {
 
     private final UserRepository userRepository;
 
-    //    public UserProfileController(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-
     @PostMapping("/edit")
     public ResponseEntity<?> updateProfile(@RequestBody UserProfileUpdateDTO request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);

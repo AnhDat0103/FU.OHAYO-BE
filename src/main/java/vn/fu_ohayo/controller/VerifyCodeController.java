@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.Validate.PasswordResetValidate;
 import vn.fu_ohayo.service.impl.PasswordForgotImp;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class VerifyCodeController {
         if (!tokenInfo.email.equals(request.getEmail())) {
             return ResponseEntity.status(404).body("Code does not match email");
         }
-        if (tokenInfo.expiryTime.isBefore(java.time.LocalDateTime.now())) {
+        if (tokenInfo.expiryTime.isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(404).body("Code expired");
         }
         return ResponseEntity.ok("Code verified");

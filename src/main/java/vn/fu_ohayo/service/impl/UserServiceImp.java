@@ -86,7 +86,7 @@ public class UserServiceImp implements UserService {
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
-        String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null, Provider.LOCAL);
+        String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
         mailService.sendEmail(initialRegisterRequest.getEmail(),token);
         return true;
     }

@@ -168,11 +168,11 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<User>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
 
-        var response = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        var response = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN);
         if (response == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
-        User user = userRepository.findByEmailAndProvider(response.getEmail(), response.getProvider()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(response.getId()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         return ResponseEntity.ok(
                 ApiResponse.<User>builder()
                         .code("200")
@@ -207,7 +207,7 @@ public class AuthenticationController {
                             .build()
             );
         }
-        ExtractTokenResponse response = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
+        ExtractTokenResponse response = jwtService.extractUserInformation(refreshToken, TokenType.REFRESH_TOKEN);
         if (response.getEmail() == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }

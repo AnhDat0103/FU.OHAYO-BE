@@ -38,31 +38,28 @@ public class JwtServiceImp implements JwtService {
     private long expiryDay;
 
     @Override
-    public String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities, Provider provider) {
+    public String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
-        claims.put("role", authorities);
-        claims.put("provider", provider);
+        claims.put("scope", authorities);
         return generateAccessToken(claims, email);
     }
 
     @Override
-    public String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities, Provider provider) {
+    public String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
-        claims.put("role", authorities);
-        claims.put("provider", provider);
+        claims.put("scope", authorities);
         return generateRefreshToken(claims, email);
     }
 
     @Override
-    public ExtractTokenResponse extractUsername(String token, TokenType type) {
+    public ExtractTokenResponse extractUserInformation(String token, TokenType type) {
         log.info("Extracting username from token: {}", token);
         Claims claims = extractAllClaims(token, type);
         String email = claims.getSubject();
-        String provider = claims.get("provider", String.class);
-        Provider providerEnum = Provider.valueOf(provider);
-        return new ExtractTokenResponse(email, providerEnum);
+        Long id = claims.get("id", Long.class);
+        return new ExtractTokenResponse(email, id);
     }
 
     private Claims extractAllClaims(String token, TokenType type) {

@@ -30,6 +30,8 @@
 	<properties>
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+		<sona.login>admin</sona.login>
+		<sona.password>Thai@11052004</sona.password>
 	</properties>
 	<dependencies>
 		<dependency>

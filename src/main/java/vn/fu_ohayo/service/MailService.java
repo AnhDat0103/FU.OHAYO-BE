@@ -45,8 +45,8 @@ public class MailService {
         }
     }
     public void sendEmailAgain(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
-        String token = jwtService.generateAccessToken(user.getUserId(), email, null, Provider.LOCAL);
+        User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
+        String token = jwtService.generateAccessToken(user.getUserId(), email, null);
         sendEmail(email,token);
     }
 

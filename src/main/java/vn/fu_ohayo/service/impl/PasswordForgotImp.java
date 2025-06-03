@@ -1,25 +1,29 @@
 package vn.fu_ohayo.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.Validate.PasswordResetValidate;
 import vn.fu_ohayo.service.PasswordForgotService;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public class PasswordForgotImp implements PasswordForgotService {
-    public final Map<String, TokenInfo> tokenStore = new HashMap<>();
+    private final Map<String, TokenInfo> tokenStore = new HashMap<>();
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
+    private final PasswordEncoder passwordEncoder;
 
     @AllArgsConstructor
     public static class TokenInfo {
@@ -47,7 +51,7 @@ public class PasswordForgotImp implements PasswordForgotService {
         mailSender.send(message);
     }
 
-    @Override
+    //    @Override
     public void userInputPassword() {
 
     }
@@ -70,14 +74,10 @@ public class PasswordForgotImp implements PasswordForgotService {
             return false;
         }
         Optional<User> userOpt = userRepository.findByEmail(tokenInfo.email);
-        if (userOpt.isEmpty()) return false;
-        User user = userOpt.get();
-        String newHashed = hashPassword(newPassword);
-        if (!PasswordResetValidate.isNewPasswordDifferent(newHashed, user.getPassword())) {
-            System.out.println("New password cannot be the same as the old password.");
+        if (userOpt.isEmpty())
             return false;
-        }
-        //luu mat khau moi vao db va xoa token
+        User user = userOpt.get();
+        String newHashed = passwordEncoder.encode(newPassword);
         user.setPassword(newHashed);
         userRepository.save(user);
         tokenStore.remove(token);
@@ -85,16 +85,30 @@ public class PasswordForgotImp implements PasswordForgotService {
         return true;
     }
 
-    @Override
-    public String hashPassword(String plainPassword) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(plainPassword.getBytes());
-            return Base64.getEncoder().encodeToString(hashedBytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
-        }
+    private static User getUser(String newPassword, Optional<User> userOpt) {
+        User user = userOpt.get();
+//        String newHashed = hashPassword(newPassword);
+//        if (!PasswordResetValidate.isNewPasswordDifferent(newHashed, user.getPassword())) {
+//            System.out.println("New password cannot be the same as the old password.");
+//            return false;
+//        }
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String newHashed = passwordEncoder.encode(newPassword);
+        //luu mat khau moi vao db va xoa token
+        user.setPassword(newHashed);
+        return user;
     }
+
+//    @Override
+//    public String hashPassword(String plainPassword) {
+//        try {
+//            MessageDigest md = MessageDigest.getInstance("SHA-256");
+//            byte[] hashedBytes = md.digest(plainPassword.getBytes());
+//            return Base64.getEncoder().encodeToString(hashedBytes);
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException("Error hashing password", e);
+//        }
+//    }
 
     @Override
     // tao ma xac nhan ngau nhien 6 so de gui den email
@@ -104,3 +118,4 @@ public class PasswordForgotImp implements PasswordForgotService {
         return String.valueOf(number);
     }
 }
+

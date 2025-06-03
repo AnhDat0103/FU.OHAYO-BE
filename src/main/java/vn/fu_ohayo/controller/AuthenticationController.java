@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.OAuthRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.User;
@@ -47,15 +48,25 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
-        userService.registerInitial(initialRegisterRequest);
-        return ResponseEntity.ok(
-                ApiResponse.<InitialRegisterRequest>builder()
-                        .code("200")
-                        .status("OK")
-                        .message("User registered successfully")
-                        .data(initialRegisterRequest)
-                        .build()
-        );
+        if(userService.registerInitial(initialRegisterRequest)) {
+            return ResponseEntity.ok(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("200")
+                            .status("OK")
+                            .message("User registered successfully")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        } else {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<InitialRegisterRequest>builder()
+                            .code("400")
+                            .status("Failed")
+                            .message("User registration failed")
+                            .data(initialRegisterRequest)
+                            .build()
+            );
+        }
     }
 
     @GetMapping("/mailAgain")
@@ -73,11 +84,8 @@ public class AuthenticationController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<String>> checkUserStatus(@RequestParam("email") String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (user == null) {
-            throw new IllegalArgumentException();
-        }
         if (user.getStatus().equals(UserStatus.ACTIVE)) {
             return ResponseEntity.ok(
                     ApiResponse.<String>builder()
@@ -100,6 +108,7 @@ public class AuthenticationController {
 
     @PostMapping("/complete-profile")
     public ApiResponse<String> completeProfile(@RequestParam String email, @RequestBody CompleteProfileRequest completeProfileRequest) {
+        log.info(email);
         userService.completeProfile(completeProfileRequest, email);
         return ApiResponse.<String>builder()
                 .code("200")
@@ -117,6 +126,7 @@ public class AuthenticationController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
+                .sameSite("None")
                 .maxAge(60 * 60 * 24 * 7)
                 .build();
 
@@ -127,6 +137,28 @@ public class AuthenticationController {
                         .status("OK")
                         .message("User logged in successfully")
                         .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .build());
+    }
+
+    @PostMapping("/getOAuthToken")
+    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
+        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("None")
+                .maxAge(60 * 60 * 24 * 7)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<TokenResponse>builder()
+                        .code("200")
+                        .status("OK")
+                        .message("User logged in successfully")
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null))
                         .build());
     }
 
@@ -149,28 +181,8 @@ public class AuthenticationController {
         );
     }
 
-    @PostMapping("/getOAuthToken")
-    public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestParam("email") String email,
-                                                                 @RequestParam("provider") Provider provider) {
-        TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(email, provider);
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(60 * 60 * 24 * 7)
-                .build();
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(ApiResponse.<TokenResponse>builder()
-                        .code("200")
-                        .status("OK")
-                        .message("User logged in successfully")
-                        .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
-                        .build());
-
-    }
     @GetMapping("/check-login")
     public ResponseEntity<ApiResponse<TokenResponse>> checkLogin(HttpServletRequest request) {
         String refreshToken = null;
@@ -213,28 +225,23 @@ public class AuthenticationController {
     public ResponseEntity<String> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Chỉ nếu dùng HTTPS
+        cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(0); // <-- Xoá cookie
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
 
         return ResponseEntity.ok("Logged out successfully");
     }
 
     @GetMapping("/code/{provider}")
-    public void handleOuthCallback(@PathVariable String provider,
+    public void handleOAuthCallback(@PathVariable String provider,
                                    @RequestParam("code") String code,
                                    HttpServletResponse response) throws IOException {
         String accessToken = authenticationService.getAccesTokenFromProvider(provider, code);
         UserFromProvider user = authenticationService.getUserInfoFromProvider(provider, accessToken);
 
-        String email = user.getEmail();
-        boolean exist = user.isExist(); // hoặc logic kiểm tra trong DB
-
-
-        String redirectUrl = "http://localhost:5173/oauth-callback?email=" + email + "&exist=" + exist;
+        String redirectUrl = "http://localhost:5173/oauth-callback?email=" + user.getEmail() + "&exist=" + user.isExist();
 
         response.sendRedirect(redirectUrl);
     }
-
 }

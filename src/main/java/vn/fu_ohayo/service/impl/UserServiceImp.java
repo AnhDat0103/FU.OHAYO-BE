@@ -72,7 +72,6 @@ public class UserServiceImp implements UserService {
                 .toList();
     }
 
-
     @Override
     public UserResponse registerUser(UserRegister userRegister) {
         return null;
@@ -80,15 +79,16 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public void registerInitial(InitialRegisterRequest initialRegisterRequest) {
+    public boolean registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if (userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+        if (userRepository.existsByEmailAndProvider(initialRegisterRequest.getEmail(), Provider.LOCAL)) {
+            return false;
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null, Provider.LOCAL);
         mailService.sendEmail(initialRegisterRequest.getEmail(),token);
+        return true;
     }
 
 
@@ -96,10 +96,8 @@ public class UserServiceImp implements UserService {
     @Override
     public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email){
         User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
 
+        user.setStatus(UserStatus.ACTIVE);
         user.setFullName(completeProfileRequest.getFullName());
         user.setGender(completeProfileRequest.getGender());
         user.setAddress(completeProfileRequest.getAddress());
@@ -171,10 +169,6 @@ public class UserServiceImp implements UserService {
     public UserResponse addUser(AddUserRequest addUserRequest) {
         if (userRepository.existsByEmail(addUserRequest.getEmail())) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
-        }
-
-        if (userRepository.existsByUsername(addUserRequest.getUsername())) {
-            throw new AppException(ErrorEnum.USERNAME_EXIST);
         }
 
         if (userRepository.existsByPhone(addUserRequest.getPhone())) {

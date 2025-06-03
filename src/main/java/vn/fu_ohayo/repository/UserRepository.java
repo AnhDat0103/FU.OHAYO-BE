@@ -12,11 +12,9 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByFullName(String fullName);
-    Optional<User> findByEmailOrFullName(String email, String fullName);
     boolean existsByEmail(String email);
-    boolean existsByFullName(String fullName);
+    boolean existsByEmailAndProvider(String email, Provider provider);
     Optional<User> findByEmailAndProvider(String email, Provider provider);
-    boolean existsByUsername(String username);
     boolean existsByPhone(String phone);
 
 }

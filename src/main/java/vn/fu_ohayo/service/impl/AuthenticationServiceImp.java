@@ -48,12 +48,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     String googleRedirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.github.client-id}")
-    String githubClientId;
-
-    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
-    String githubRedirectUri;
-
     @Value("${spring.security.oauth2.client.registration.facebook.client-id}")
     String facebookClientId;
 
@@ -65,8 +59,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Value("${spring.security.oauth2.client.registration.facebook.client-secret}")
     String facebookClientSecret;
-    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
-    String githubClientSecret;
+
 
 
     final UserRepository userRepository;
@@ -88,7 +81,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         } catch (AuthenticationException e) {
             throw new AccessDeniedException(e.getMessage());
         }
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -108,9 +101,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
         try {
             ExtractTokenResponse response = jwtService.extractUsername(request, TokenType.REFRESH_TOKEN);
 
-            User user = userRepository.findByEmail(response.getEmail())
+            User user = userRepository.findByEmailAndProvider(response.getEmail(), response.getProvider())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
-            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null, Provider.LOCAL);
+            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null, user.getProvider());
             return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
         } catch (Exception e) {
             log.error("Error generating refresh token: {}", e.getMessage());
@@ -134,8 +127,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public boolean extractToken(String token, TokenType type) {
         try {
             var response = jwtService.extractUsername(token, type);
-            if (response.getEmail() != null && userRepository.existsByEmail(response.getEmail())) {
-                User user = userRepository.findByEmail(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            if (userRepository.existsByEmailAndProvider(response.getEmail(), Provider.LOCAL)) {
+                User user = userRepository.findByEmailAndProvider(response.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
                 return true;
@@ -168,12 +161,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 scope = "email";
                 break;
 
-            case "github":
-                baseUrl = "https://github.com/login/oauth/authorize";
-                clientId = githubClientId;
-                redirectUri = "http://localhost:8080/auth/code/github";
-                scope = "user:email";
-                break;
             default:
                 throw new IllegalArgumentException("Unsupported OAuth provider: " + type);
         }
@@ -211,13 +198,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
                         "&redirect_uri=" + facebookRedirectUri +
                         "&code=" + code;
                 return restTemplate.getForObject(url, Map.class).get("access_token").toString();
-            case "github":
-                body.add("client_id", githubClientId);
-                body.add("client_secret", githubClientSecret);
-                body.add("code", code);
-                body.add("redirect_uri", githubRedirectUri);
-                url = "https://github.com/login/oauth/access_token";
-                break;
 
             default:
                 throw new IllegalArgumentException("Unsupported OAuth provider: " + provider);
@@ -244,10 +224,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 providerEnum = Provider.FACEBOOK;
                 url = "https://graph.facebook.com/me?fields=email&access_token=" + accessToken;
                 break;
-            case "github":
-                providerEnum = Provider.GITHUB;
-                url = "https://api.github.com/user";
-                break;
             default:
                 throw new IllegalArgumentException("Unsupported provider: " + provider);
         }
@@ -264,14 +240,17 @@ public class AuthenticationServiceImp implements AuthenticationService {
         User user = new User();
         if(userExist) {
             user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-            if(Provider.LOCAL.equals(user.getProvider()) && Provider.GOOGLE.equals(providerEnum)) {
-                return UserFromProvider.builder().email(email).isExist(true).build();
+            if(Provider.LOCAL.equals(user.getProvider()) && Provider.GOOGLE.equals(providerEnum) && user.getStatus().equals(UserStatus.ACTIVE)) {
+                return UserFromProvider.builder().email(email).isExist(false).build();
+            }
+            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
+                return UserFromProvider.builder().email(email).isExist(false).build();
             }
         }
         user.setEmail(email);
         user.setProvider(providerEnum);
         userRepository.save(user);
-        return UserFromProvider.builder().email(email).isExist(false).build();
+        return UserFromProvider.builder().email(email).isExist(true).build();
 
     }
 

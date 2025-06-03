@@ -196,7 +196,6 @@
 //            // Other methods can be left unimplemented for this test
 //        };
 //
-//        PasswordForgotService passwordForgotService = new PasswordForgotService();
 //        // Inject repository via reflection
 //        try {
 //            var field = PasswordForgotService.class.getDeclaredField("userRepository");

@@ -45,6 +45,8 @@ public class AuthenticationController {
     UserRepository userRepository;
     AuthenticationServiceImp authenticationService;
     JwtService jwtService;
+    String tokenName = "refreshToken";
+    long timeCookie = (long)60 * 60 * 24 * 7; // 7 days
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
@@ -122,12 +124,12 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
         TokenResponse tokenResponse = authenticationService.getAccessToken(signInRequest);
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(tokenName, tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(timeCookie)
                 .build();
 
         return ResponseEntity.ok()
@@ -144,12 +146,12 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<TokenResponse>> getOAuthToken(@RequestBody OAuthRequest request) {
         TokenResponse tokenResponse = authenticationService.getAccessTokenForSocialLogin(request.getEmail(), request.getProvider());
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(tokenName, tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(timeCookie)
                 .build();
 
         return ResponseEntity.ok()
@@ -166,11 +168,11 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<User>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
 
-        var response = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        var response = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN);
         if (response == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
-        User user = userRepository.findByEmailAndProvider(response.getEmail(), response.getProvider()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(response.getId()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         return ResponseEntity.ok(
                 ApiResponse.<User>builder()
                         .code("200")
@@ -205,7 +207,7 @@ public class AuthenticationController {
                             .build()
             );
         }
-        ExtractTokenResponse response = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
+        ExtractTokenResponse response = jwtService.extractUserInformation(refreshToken, TokenType.REFRESH_TOKEN);
         if (response.getEmail() == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
@@ -223,7 +225,7 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
+        Cookie cookie = new Cookie(tokenName, null);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");

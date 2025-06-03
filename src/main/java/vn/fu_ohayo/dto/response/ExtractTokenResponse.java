@@ -14,5 +14,5 @@ import vn.fu_ohayo.enums.Provider;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExtractTokenResponse {
     private String email;
-    private Provider provider;
+    private Long id;
 }

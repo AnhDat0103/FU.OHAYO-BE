@@ -85,8 +85,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null, Provider.LOCAL);
-        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null, Provider.LOCAL);
+        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
     }
 
@@ -99,11 +99,11 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
         try {
-            ExtractTokenResponse response = jwtService.extractUsername(request, TokenType.REFRESH_TOKEN);
+            ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
 
-            User user = userRepository.findByEmailAndProvider(response.getEmail(), response.getProvider())
+            User user = userRepository.findById(response.getId())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
-            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null, user.getProvider());
+            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
             return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
         } catch (Exception e) {
             log.error("Error generating refresh token: {}", e.getMessage());
@@ -115,8 +115,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public TokenResponse getAccessTokenForSocialLogin(String email, Provider provider) {
         User user = userRepository.findByEmailAndProvider(email, provider)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null, provider);
-        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null, provider);
+        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -126,9 +126,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     public boolean extractToken(String token, TokenType type) {
         try {
-            var response = jwtService.extractUsername(token, type);
-            if (userRepository.existsByEmailAndProvider(response.getEmail(), Provider.LOCAL)) {
-                User user = userRepository.findByEmailAndProvider(response.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            var response = jwtService.extractUserInformation(token, type);
+            if (response.getEmail() != null && userRepository.existsById(response.getId())) {
+                User user = userRepository.findByEmail(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
                 return true;
@@ -228,24 +228,25 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 throw new IllegalArgumentException("Unsupported provider: " + provider);
         }
         ResponseEntity<Map> response  = null;
-        if(providerEnum == Provider.FACEBOOK) {
+
              response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        }
-        else {
-              response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        }
+
         Map<String, Object> userInfo = response.getBody();
         String email = (String) userInfo.get("email");
         boolean userExist = userRepository.existsByEmail(email);
         User user = new User();
         if(userExist) {
-            user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-            if(Provider.LOCAL.equals(user.getProvider()) && Provider.GOOGLE.equals(providerEnum) && user.getStatus().equals(UserStatus.ACTIVE)) {
-                return UserFromProvider.builder().email(email).isExist(false).build();
-            }
-            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
-                return UserFromProvider.builder().email(email).isExist(false).build();
-            }
+            return UserFromProvider.builder().email(email).isExist(true).build();
+//              user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+//            if (!user.getProvider().equals(providerEnum)
+//                    && Provider.GOOGLE.equals(providerEnum)
+//                    && user.getProvider().equals(Provider.LOCAL)
+//                    && user.getStatus().equals(UserStatus.ACTIVE)) {
+//                return UserFromProvider.builder().email(email).isExist(false).build();
+//            }
+//            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
+//                return UserFromProvider.builder().email(email).isExist(false).build();
+//            }
         }
         user.setEmail(email);
         user.setProvider(providerEnum);

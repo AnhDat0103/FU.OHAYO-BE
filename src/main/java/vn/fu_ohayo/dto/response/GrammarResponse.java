@@ -30,7 +30,7 @@ public class GrammarResponse {
 
     private JlptLevel jlptLevel;
 
-    private Lesson lesson;
+    private LessonResponse lesson;
 
     private Date updateAt;
 

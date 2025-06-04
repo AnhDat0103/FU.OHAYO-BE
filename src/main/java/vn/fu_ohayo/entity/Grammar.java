@@ -61,7 +61,7 @@ public class Grammar {
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 

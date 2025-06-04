@@ -4,12 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.GrammarRequest;
+import vn.fu_ohayo.dto.request.PatchGrammarRequest;
 import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.GrammarMapper;
+import vn.fu_ohayo.mapper.LessonMapper;
 import vn.fu_ohayo.repository.GrammarRepository;
 import vn.fu_ohayo.repository.LessonRepository;
 import vn.fu_ohayo.service.GrammarService;
@@ -22,10 +24,11 @@ public class GrammarServiceImp implements GrammarService {
     private final LessonRepository lessonRepository;
     private final GrammarRepository grammarRepository;
     private final GrammarMapper grammarMapper;
+
     public GrammarServiceImp(
-                             LessonRepository lessonRepository,
-                             GrammarRepository grammarRepository,
-                             GrammarMapper grammarMapper) {
+            LessonRepository lessonRepository,
+            GrammarRepository grammarRepository,
+            GrammarMapper grammarMapper) {
         this.lessonRepository = lessonRepository;
         this.grammarRepository = grammarRepository;
         this.grammarMapper = grammarMapper;
@@ -83,34 +86,34 @@ public class GrammarServiceImp implements GrammarService {
     }
 
     @Override
-    public GrammarResponse patchGrammar(int id, GrammarRequest grammarRequest) {
+    public GrammarResponse patchGrammar(int id, PatchGrammarRequest patchGrammarRequest) {
         Grammar grammar = grammarRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.GRAMMAR_NOT_FOUND));
         if(grammarRepository.existsByTitleJpAndMeaningAndLessonAndGrammarIdNot(
-                grammarRequest.getTitleJp(),
-                grammarRequest.getMeaning(),
+                patchGrammarRequest.getTitleJp(),
+                patchGrammarRequest.getMeaning(),
                 grammar.getLesson(),
                 id
         )){
             throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
         }
-        if (grammarRequest.getTitleJp() != null) {
-            grammar.setTitleJp(grammarRequest.getTitleJp());
+        if (patchGrammarRequest.getTitleJp() != null) {
+            grammar.setTitleJp(patchGrammarRequest.getTitleJp());
         }
-        if (grammarRequest.getStructure() != null) {
-            grammar.setStructure(grammarRequest.getStructure());
+        if (patchGrammarRequest.getStructure() != null) {
+            grammar.setStructure(patchGrammarRequest.getStructure());
         }
-        if (grammarRequest.getMeaning() != null) {
-            grammar.setMeaning(grammarRequest.getMeaning());
+        if (patchGrammarRequest.getMeaning() != null) {
+            grammar.setMeaning(patchGrammarRequest.getMeaning());
         }
-        if (grammarRequest.getUsage() != null) {
-            grammar.setUsage(grammarRequest.getUsage());
+        if (patchGrammarRequest.getUsage() != null) {
+            grammar.setUsage(patchGrammarRequest.getUsage());
         }
-        if (grammarRequest.getExample() != null) {
-            grammar.setExample(grammarRequest.getExample());
+        if (patchGrammarRequest.getExample() != null) {
+            grammar.setExample(patchGrammarRequest.getExample());
         }
-        if (grammarRequest.getJlptLevel() != null) {
-            grammar.setJlptLevel(grammarRequest.getJlptLevel());
+        if (patchGrammarRequest.getJlptLevel() != null) {
+            grammar.setJlptLevel(patchGrammarRequest.getJlptLevel());
         }
         return grammarMapper.toGrammarResponse(grammarRepository.save(grammar));
     }
@@ -128,7 +131,6 @@ public class GrammarServiceImp implements GrammarService {
     public Page<GrammarResponse> getAllGrammars(int lessonId, int page, int size) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new AppException(ErrorEnum.LESSON_NOT_FOUND));
-
         Page<Grammar> grammarPage = grammarRepository.findAllByLessonAndDeletedIsFalse(lesson, PageRequest.of(page, size));
         return grammarPage.map(grammarMapper::toGrammarResponse);
     }

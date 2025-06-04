@@ -50,4 +50,14 @@ public class GrammarController {
                 .message("Grammar deleted successfully")
                 .build();
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<GrammarResponse> updateGrammar(@PathVariable int id, @Valid @RequestBody GrammarRequest grammarRequest) {
+        GrammarResponse updatedGrammar = grammarService.updateGrammar(id, grammarRequest);
+        return ApiResponse.<GrammarResponse>builder()
+                .status("success")
+                .message("Grammar updated successfully")
+                .data(updatedGrammar)
+                .build();
+    }
 }

@@ -73,10 +73,10 @@ public class VocabularyServiceImp implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
         );
-        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLesson(vocabularyRequest.getKanji(),
+        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLessonAndVocabularyIdNot(vocabularyRequest.getKanji(),
                     vocabularyRequest.getKana(),
                     vocabularyRequest.getMeaning(),
-                    lesson)){
+                    lesson, vocabularyId)){
                 throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         if(vocabularyRequest.getKanji() != null) {

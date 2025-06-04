@@ -21,5 +21,5 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
 
     boolean existsByKanjiAndKanaAndMeaningAndLesson(String kanji,String kana, String meaning, Lesson lesson);
 
-    Optional<Vocabulary> findByKanjiAndKanaAndMeaningAndLesson(String kanji, String kana, String meaning, Lesson lesson);
+    boolean existsByKanjiAndKanaAndMeaningAndLessonAndVocabularyIdNot(String kanji, String kana, String meaning, Lesson lesson, int vocabularyId);
 }

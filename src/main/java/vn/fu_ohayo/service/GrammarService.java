@@ -8,12 +8,9 @@ import java.util.List;
 
 public interface GrammarService {
 
-    List<GrammarResponse> getAllGrammars();
-    GrammarResponse getGrammarById(String id);
     GrammarResponse saveGrammar(GrammarRequest grammarRequest);
-    GrammarResponse updateGrammar(String id, GrammarRequest grammarRequest);
-    GrammarResponse patchGrammar(String id, GrammarRequest grammarRequest);
-    void deleteGrammarById(String id);
-    Page<GrammarResponse> getGrammarPage(int page, int size);
+    GrammarResponse updateGrammar(int id, GrammarRequest grammarRequest);
+    GrammarResponse patchGrammar(int id, GrammarRequest grammarRequest);
+    void deleteGrammarById(int id);
     Page<GrammarResponse> getAllGrammars(int lessonId, int page, int size);
 }

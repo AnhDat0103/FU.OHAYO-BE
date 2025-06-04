@@ -41,4 +41,13 @@ public class GrammarController {
                 .data(createdGrammar)
                 .build();
     }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteGrammar(@PathVariable int id) {
+        grammarService.deleteGrammarById(id);
+        return ApiResponse.<Void>builder()
+                .status("success")
+                .message("Grammar deleted successfully")
+                .build();
+    }
 }

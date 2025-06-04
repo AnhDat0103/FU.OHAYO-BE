@@ -3,7 +3,6 @@ package vn.fu_ohayo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,9 +61,8 @@ public class Grammar {
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
-    @Null
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
     @Column(name = "created_at")
@@ -78,6 +76,9 @@ public class Grammar {
 
     @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
     private Set<FavoriteGrammar> favoriteGrammars;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
     @PrePersist
     protected void onCreate() {

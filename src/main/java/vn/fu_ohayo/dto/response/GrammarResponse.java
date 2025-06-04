@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
@@ -29,7 +30,9 @@ public class GrammarResponse {
 
     private JlptLevel jlptLevel;
 
-    private int lessonId;
+    private Lesson lesson;
 
     private Date updateAt;
+
+    private boolean isDeleted;
 }

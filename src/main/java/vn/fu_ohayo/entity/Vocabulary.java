@@ -82,6 +82,9 @@ public class Vocabulary {
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private Set<ContentReading> contentReadings;
 
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private Set<FavoriteVocabulary> favoriteVocabularies ;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new java.util.Date();

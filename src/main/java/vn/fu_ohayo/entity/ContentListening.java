@@ -11,6 +11,7 @@ import vn.fu_ohayo.enums.CategoryListeningEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Content_Listenings")
@@ -59,6 +60,9 @@ public class ContentListening {
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)
     @Enumerated(EnumType.STRING)
     private CategoryListeningEnum category;
+
+    @OneToMany(mappedBy = "contentListening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExerciseQuestion> exerciseQuestions;
 
     @PrePersist
     protected void onCreate() {

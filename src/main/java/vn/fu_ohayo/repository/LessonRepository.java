@@ -18,4 +18,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     Page<Lesson> findAllBySubject(Subject subject, Pageable pageable);
 
     Optional<Lesson> getLessonByLessonId(int lessonId);
+
+    boolean existsByNameAndLessonIdNot(String name, int lessonId);
 }

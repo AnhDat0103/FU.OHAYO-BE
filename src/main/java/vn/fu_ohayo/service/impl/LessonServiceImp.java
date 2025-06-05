@@ -86,7 +86,7 @@ public class LessonServiceImp implements LessonService {
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
         if(lessonRequest.getName() != null) {
-            if (lessonRepository.existsByName(lessonRequest.getName())) {
+            if (lessonRepository.existsByNameAndLessonIdNot(lessonRequest.getName(), id)) {
                 throw new AppException(ErrorEnum.LESSON_NAME_EXIST);
             }
             lesson.setName(lessonRequest.getName());
@@ -108,7 +108,7 @@ public class LessonServiceImp implements LessonService {
         if(vocabularyRepository.countAllByLesson(lesson) > 0) {
             throw new AppException(ErrorEnum.LESSON_HAS_VOCABULARY);
         }
-        if(grammarRepository.countAllByLesson(lesson) > 0) {
+        if(grammarRepository.countAllByLessonAndDeletedIsFalse(lesson) > 0) {
             throw new AppException(ErrorEnum.LESSON_HAS_GRAMMAR);
         }
         lessonRepository.delete(lesson);

@@ -31,7 +31,7 @@ public enum ErrorEnum {
     SUBJECT_NOT_FOUND("4004", "Subject not found"),
     SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
     EXERCISE_NOT_FOUND("4005", "Exercise not found"),
-
+    QUESTION_NOT_FOUND("4006","Question not found" ),
     SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
     SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted"),
     INVALID_PAGE("4008","Page is not exist" ),

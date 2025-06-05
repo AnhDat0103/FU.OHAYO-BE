@@ -173,7 +173,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8);
     }
 
-    public String getAccesTokenFromProvider(String provider, String code) {
+    public String getAccessTokenFromProvider(String provider, String code) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -252,7 +252,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
         user.setProvider(providerEnum);
         userRepository.save(user);
         return UserFromProvider.builder().email(email).isExist(true).build();
-
     }
 
 }

@@ -48,7 +48,7 @@ public class User implements UserDetails, Serializable {
     @Column(name = "user_id")
     private int userId;
 
-    @Email
+//    @Email
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
@@ -77,6 +77,9 @@ public class User implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.INACTIVE;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private MembershipLevelOfUser membershipInfo;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "membership_level")

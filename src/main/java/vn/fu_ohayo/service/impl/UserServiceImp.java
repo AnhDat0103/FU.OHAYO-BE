@@ -121,7 +121,6 @@ public class UserServiceImp implements UserService {
         dto.setPhoneNumber(user.getPhone());
         dto.setAddress(user.getAddress());
         dto.setStatus(user.getStatus());
-        dto.setMembershipLevel(user.getMembershipLevel());
         dto.setProvider(user.getProvider());
 //        dto.setProfilePicture(user.getAvatar());
         if (user.getCreatedAt() != null) {

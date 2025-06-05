@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.enums.Provider;
 
 @AllArgsConstructor
 @NoArgsConstructor

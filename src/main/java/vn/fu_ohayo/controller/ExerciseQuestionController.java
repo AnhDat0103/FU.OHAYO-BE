@@ -23,15 +23,16 @@ private final ExerciseQuestionService exerciseQuestionService;
         this.exerciseQuestionService = exerciseQuestionService;
     }
 
-    @GetMapping()
-    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionPage(
+    @GetMapping("/content_listening/{contentListeningId}")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionByContentListeningPage(
             @RequestParam(defaultValue="1" ) int page,
-            @RequestParam(defaultValue = "5") int size                                                                             ) {
+            @RequestParam(defaultValue = "5") int size,
+            @PathVariable long contentListeningId) {
         return ApiResponse .    <Page<ExerciseQuestionResponse>>builder()
                 .code("200")
                 .status("success")
-                .message("success")
-                .data(exerciseQuestionService.getExerciseQuestionPage(page - 1, size))
+                .message("get page of exercise questions by content listening id")
+                .data(exerciseQuestionService.getExerciseQuestionPage(page - 1, size, contentListeningId))
                 .build();
     }
 

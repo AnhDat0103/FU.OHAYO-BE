@@ -11,6 +11,8 @@ public enum ErrorEnum {
     INVALID_FIELDS("1001","Invalid fields"),
     INVALID_EMAIL("1002","Email is invalid"),
     INVALID_CATEGORY_CONTENT_READING("1003","Choose right category contentt" ),
+    INVALID_ANSWER_CORRECT_COUNT("1004","Have to choose exactly one correct answer for the question." ),
+
     // 2xxx - authentication
     EMAIL_EXIST("2001","Email is used to register" ),
     PHONE_EXIST("2002", "Phone is used to register."),

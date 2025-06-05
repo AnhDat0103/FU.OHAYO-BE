@@ -12,9 +12,11 @@ import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.service.UserService;
-import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.util.List;
+
+import static vn.fu_ohayo.constant.ApiConstants.SUCCESS_CODE;
+import static vn.fu_ohayo.constant.ApiConstants.SUCCESS_STATUS;
 
 @RestController()
 @RequiredArgsConstructor
@@ -26,8 +28,8 @@ public class AdminUserController {
     @GetMapping
     public ApiResponse<List<SearchUserResponse>> searchUsers(@Valid @ModelAttribute SearchUserRequest request) {
         return ApiResponse.<List<SearchUserResponse>>builder()
-                .code("200")
-                .status("success")
+                .code(SUCCESS_CODE)
+                .status(SUCCESS_STATUS)
                 .message("Get user by name successfully")
                 .data(userService.searchUsersByName(request))
                 .build();
@@ -36,8 +38,8 @@ public class AdminUserController {
     @DeleteMapping("/{userId}")
     public ApiResponse<UserResponse> deleteUser(@PathVariable("userId") Long userId) {
         return ApiResponse.<UserResponse>builder()
-                .code("200")
-                .status("success")
+                .code(SUCCESS_CODE)
+                .status(SUCCESS_STATUS)
                 .message("Delete user successfully")
                 .data(userService.deleteUser(userId))
                 .build();
@@ -47,18 +49,18 @@ public class AdminUserController {
     public ApiResponse<UserResponse> updateUser(@PathVariable("userId") Long userId,
                                                 @RequestBody @Valid AdminUpdateUserRequest adminUpdateUserRequest) {
         return ApiResponse.<UserResponse>builder()
-                .code("200")
-                .status("success")
+                .code(SUCCESS_CODE)
+                .status(SUCCESS_STATUS)
                 .message("Update user successfully")
                 .data(userService.updateUser(userId, adminUpdateUserRequest))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<UserResponse> AddUser(@RequestBody @Valid AddUserRequest addUserRequest) {
+    public ApiResponse<UserResponse> addUser(@RequestBody @Valid AddUserRequest addUserRequest) {
         return ApiResponse.<UserResponse>builder()
-                .code("200")
-                .status("success")
+                .code(SUCCESS_CODE)
+                .status(SUCCESS_STATUS)
                 .message("Create user successfully")
                 .data(userService.addUser(addUserRequest))
                 .build();

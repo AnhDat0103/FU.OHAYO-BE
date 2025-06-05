@@ -25,7 +25,7 @@ public class GrammarRequest {
     @Size(max = 100, message = ErrorEnum.MAX_LENGTH_100)
     private String structure;
 
-    @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
+    @NotEmpty(message = ErrorEnum.NOT_EMPTY_MEANING)
     @Size(max = 200, message = ErrorEnum.MAX_LENGTH_200)
     private String meaning;
 

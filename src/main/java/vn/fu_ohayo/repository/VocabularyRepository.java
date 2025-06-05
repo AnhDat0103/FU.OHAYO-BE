@@ -8,7 +8,6 @@ import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Vocabulary;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {

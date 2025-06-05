@@ -7,7 +7,6 @@ import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.enums.JlptLevel;
-import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.PartOfSpeech;
 import vn.fu_ohayo.service.VocabularyService;
 

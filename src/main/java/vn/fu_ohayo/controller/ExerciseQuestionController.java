@@ -4,15 +4,12 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
-import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.entity.ExerciseQuestion;
-import vn.fu_ohayo.repository.ExerciseQuestionRepository;
 import vn.fu_ohayo.service.ExerciseQuestionService;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/question")
@@ -81,12 +78,12 @@ private final ExerciseQuestionService exerciseQuestionService;
     public  ApiResponse<ExerciseQuestionResponse> patchExerciseQuestion(
             @PathVariable int id,
             @Valid @RequestBody ExerciseQuestionRequest request){
-        ExerciseQuestionResponse ExerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id,request );
+        ExerciseQuestionResponse exerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id, request);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Updated all fields of content speaking")
-                .data(ExerciseQuestionResponse)
+                .data(exerciseQuestionResponse)
                 .build();
     }
 

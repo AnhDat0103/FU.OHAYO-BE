@@ -9,6 +9,7 @@ import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.entity.AnswerQuestion;
+import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.entity.ExerciseQuestion;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
@@ -40,9 +41,10 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     }
 
     @Override
-    public Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page, int size) {
+    public Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page, int size, long contentListeningId) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAll(pageable);
+        ContentListening contentListening = contentListeningService.getContentListeningById(contentListeningId);
+        Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByContentListening(contentListening, pageable);
         Page<ExerciseQuestionResponse> responsePage = prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);
         return responsePage;
     }
@@ -56,12 +58,22 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
 
 //    @Override
     public ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest exerciseQuestionRequest) {
+        List<AnswerQuestionRequest> answerRequests = exerciseQuestionRequest.getAnswerQuestionRequests();
+        int correctCount = 0;
+        for (AnswerQuestionRequest answerRequest : answerRequests) {
+            if (Boolean.TRUE.equals(answerRequest.getIsCorrect())) {
+                correctCount++;
+            }
+        }
+
+        if (correctCount != 1) {
+            throw new AppException(ErrorEnum.INVALID_ANSWER_CORRECT_COUNT); // bạn cần tự định nghĩa ErrorEnum này
+        }
         ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
                 .questionText(exerciseQuestionRequest.getQuestionText())
                 .contentListening(contentListeningService.getContentListeningById(exerciseQuestionRequest.getContent_listening_id()))
                 .build();
         exerciseQuestion = exerciseQuestionRepository.save(exerciseQuestion);
-        List<AnswerQuestionRequest> answerRequests = exerciseQuestionRequest.getAnswerQuestionRequests();
         for (AnswerQuestionRequest answerRequest : answerRequests) {
             AnswerQuestion answerQuestion = AnswerQuestion.builder()
                     .answerText(answerRequest.getAnswerText())

@@ -14,12 +14,11 @@ import java.util.Set;
 public interface ExerciseQuestionService {
 
 
-    Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size);
+    Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size, long contentListeningId);
     ExerciseQuestionResponse getExerciseQuestionById(int id);
     ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest exerciseQuestionRequest);
     void deleteExerciseQuestionById(int id);
     ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequest exerciseQuestionRequest);
     List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(
             List<ExerciseQuestionRequest> exerciseQuestionRequests);
-//    List<AnswerQuestionResponse> getAnwerQuestionByExerciseQuestionId(int id);
 }

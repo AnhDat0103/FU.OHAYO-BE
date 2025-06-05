@@ -51,13 +51,13 @@ public class SubjectServiceImp implements SubjectService {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
         if(subjectRequest.getSubjectCode() != null){
-            if (subjectRepository.existsBySubjectCode(subjectRequest.getSubjectCode())) {
+            if (subjectRepository.existsBySubjectCodeAndSubjectIdNot(subjectRequest.getSubjectCode(), id)) {
                 throw new AppException(ErrorEnum.SUBJECT_CODE_EXISTS);
             }
             subject.setSubjectCode(subjectRequest.getSubjectCode());
         }
         if(subjectRequest.getSubjectName() != null){
-            if(subjectRepository.existsBySubjectName(subjectRequest.getSubjectName())) {
+            if(subjectRepository.existsBySubjectNameAndSubjectIdNot(subjectRequest.getSubjectName(), id)) {
                 throw new AppException(ErrorEnum.SUBJECT_NAME_EXISTS);
             }
             subject.setSubjectName(subjectRequest.getSubjectName());

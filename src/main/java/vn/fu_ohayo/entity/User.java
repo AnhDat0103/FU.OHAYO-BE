@@ -78,6 +78,9 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false)
     private UserStatus status = UserStatus.INACTIVE;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private MembershipLevelOfUser membershipInfo;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "membership_level")
     private MembershipLevel membershipLevel = MembershipLevel.NORMAL;

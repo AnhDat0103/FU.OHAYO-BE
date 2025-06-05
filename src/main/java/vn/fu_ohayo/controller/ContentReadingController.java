@@ -14,7 +14,7 @@ import vn.fu_ohayo.service.ContentReadingService;
 @RequestMapping("/content_reading")
 public class ContentReadingController {
     private final ContentReadingService contentReadingService;
-
+    String success = "success";
     public ContentReadingController(ContentReadingService contentReadingService) {
         this.contentReadingService = contentReadingService;
     }
@@ -25,8 +25,8 @@ public class ContentReadingController {
             @RequestParam(defaultValue = "5") int size                                                                             ) {
         return ApiResponse .    <Page<ContentReadingResponse>>builder()
                 .code("200")
-                .status("success")
-                .message("success")
+                .status(success)
+                .message(success)
                 .data(contentReadingService.getContentReadingPage(page, size))
                 .build();
     }
@@ -35,7 +35,7 @@ public class ContentReadingController {
     public ApiResponse<ContentReading> getContentReading(@PathVariable long id) {
         return  ApiResponse.<ContentReading>builder()
                 .code("200")
-                .status("success")
+                .status(success)
                 .message("Get contentReading by id")
                 .data(contentReadingService.getContentReadingById(id))
                 .build();
@@ -46,7 +46,7 @@ public class ContentReadingController {
         ContentReading newContentReading =contentReadingService.handleCreateContentReading(request);
         return ApiResponse.<ContentReading>builder()
                 .code("201")
-                .status("success")
+                .status(success)
                 .message("Created new ContentReading successfully")
                 .data(newContentReading)
                 .build();
@@ -57,7 +57,7 @@ public class ContentReadingController {
         contentReadingService.deleteContentReadingById(id);
         return ApiResponse.<ContentReading>builder()
                 .code("200")
-                .status("success")
+                .status(success)
                 .message("Deleted content reading successfully")
                 .build();
 
@@ -67,12 +67,12 @@ public class ContentReadingController {
     public  ApiResponse<ContentReadingResponse> patchContentReading(
             @PathVariable Long id,
             @Valid @RequestBody ContentReadingRequest request){
-        ContentReadingResponse ContentReadingResponse = contentReadingService.updatePatchContentReading(id,request );
+        ContentReadingResponse contentReadingResponse = contentReadingService.updatePatchContentReading(id,request );
         return ApiResponse.<ContentReadingResponse>builder()
                 .code("200")
-                .status("success")
+                .status(success)
                 .message("Updated all fields of content reading")
-                .data(ContentReadingResponse)
+                .data(contentReadingResponse)
                 .build();
     }
 }

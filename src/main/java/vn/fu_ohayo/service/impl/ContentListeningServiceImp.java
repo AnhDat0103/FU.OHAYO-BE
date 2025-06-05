@@ -5,8 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ContentListeningRequest;
-import vn.fu_ohayo.dto.request.ContentListeningRequest;
-import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentListening;

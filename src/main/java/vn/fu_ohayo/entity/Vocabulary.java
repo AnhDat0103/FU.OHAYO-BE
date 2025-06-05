@@ -70,7 +70,7 @@ public class Vocabulary {
     private JlptLevel jlptLevel;
     
     @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
+    @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
     @Column(name = "created_at")

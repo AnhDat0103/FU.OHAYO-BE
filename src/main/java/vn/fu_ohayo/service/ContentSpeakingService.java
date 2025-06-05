@@ -1,14 +1,12 @@
 package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentSpeaking;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ContentSpeakingService {
     List<ContentSpeaking> getAllContentSpeakings();

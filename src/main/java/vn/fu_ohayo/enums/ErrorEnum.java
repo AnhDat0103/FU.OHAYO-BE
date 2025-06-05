@@ -74,7 +74,7 @@ public enum ErrorEnum {
     public static final String INVALID_SUBJECT_NAME = "Subject name must be less than 50 characters";
     public static final String NOT_EMPTY_JLPT_LEVEL = "JLPT level must not be empty";
     public static final String NOT_EMPTY_PART_OF_SPEECH = "Part of speech must not be empty";
-    public static final String Not_EMPTY_MEANING = "Meaning must not be null";
+    public static final String NOT_EMPTY_MEANING = "Meaning must not be null";
     public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
     public static final String NOT_EMPTY_SCRIPT = "script can not null";
     public static final String NOT_EMPTY_DATE = "Date can not null";

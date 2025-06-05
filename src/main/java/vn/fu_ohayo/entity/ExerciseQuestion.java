@@ -1,5 +1,6 @@
 package vn.fu_ohayo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,15 +26,15 @@ public class ExerciseQuestion {
     private String questionText;
 
     @ManyToOne
-    @JoinColumn(name = "exercise_id", nullable = false)
+    @JoinColumn(name = "exercise_id", nullable = true)
     private LessonExercise lessonExercise;
 
     @ManyToOne
-    @JoinColumn(name = "content_id", nullable = false)
+    @JoinColumn(name = "content_id", nullable = true)
     private ContentListening contentListening;
 
-    @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AnswerQuestion> answerQuestions;
+    @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<AnswerQuestion> answerQuestions;
 
     @Column(name = "created_at")
     private Date createdAt;

@@ -3,20 +3,19 @@ package vn.fu_ohayo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.CategoryListeningEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Content_Listenings")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 public class ContentListening {
     @Id
@@ -60,6 +59,9 @@ public class ContentListening {
     @Enumerated(EnumType.STRING)
     private CategoryListeningEnum category;
 
+    @OneToMany(mappedBy = "contentListening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExerciseQuestion> exerciseQuestions;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
@@ -68,5 +70,12 @@ public class ContentListening {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = new Date();
+    }
+
+    @Override
+    public String toString() {
+        return "ContentListening{" +
+                ", title='" + title + '\'' +
+                '}';
     }
 }

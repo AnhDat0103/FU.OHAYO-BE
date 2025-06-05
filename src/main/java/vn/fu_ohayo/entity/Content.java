@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "Contents")
 @AllArgsConstructor
@@ -26,6 +28,10 @@ public class Content {
     @NotNull(message = ErrorEnum.NOT_EMPTY_CONTENT_TYPE)
     @Enumerated(EnumType.STRING)
     private ContentTypeEnum contentType;
+
+
+    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressContent> contents;
 
 //    @OneToOne(mappedBy = "content")
 //    private ContentListening contentListening;

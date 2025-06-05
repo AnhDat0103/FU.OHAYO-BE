@@ -31,7 +31,7 @@ public enum ErrorEnum {
     SUBJECT_NOT_FOUND("4004", "Subject not found"),
     SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
     EXERCISE_NOT_FOUND("4005", "Exercise not found"),
-
+    QUESTION_NOT_FOUND("4006","Question not found" ),
     SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
     SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted"),
     INVALID_PAGE("4008","Page is not exist" ),
@@ -42,7 +42,8 @@ public enum ErrorEnum {
     LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" ),
 
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
-    VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." );
+    VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
+    GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." );
 
 
     // 5xxx - server error
@@ -85,6 +86,7 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_STRUCTURE = "Structure must not be empty";
     public static final String MAX_LENGTH_200 = "input must be less than 200 characters";
     public static final String MAX_LENGTH_500 = "input must be less than 500 characters";
+    public static final String MIN_TIME_1 = "Time must be greater than 1 minute";
 
     private final String code;
     private final String message;

@@ -48,7 +48,7 @@ public class User implements UserDetails, Serializable {
     @Column(name = "user_id")
     private int userId;
 
-//    @Email
+    @Email()
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
@@ -134,11 +134,35 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "student")
     private List<ParentStudent> parents;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserResponseQuestion> userResponseQuestions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<FavoriteList> favoriteLists;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressGrammar> progressGrammars;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressVocabulary> progressVocabularies;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressSubject> progressSubjects;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExerciseResult> exerciseResults;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressContent> progressContents;
+
     @Column(name = "created_at")
     private Date createdAt;
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Notification> notifications;
 
     @PrePersist
     protected void onCreate() {

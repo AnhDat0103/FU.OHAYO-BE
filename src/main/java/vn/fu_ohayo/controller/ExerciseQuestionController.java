@@ -3,7 +3,7 @@ package vn.fu_ohayo.controller;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
+import vn.fu_ohayo.dto.request.ExerciseQuestionRequestForListening;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
@@ -47,7 +47,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     }
 
     @PostMapping
-    public ApiResponse<ExerciseQuestionResponse> createExerciseQuestion(@Valid @RequestBody ExerciseQuestionRequest request) {
+    public ApiResponse<ExerciseQuestionResponse> createExerciseQuestion(@Valid @RequestBody ExerciseQuestionRequestForListening request) {
         ExerciseQuestionResponse newExerciseQuestion =exerciseQuestionService.handleCreateExerciseQuestion(request);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("201")
@@ -58,7 +58,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     }
 
     @PostMapping("/many")
-    public ApiResponse<List<ExerciseQuestionResponse>> createManyExerciseQuestion(@Valid @RequestBody List<ExerciseQuestionRequest> requests) {
+    public ApiResponse<List<ExerciseQuestionResponse>> createManyExerciseQuestion(@Valid @RequestBody List<ExerciseQuestionRequestForListening> requests) {
         List<ExerciseQuestionResponse> newExerciseQuestion =exerciseQuestionService.handleCreateAllExerciseQuestion(requests);
         return ApiResponse.<List<ExerciseQuestionResponse>>builder()
                 .code("201")
@@ -81,7 +81,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     @PatchMapping("/{id}")
     public  ApiResponse<ExerciseQuestionResponse> patchExerciseQuestion(
             @PathVariable int id,
-            @Valid @RequestBody ExerciseQuestionRequest request){
+            @Valid @RequestBody ExerciseQuestionRequestForListening request){
         ExerciseQuestionResponse ExerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id,request );
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")

@@ -2,6 +2,9 @@ package vn.fu_ohayo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +26,8 @@ public class ExerciseQuestion {
     private int exerciseQuestionId;
 
     @Column(name = "question_text", columnDefinition = "TEXT")
+    @NotNull(message = "Question text cannot be null")
+    @NotBlank(message = "Question text cannot be blank")
     private String questionText;
 
     @ManyToOne
@@ -34,6 +39,7 @@ public class ExerciseQuestion {
     private ContentListening contentListening;
 
     @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestion> answerQuestions;
 
     @Column(name = "created_at")

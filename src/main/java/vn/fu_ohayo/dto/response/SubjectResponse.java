@@ -30,7 +30,9 @@ public class SubjectResponse {
 
     private Date updatedAt;
 
-    public SubjectResponse(int subjectId, String subjectCode, String subjectName, String description,SubjectStatus status, long countUsers, Date updatedAt) {
+    private int countLessons;
+
+    public SubjectResponse(int subjectId, String subjectCode, String subjectName, String description,SubjectStatus status, long countUsers, Date updatedAt, int countLessons) {
         this.subjectId = subjectId;
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -38,6 +40,7 @@ public class SubjectResponse {
         this.status = status;
         this.countUsers = (int) countUsers;
         this.updatedAt = updatedAt;
+        this.countLessons = countLessons;
     }
 
 }

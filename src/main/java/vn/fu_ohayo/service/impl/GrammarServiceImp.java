@@ -39,12 +39,11 @@ public class GrammarServiceImp implements GrammarService {
         Lesson lesson = lessonRepository.findById(grammarRequest.getLessonId()).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
-        grammarRepository.findByTitleJpAndLesson(grammarRequest.getTitleJp(), lesson).ifPresent(
-                grammar -> {
-                    throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
-                }
-        );
-
+        Optional<Grammar> grammarOptional = grammarRepository.findByTitleJpAndLesson(grammarRequest.getTitleJp(), lesson);
+        if (grammarOptional.isPresent()) {
+            grammarOptional.get().setDeleted(false);
+            return grammarMapper.toGrammarResponse(grammarRepository.save(grammarOptional.get()));
+        }
         Grammar grammar = Grammar.builder()
                 .titleJp(grammarRequest.getTitleJp())
                 .jlptLevel(grammarRequest.getJlptLevel())

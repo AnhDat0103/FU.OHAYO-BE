@@ -46,7 +46,7 @@ public class Vocabulary {
     @Size(max = 50, message = ErrorEnum.MAX_LENGTH_50)
     private String romaji; // e.g., "kōkō" for 高校
 
-    @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
+    @NotEmpty(message = ErrorEnum.NOT_EMPTY_MEANING)
     @Size(max = 100, message =  ErrorEnum.MAX_LENGTH_100)
     private String meaning;
 

@@ -5,9 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.service.UploadService;
 
-import java.io.File;
-import java.util.List;
-
 @RestController
 @RequestMapping("/uploadfile")
 public class UploadFileController {

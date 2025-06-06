@@ -1,12 +1,12 @@
 package vn.fu_ohayo.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryListeningEnum;
-import vn.fu_ohayo.enums.CategoryReadingEnum;
+
 
 import java.util.Date;
 

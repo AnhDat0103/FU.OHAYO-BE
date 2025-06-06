@@ -1,8 +1,6 @@
 package vn.fu_ohayo.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import vn.fu_ohayo.dto.response.ApiErrorResponse;
 import vn.fu_ohayo.enums.ErrorEnum;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

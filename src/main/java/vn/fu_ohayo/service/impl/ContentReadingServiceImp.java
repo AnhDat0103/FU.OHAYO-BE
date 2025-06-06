@@ -8,16 +8,10 @@ import vn.fu_ohayo.dto.request.ContentReadingRequest;
 import vn.fu_ohayo.dto.response.ContentReadingResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentReading;
-import vn.fu_ohayo.enums.CategoryReadingEnum;
 import vn.fu_ohayo.enums.ContentTypeEnum;
-import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentReadingRepository;
 import vn.fu_ohayo.service.ContentReadingService;
-
-import java.util.Arrays;
-
 @Service
 public class ContentReadingServiceImp implements ContentReadingService {
 

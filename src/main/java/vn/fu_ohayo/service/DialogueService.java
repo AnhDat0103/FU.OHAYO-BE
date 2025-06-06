@@ -6,7 +6,6 @@ import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DialogueService {
     List<Dialogue> getAllDialogues();

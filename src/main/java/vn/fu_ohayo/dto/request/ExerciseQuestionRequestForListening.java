@@ -20,6 +20,7 @@ public class ExerciseQuestionRequestForListening {
     @NotNull(message = "Question text cannot be null")
     @NotBlank(message = "Question text cannot be blank")
     private String questionText;
+    @NotNull(message = "The list must contain at least 2 answer")
     @Size(min = 2, message = "The list must contain at least 2 answer")
-    private List<AnswerQuestionRequest> answerQuestionRequests;
+    private List<AnswerQuestionRequest> answerQuestions;
 }

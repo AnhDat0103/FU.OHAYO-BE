@@ -91,14 +91,5 @@ private final ExerciseQuestionService exerciseQuestionService;
                 .build();
     }
 
-//    @GetMapping("/{id}/answers")
-//    public ApiResponse<List<AnswerQuestionResponse>> getAnwerQuestionByExerciseQuestionId(@PathVariable int id) {
-//        List<AnswerQuestionResponse> answerQuestions = exerciseQuestionService.getAnwerQuestionByExerciseQuestionId(id);
-//        return ApiResponse.<Set<AnswerQuestionResponse>>builder()
-//                .code("200")
-//                .status("success")
-//                .message("Get answer questions by exercise question id")
-//                .data(answerQuestions)
-//                .build();
-//    }
+
 }

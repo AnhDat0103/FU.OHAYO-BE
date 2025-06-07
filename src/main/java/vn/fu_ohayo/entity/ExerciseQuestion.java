@@ -36,8 +36,8 @@ public class ExerciseQuestion {
     @JoinColumn(name = "content_id", nullable = true)
     private ContentListening contentListening;
 
-    @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @Size(min = 2, message = "The list must contain at least 2 answer")
+    @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+//    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestion> answerQuestions;
 
     @Column(name = "created_at")

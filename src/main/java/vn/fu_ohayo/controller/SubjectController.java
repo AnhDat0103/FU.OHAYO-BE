@@ -33,7 +33,7 @@ public class SubjectController {
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllSubjects(page, size))
+                .data(subjectService.getAllSubjectsForAdmin(page, size))
                 .build();
     }
 

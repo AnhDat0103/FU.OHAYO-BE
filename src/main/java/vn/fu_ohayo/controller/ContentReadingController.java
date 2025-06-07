@@ -4,12 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentReadingRequest;
-import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.ContentReadingGrammarResponse;
-import vn.fu_ohayo.dto.response.ContentReadingResponse;
-import vn.fu_ohayo.dto.response.ContentReadingVocabularyResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.service.ContentReadingService;
+
+import java.util.List;
 
 
 @RestController
@@ -123,6 +122,27 @@ public class ContentReadingController {
                 .code("200")
                 .status(success)
                 .message("Removed grammar from content reading successfully")
+                .build();
+    }
+    @GetMapping("/{id}/vocabularies")
+    public ApiResponse<List<VocabularyResponse>> getVocabularies(@PathVariable long id) {
+        List<VocabularyResponse> vocabularies = contentReadingService.getVocabulariesByContentReadingId(id);
+        return ApiResponse.<List<VocabularyResponse>>builder()
+                .code("200")
+                .status(success)
+                .message("Retrieved vocabularies for content reading")
+                .data(vocabularies)
+                .build();
+    }
+
+    @GetMapping("/{id}/grammars")
+    public ApiResponse<List<GrammarResponse>> getGrammars(@PathVariable long id) {
+        List<GrammarResponse> grammars = contentReadingService.getGrammarsByContentReadingId(id);
+        return ApiResponse.<List<GrammarResponse>>builder()
+                .code("200")
+                .status(success)
+                .message("Retrieved grammars for content reading")
+                .data(grammars)
                 .build();
     }
 }

@@ -7,9 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ContentReadingRequest;
-import vn.fu_ohayo.dto.response.ContentReadingGrammarResponse;
-import vn.fu_ohayo.dto.response.ContentReadingResponse;
-import vn.fu_ohayo.dto.response.ContentReadingVocabularyResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.entity.Grammar;
@@ -19,6 +17,8 @@ import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ContentMapper;
+import vn.fu_ohayo.mapper.GrammarMapper;
+import vn.fu_ohayo.mapper.VocabularyMapper;
 import vn.fu_ohayo.repository.ContentReadingRepository;
 import vn.fu_ohayo.repository.GrammarRepository;
 import vn.fu_ohayo.repository.VocabularyRepository;
@@ -27,6 +27,7 @@ import vn.fu_ohayo.service.GrammarService;
 import vn.fu_ohayo.service.VocabularyService;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ContentReadingServiceImp implements ContentReadingService {
@@ -35,12 +36,16 @@ public class ContentReadingServiceImp implements ContentReadingService {
     private final ContentMapper contentMapper;
     private final VocabularyRepository vocabularyRepository;
     private final GrammarRepository grammarRepository;
+    private final VocabularyMapper vocabularyMapper;
+    private final GrammarMapper grammarMapper;
 
-    public ContentReadingServiceImp(ContentReadingRepository contentReadingRepository, ContentMapper contentMapper, VocabularyRepository vocabularyRepository, GrammarRepository grammarRepository) {
+    public ContentReadingServiceImp(ContentReadingRepository contentReadingRepository, ContentMapper contentMapper, VocabularyRepository vocabularyRepository, GrammarRepository grammarRepository, VocabularyMapper vocabularyMapper, GrammarMapper grammarMapper) {
         this.contentReadingRepository = contentReadingRepository;
         this.contentMapper = contentMapper;
         this.vocabularyRepository = vocabularyRepository;
         this.grammarRepository = grammarRepository;
+        this.vocabularyMapper = vocabularyMapper;
+        this.grammarMapper = grammarMapper;
     }
 
 
@@ -162,5 +167,19 @@ public class ContentReadingServiceImp implements ContentReadingService {
         Hibernate.initialize(contentReading.getVocabularies());
         contentReading.getGrammars().remove(grammar);
         contentReadingRepository.save(contentReading);
+    }
+
+    @Override
+    public List<VocabularyResponse> getVocabulariesByContentReadingId(long contentReadingId) {
+        return this.getContentReadingById(contentReadingId).getVocabularies().stream()
+                .map(vocabularyMapper::toVocabularyResponse)
+                .toList();
+    }
+
+    @Override
+    public List<GrammarResponse> getGrammarsByContentReadingId(long contentReadingId) {
+        return this.getContentReadingById(contentReadingId).getGrammars().stream()
+                .map(grammarMapper::toGrammarResponse)
+                .toList();
     }
 }

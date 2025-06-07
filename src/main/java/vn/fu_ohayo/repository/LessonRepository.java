@@ -23,4 +23,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     boolean existsByNameAndLessonIdNot(String name, int lessonId);
 
     int countAllBySubject_SubjectIdAndStatus(int subjectId, LessonStatus status);
+
+    int countAllBySubject_SubjectId(int subjectSubjectId);
 }

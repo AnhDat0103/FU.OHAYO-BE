@@ -43,6 +43,19 @@ public class SubjectServiceImp implements SubjectService {
                 });
     }
 
+
+    @Override
+    public Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size) {
+        return subjectRepository.findAll(PageRequest.of(page, size))
+                .map(subjectMapper::toSubjectResponse)
+                .map(s -> {
+                    s.setCountUsers(subjectRepository.countUsersBySubjectId(s.getSubjectId()) > 0 ? subjectRepository.countUsersBySubjectId(s.getSubjectId()) : 0);
+                    s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectId(s.getSubjectId()), 0));
+                    return s;
+                });
+    }
+
+
     @Override
     public SubjectResponse createSubject(SubjectRequest subjectRequest) {
         if (subjectRepository.existsBySubjectCode(subjectRequest.getSubjectCode())) {

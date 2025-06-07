@@ -13,5 +13,6 @@ public class Config implements WebMvcConfigurer {
         registry.addResourceHandler("/audio/**").addResourceLocations("file:src/main/webapp/resources/audio/");
         registry.addResourceHandler("/url/**").addResourceLocations("/resources/url/");
         registry.addResourceHandler("/uploads/**").addResourceLocations("file:uploads/");
+        registry.addResourceHandler("/video/**").addResourceLocations("file:src/main/webapp/resources/video/");
     }
 }

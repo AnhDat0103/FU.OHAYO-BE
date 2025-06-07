@@ -7,14 +7,16 @@ import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.SubjectMapper;
+import vn.fu_ohayo.repository.LessonRepository;
 import vn.fu_ohayo.repository.SubjectRepository;
 import vn.fu_ohayo.service.SubjectService;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -22,17 +24,37 @@ public class SubjectServiceImp implements SubjectService {
 
     private final SubjectRepository subjectRepository;
     private final SubjectMapper subjectMapper;
+    private final LessonRepository lessonRepository;
 
-    public SubjectServiceImp(SubjectRepository subjectRepository, SubjectMapper subjectMapper) {
+    public SubjectServiceImp(SubjectRepository subjectRepository, SubjectMapper subjectMapper, LessonRepository lessonRepository) {
         this.subjectRepository = subjectRepository;
         this.subjectMapper = subjectMapper;
+        this.lessonRepository = lessonRepository;
     }
 
     @Override
     public Page<SubjectResponse> getAllSubjects(int page, int size) {
-        return subjectRepository.findAll(PageRequest.of(page, size))
-                .map(subjectMapper::toSubjectResponse);
+        return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE, PageRequest.of(page, size))
+                .map(subjectMapper::toSubjectResponse)
+                .map(s -> {
+                    s.setCountUsers(subjectRepository.countUsersBySubjectId(s.getSubjectId()) > 0 ? subjectRepository.countUsersBySubjectId(s.getSubjectId()) : 0);
+                    s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
+                    return s;
+                });
     }
+
+
+    @Override
+    public Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size) {
+        return subjectRepository.findAll(PageRequest.of(page, size))
+                .map(subjectMapper::toSubjectResponse)
+                .map(s -> {
+                    s.setCountUsers(subjectRepository.countUsersBySubjectId(s.getSubjectId()) > 0 ? subjectRepository.countUsersBySubjectId(s.getSubjectId()) : 0);
+                    s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectId(s.getSubjectId()), 0));
+                    return s;
+                });
+    }
+
 
     @Override
     public SubjectResponse createSubject(SubjectRequest subjectRequest) {

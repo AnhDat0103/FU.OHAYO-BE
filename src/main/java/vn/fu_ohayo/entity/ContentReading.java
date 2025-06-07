@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryReadingEnum;
-import vn.fu_ohayo.enums.CategorySpeakingEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;

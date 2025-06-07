@@ -66,12 +66,12 @@ public class ContentListeningController {
     public  ApiResponse<ContentListeningResponse> patchContentListening(
             @PathVariable Long id,
             @Valid @RequestBody ContentListeningRequest request){
-        ContentListeningResponse ContentListeningResponse = contentListeningService.updatePatchContentListening(id,request );
+        ContentListeningResponse contentListeningResponse = contentListeningService.updatePatchContentListening(id,request );
         return ApiResponse.<ContentListeningResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Updated some fields of content listening")
-                .data(ContentListeningResponse)
+                .data(contentListeningResponse)
                 .build();
     }
 }

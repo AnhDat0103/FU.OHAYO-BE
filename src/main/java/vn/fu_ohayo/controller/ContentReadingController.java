@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentReadingRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ContentReadingGrammarResponse;
 import vn.fu_ohayo.dto.response.ContentReadingResponse;
+import vn.fu_ohayo.dto.response.ContentReadingVocabularyResponse;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.service.ContentReadingService;
 
@@ -60,7 +62,6 @@ public class ContentReadingController {
                 .status(success)
                 .message("Deleted content reading successfully")
                 .build();
-
     }
 
     @PatchMapping("/{id}")
@@ -73,6 +74,55 @@ public class ContentReadingController {
                 .status(success)
                 .message("Updated all fields of content reading")
                 .data(contentReadingResponse)
+                .build();
+    }
+    @PatchMapping("/{id}/add_vocabulary/{vocabularyId}")
+    public ApiResponse<ContentReadingVocabularyResponse> addVocabularyToContentReading(
+            @PathVariable Long id,
+            @PathVariable int vocabularyId) {
+        ContentReadingVocabularyResponse contentReadingResponse = contentReadingService.addVocabularyToContentReading(id, vocabularyId);
+        return ApiResponse.<ContentReadingVocabularyResponse>builder()
+                .code("200")
+                .status(success)
+                .message("Added vocabulary to content reading successfully")
+                .data(contentReadingResponse)
+                .build();
+    }
+
+    @PatchMapping("/{id}/remove_vocabulary/{vocabularyId}")
+    public ApiResponse<Void> removeVocabularyFromContentReading(
+            @PathVariable Long id,
+            @PathVariable int vocabularyId) {
+        contentReadingService.removeVocabularyFromContentReading(id, vocabularyId);
+        return ApiResponse.<Void>builder()
+                .code("200")
+                .status(success)
+                .message("Removed vocabulary from content reading successfully")
+                .build();
+    }
+
+    @PatchMapping("/{id}/add_grammar/{grammarId}")
+    public ApiResponse<ContentReadingGrammarResponse> addGrammarToContentReading(
+            @PathVariable Long id,
+            @PathVariable int grammarId) {
+        ContentReadingGrammarResponse contentReadingResponse = contentReadingService.addGrammarToContentReading(id, grammarId);
+        return ApiResponse.<ContentReadingGrammarResponse>builder()
+                .code("200")
+                .status(success)
+                .message("Added grammar to content reading successfully")
+                .data(contentReadingResponse)
+                .build();
+    }
+
+    @PatchMapping("/{id}/remove_grammar/{grammarId}")
+    public ApiResponse<Void> removeGrammarFromContentReading(
+            @PathVariable Long id,
+            @PathVariable int grammarId) {
+        contentReadingService.removeGrammarFromContentReading(id, grammarId);
+        return ApiResponse.<Void>builder()
+                .code("200")
+                .status(success)
+                .message("Removed grammar from content reading successfully")
                 .build();
     }
 }

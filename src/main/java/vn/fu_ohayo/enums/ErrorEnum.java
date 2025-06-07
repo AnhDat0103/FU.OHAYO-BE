@@ -46,7 +46,10 @@ public enum ErrorEnum {
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
-    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." );
+    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
+    CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
+    VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("2017","Vocabulary is  existed in content reading " ),
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("2017","Grammar is  existed in content reading " );
 
 
     // 5xxx - server error

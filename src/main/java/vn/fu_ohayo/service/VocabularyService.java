@@ -19,4 +19,5 @@ public interface VocabularyService {
     void deleteVocabularyById(int vocabularyId);
 
     Page<VocabularyResponse> getVocabularyPage(int page, int size, int lessonId);
+    Page<VocabularyResponse> getAllVocabularíesPage(int page, int size);
 }

@@ -52,13 +52,13 @@ public class Lesson {
     private Subject subject;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Vocabulary> vocabularies;
+    private java.util.List<Vocabulary> vocabularies;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Grammar> grammars;
+    private java.util.List<Grammar> grammars;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<LessonExercise> lessonExercises;
+    private java.util.List<LessonExercise> lessonExercises;
 
     @PrePersist
     protected void onCreate() {

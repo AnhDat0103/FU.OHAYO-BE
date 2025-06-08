@@ -129,4 +129,10 @@ public class VocabularyServiceImp implements VocabularyService {
         return vocabularyRepository.findAllByLesson(PageRequest.of(page, size), lesson)
                 .map(vocabularyMapper::toVocabularyResponse);
     }
+
+    @Override
+    public Page<VocabularyResponse> getAllVocabularíesPage(int page, int size) {
+        return vocabularyRepository.findAll(PageRequest.of(page, size))
+                .map(vocabularyMapper::toVocabularyResponse);
+    }
 }

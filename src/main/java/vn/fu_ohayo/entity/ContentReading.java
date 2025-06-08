@@ -12,6 +12,7 @@ import vn.fu_ohayo.enums.CategoryReadingEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -69,7 +70,7 @@ public class ContentReading {
             joinColumns = @JoinColumn(name = "content_reading_id"),
             inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
     )
-    private Set<Vocabulary> vocabularies;
+    private List<Vocabulary> vocabularies;
 
     @ManyToMany
     @JoinTable(
@@ -77,7 +78,7 @@ public class ContentReading {
             joinColumns = @JoinColumn(name = "content_reading_id"),
             inverseJoinColumns = @JoinColumn(name = "grammar_id")
     )
-    private Set<Grammar> grammars;
+    private List<Grammar> grammars;
 
     @PrePersist
     protected void onCreate() {

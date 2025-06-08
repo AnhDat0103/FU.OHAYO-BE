@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.service.LessonExerciseService;
 
@@ -19,6 +20,7 @@ public class LessonExerciseController {
 
 
     private final LessonExerciseService lessonExerciseService;
+
     public LessonExerciseController(LessonExerciseService lessonExerciseService) {
         this.lessonExerciseService = lessonExerciseService;
     }
@@ -32,6 +34,22 @@ public class LessonExerciseController {
         Page<LessonExerciseResponse> response = lessonExerciseService.getAllContentByLesson(page, size, lessonId);
         return ApiResponse.<Page<LessonExerciseResponse>>builder()
                 .message("Fetched exercise questions successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(response)
+                .build();
+    }
+
+
+    @GetMapping("/exercise-details")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionsByLessonExerciseId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam int exerciseId
+    ) {
+        Page<ExerciseQuestionResponse> response = lessonExerciseService.getExerciseQuestionByExerciseLesson(page, size, exerciseId);
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+                .message("Fetched exercise questions by lesson exercise ID successfully")
                 .status(HTTP_SUCCESS_RESPONSE)
                 .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .data(response)

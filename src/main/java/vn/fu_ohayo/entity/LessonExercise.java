@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.enums.Difficulty;
 import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.enums.ExerciseType;
 
 import java.util.Date;
 import java.util.Set;
@@ -31,19 +29,9 @@ public class LessonExercise {
     @Column(name = "duration")
     private long duration;
 
-    @Column(name = "instructions", columnDefinition = "TEXT")
-    private String instructions;
-
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "exercise_type", nullable = false)
-    private ExerciseType exerciseType;
-
-    @Column(name = "difficulty", nullable = false)
-    private Difficulty difficulty;
 
     @Column(name = "created_at")
     private Date createdAt;

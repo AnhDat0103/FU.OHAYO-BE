@@ -14,4 +14,5 @@ public interface GrammarService {
     GrammarResponse patchGrammar(int id, PatchGrammarRequest patchGrammarRequest);
     void deleteGrammarById(int id);
     Page<GrammarResponse> getAllGrammars(int lessonId, int page, int size);
+    Page<GrammarResponse> getAllGrammarsPage(int page, int size);
 }

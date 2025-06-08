@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.entity.ExerciseQuestion;
+import vn.fu_ohayo.entity.LessonExercise;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ import java.util.List;
 public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuestion, Integer> {
     List<ExerciseQuestion> findByContentListening(ContentListening contentListening);
     Page<ExerciseQuestion> findAllByContentListening(ContentListening contentListening, Pageable page);
+    List<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise);
 }

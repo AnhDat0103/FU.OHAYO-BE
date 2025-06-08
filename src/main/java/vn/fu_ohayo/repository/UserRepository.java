@@ -1,9 +1,14 @@
 package vn.fu_ohayo.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.Provider;
+import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Optional;
 

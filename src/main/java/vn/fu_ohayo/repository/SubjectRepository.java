@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.entity.Subject;
+import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Collection;
@@ -34,4 +35,11 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     boolean existsBySubjectNameAndSubjectIdNot(String subjectName, int subjectId);
 
     Page<Subject> findAllByStatus(SubjectStatus status, Pageable pageable);
+
+
+    @Query("SELECT s FROM Subject s " +
+            "JOIN s.users u " +
+            "WHERE u.userId = :userId AND s.status = :status")
+    Page<Subject> findAllByUsersAndStatus(long userId, SubjectStatus status, Pageable pageable);
+
 }

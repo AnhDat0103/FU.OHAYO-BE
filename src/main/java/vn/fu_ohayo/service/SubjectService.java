@@ -15,4 +15,6 @@ public interface SubjectService {
      void deleteSubject(int id);
     SubjectResponse getSubjectById(int id);
     Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size);
+
+    Page<SubjectResponse> getAllByUserId(int page, int size, long userId);
 }

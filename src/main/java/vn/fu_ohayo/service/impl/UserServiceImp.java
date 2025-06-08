@@ -2,6 +2,7 @@ package vn.fu_ohayo.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.AuthConfig;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
@@ -24,6 +25,7 @@ import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
 import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
+import vn.fu_ohayo.repository.RoleRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
@@ -34,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
-
+@Slf4j(topic = "UserService")
 public class UserServiceImp implements UserService {
 
     UserRepository userRepository;
@@ -43,6 +45,7 @@ public class UserServiceImp implements UserService {
     MailService mailService;
     JwtService jwtService;
     AdminUpdateUserMapper adminUpdateUserMapper;
+    RoleRepository roleRepository;
     private final SearchUserMapper searchUserMapper;
 
 
@@ -85,7 +88,7 @@ public class UserServiceImp implements UserService {
             return false;
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
-        var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
+        var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
         mailService.sendEmail(initialRegisterRequest.getEmail(),token);
         return true;
@@ -97,12 +100,15 @@ public class UserServiceImp implements UserService {
     public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email){
         User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
 
+        log.info(String.valueOf(completeProfileRequest.getRole()));
+
         user.setStatus(UserStatus.ACTIVE);
         user.setFullName(completeProfileRequest.getFullName());
         user.setGender(completeProfileRequest.getGender());
         user.setAddress(completeProfileRequest.getAddress());
         user.setPhone(completeProfileRequest.getPhone());
         user.setDob(completeProfileRequest.getDob());
+        user.setRole(roleRepository.findByName(completeProfileRequest.getRole()));
 
         userRepository.save(user);
         return userMapper.toUserResponse(user);

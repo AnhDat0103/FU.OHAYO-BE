@@ -4,22 +4,64 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.fu_ohayo.enums.TokenType;
+import vn.fu_ohayo.service.JwtService;
+import vn.fu_ohayo.service.UserServiceDetail;
 
 import java.io.IOException;
-
+@Slf4j(topic = "CustomizeRequestFilter")
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class CustomizeRequestFilter extends OncePerRequestFilter {
-
-
+    JwtService jwtService;
+    UserServiceDetail userServiceDetail;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-filterChain.doFilter(request, response);
-        response.setHeader("X-Content-Type-Options", "nosniff");
-        response.setHeader("X-XSS-Protection", "1; mode=block");
-        response.setHeader("X-Frame-Options", "DENY");
-        response.setHeader("Referrer-Policy", "no-referrer");
-        response.setHeader("Permissions-Policy", "geolocation=(), microphone=()");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+        log.info("Processing request: {} {}", method, path);
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            log.info("Extracted token: {}", token);
+
+            try {
+                String username = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN).getEmail();
+                log.info("Extracted username from token: {}", username);
+
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails user = userServiceDetail.UserServiceDetail().loadUserByUsername(username);
+
+                    SecurityContext context = SecurityContextHolder.createEmptyContext();
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    context.setAuthentication(authentication);
+                    SecurityContextHolder.setContext(context);
+                }
+            } catch (Exception e) {
+                log.error("Error extracting user information from token: {}", e.getMessage());
+                // Không throw ở đây nữa để không chặn luồng các API public hoặc OPTIONS
+            }
+        }
+
+        filterChain.doFilter(request, response);
     }
+
 }

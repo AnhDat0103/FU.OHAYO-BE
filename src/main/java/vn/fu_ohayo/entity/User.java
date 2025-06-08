@@ -41,12 +41,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
+
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
 //    @Email
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
@@ -55,6 +56,10 @@ public class User implements UserDetails, Serializable {
 
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
+
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 
     @Column(name = "full_name")
@@ -116,7 +121,7 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
 
@@ -148,8 +153,7 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Return user roles/authorities here. Example:
-        return List.of();
+        return List.of(this.role);
     }
 
     @PreUpdate

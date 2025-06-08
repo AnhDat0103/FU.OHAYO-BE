@@ -1,5 +1,6 @@
 package vn.fu_ohayo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,11 +11,12 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "membership_level_of_user")
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
 public class MembershipLevelOfUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,8 @@ public class MembershipLevelOfUser {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-     User user;
+    @JsonIgnore
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "membership_level_id", nullable = false)
@@ -36,7 +39,6 @@ public class MembershipLevelOfUser {
     @Column(nullable = false)
      LocalDate endDate;
 
-    // ✅ Tự gán startDate nếu chưa được gán
     @PrePersist
     public void prePersist() {
         if (this.startDate == null) {

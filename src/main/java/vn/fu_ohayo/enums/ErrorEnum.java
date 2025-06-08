@@ -49,7 +49,7 @@ public enum ErrorEnum {
     GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
     CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
     VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
-    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " );
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
     EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." );
 
 

@@ -7,6 +7,7 @@ import vn.fu_ohayo.dto.request.GrammarRequest;
 import vn.fu_ohayo.dto.request.PatchGrammarRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.GrammarResponse;
+import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.service.GrammarService;
 
 @RestController
@@ -69,6 +70,19 @@ public class GrammarController {
                 .status("success")
                 .message("Grammar partially updated successfully")
                 .data(patchedGrammar)
+                .build();
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<Page<GrammarResponse>> getAllGrammars(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<GrammarResponse> grammarResponses = grammarService.getAllGrammarsPage(page, size);
+        return ApiResponse.<Page<GrammarResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched all grammars successfully")
+                .data(grammarResponses)
                 .build();
     }
 }

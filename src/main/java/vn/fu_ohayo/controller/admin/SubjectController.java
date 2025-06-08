@@ -1,19 +1,12 @@
-package vn.fu_ohayo.controller;
+package vn.fu_ohayo.controller.admin;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
-import vn.fu_ohayo.entity.User;
-import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.service.SubjectService;
 
@@ -85,7 +78,7 @@ public class SubjectController {
                 .build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}")   //@GetMapping("/{id:\\d+}")
     public ApiResponse<SubjectResponse> getSubjectById(@PathVariable("id") int id) {
         return ApiResponse.<SubjectResponse>builder()
                 .code("200")

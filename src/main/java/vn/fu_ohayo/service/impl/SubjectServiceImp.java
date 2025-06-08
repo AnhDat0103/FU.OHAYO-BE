@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.SubjectResponse;
+import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -12,6 +13,7 @@ import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.SubjectMapper;
+import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.LessonRepository;
 import vn.fu_ohayo.repository.SubjectRepository;
 import vn.fu_ohayo.repository.UserRepository;
@@ -28,14 +30,17 @@ public class SubjectServiceImp implements SubjectService {
     private final SubjectMapper subjectMapper;
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public SubjectServiceImp(SubjectRepository subjectRepository, SubjectMapper subjectMapper,
                              LessonRepository lessonRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository,
+                             UserMapper userMapper) {
         this.subjectRepository = subjectRepository;
         this.subjectMapper = subjectMapper;
         this.lessonRepository = lessonRepository;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override

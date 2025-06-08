@@ -1,5 +1,5 @@
 
-package vn.fu_ohayo.controller;
+package vn.fu_ohayo.controller.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

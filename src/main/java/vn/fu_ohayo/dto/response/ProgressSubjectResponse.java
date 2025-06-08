@@ -16,9 +16,9 @@ import java.util.Date;
 public class ProgressSubjectResponse {
     private int progressId;
 
-    private int userId;
+    private UserResponse user;
 
-    private int subjectId;
+    private SubjectResponse subject;
 
     private ProgressStatus progressStatus;
 

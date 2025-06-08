@@ -7,7 +7,7 @@ import vn.fu_ohayo.enums.TokenType;
 import java.util.Collection;
 
 public interface JwtService {
-    String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities);
-    String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities);
+    String generateAccessToken(long userId, String email, Collection<? extends GrantedAuthority> authorities);
+    String generateRefreshToken(long userId, String email, Collection<? extends GrantedAuthority> authorities);
     ExtractTokenResponse extractUserInformation(String token, TokenType type);
 }

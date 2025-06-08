@@ -12,4 +12,5 @@ public interface UserMapper {
     User toUser(UserRegister userRegister);
     UserResponse toUserResponse(User user);
     User toUser(AddUserRequest addUserRequest);
+    User toUser(UserResponse userResponse);
 }

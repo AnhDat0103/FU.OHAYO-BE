@@ -72,17 +72,17 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public Page<SubjectResponse> getAllByUserId(int page, int size, long userId) {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-//
-//        Page<Subject> subject = progressSubjectRepository.findAllSubjectsByUserAndProgressStatus(user,Pro)
-//        if( subject != null && subject.hasContent()) {
-//            return subject.map(subjectMapper::toSubjectResponse)
-//                    .map(s -> {
-//                        s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
-//                        s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
-//                        return s;
-//                    });
-//        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+
+        Page<Subject> subject = progressSubjectRepository.findAllSubjectsByUserAndSubject_Status(user, SubjectStatus.ACTIVE, PageRequest.of(page, size));
+        if( subject != null && subject.hasContent()) {
+            return subject.map(subjectMapper::toSubjectResponse)
+                    .map(s -> {
+                        s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
+                        s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
+                        return s;
+                    });
+        }
         return getAllSubjects(page, size);
     }
 

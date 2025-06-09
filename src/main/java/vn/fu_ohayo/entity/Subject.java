@@ -63,9 +63,6 @@ public class Subject {
     @JsonIgnore
     private java.util.List<Lesson> lessons;
 
-    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
-    private Set<User> users;
-
     @OneToMany(
             mappedBy = "subject",
             cascade = CascadeType.ALL,

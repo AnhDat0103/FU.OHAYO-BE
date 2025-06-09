@@ -27,7 +27,9 @@ public class SubjectEnrollmentController {
             @RequestParam() int subjectId,
             @RequestParam() int userId
     ) {
-        progressSubjectService.enrollCourse(subjectId, userId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        progressSubjectService.enrollCourse(subjectId, email);
         return ApiResponse.<String>builder()
                 .code("200")
                 .status("success")

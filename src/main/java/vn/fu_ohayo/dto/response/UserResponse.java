@@ -9,6 +9,8 @@ import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.UserStatus;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -16,7 +18,7 @@ import vn.fu_ohayo.enums.UserStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponse {
 
-    private int userId;
+    private Long userId;
 
     private String email;
 

@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class LessonExerciseResponse {
 
+    private int id;
     private String title;
     private long duration;
     private List<ExerciseQuestionResponse> content;

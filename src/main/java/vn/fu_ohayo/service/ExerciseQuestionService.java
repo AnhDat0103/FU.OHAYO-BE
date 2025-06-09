@@ -20,5 +20,5 @@ public interface ExerciseQuestionService {
     void deleteExerciseQuestionById(int id);
     ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequestForListening ExerciseQuestionRequestForListening);
     List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(
-            List<ExerciseQuestionRequestForListening> ExerciseQuestionRequestForListenings);
+    List<ExerciseQuestionRequestForListening> ExerciseQuestionRequestForListenings);
 }

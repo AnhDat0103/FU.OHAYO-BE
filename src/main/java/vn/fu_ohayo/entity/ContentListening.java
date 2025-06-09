@@ -44,6 +44,7 @@ public class ContentListening {
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
 
+    @Column(name = "audio_file")
     private String audioFile;
 
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)

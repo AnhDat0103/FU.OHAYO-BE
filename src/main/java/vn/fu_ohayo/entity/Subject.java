@@ -63,11 +63,7 @@ public class Subject {
     @JsonIgnore
     private java.util.List<Lesson> lessons;
 
-    @OneToMany(
-            mappedBy = "subject",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProgressSubject> progressSubjects;
 
     @PrePersist

@@ -14,7 +14,6 @@ import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -64,10 +63,11 @@ public class Subject {
     @JsonIgnore
     private java.util.List<Lesson> lessons;
 
-    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
-    private Set<User> users;
-
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "subject",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     private List<ProgressSubject> progressSubjects;
 
     @PrePersist

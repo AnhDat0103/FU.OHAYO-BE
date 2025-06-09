@@ -24,12 +24,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     boolean existsBySubjectName(String subjectName);
 
-    @Query("SELECT COUNT(DISTINCT su.userId) FROM Subject s " +
-            "LEFT JOIN s.users su" +
-            " WHERE s.subjectId = :subjectId"
-    )
-    int countUsersBySubjectId(@Param("subjectId") int subjectId);
-
     boolean existsBySubjectCodeAndSubjectIdNot(String subjectCode, int subjectId);
 
     boolean existsBySubjectNameAndSubjectIdNot(String subjectName, int subjectId);
@@ -37,9 +31,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     Page<Subject> findAllByStatus(SubjectStatus status, Pageable pageable);
 
 
-    @Query("SELECT s FROM Subject s " +
-            "JOIN s.users u " +
-            "WHERE u.userId = :userId AND s.status = :status")
-    Page<Subject> findAllByUsersAndStatus(long userId, SubjectStatus status, Pageable pageable);
+//    @Query("SELECT s FROM Subject s " +
+//            "JOIN s. " +
+//            "WHERE u.userId = :userId AND s.status = :status")
+//    Page<Subject> findAllByUsersAndStatus(long userId, SubjectStatus status, Pageable pageable);
 
 }

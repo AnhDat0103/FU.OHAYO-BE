@@ -5,8 +5,9 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ProgressStatus;
 
 @Repository
 public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject, Integer> {
-    ProgressSubject findBySubjectAndUser(Subject subject, User user);
+    ProgressSubject findBySubjectAndUserAndProgressStatus(Subject subject, User user, ProgressStatus progressStatus);
 }

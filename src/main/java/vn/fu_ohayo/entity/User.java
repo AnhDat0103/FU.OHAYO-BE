@@ -124,15 +124,6 @@ public class User implements UserDetails, Serializable {
         return this.email;
     }
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "User_Subjects",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id")
-    )
-    private List<Subject> subjects;
-
     @OneToMany(mappedBy = "parent")
     private List<ParentStudent> children;
 

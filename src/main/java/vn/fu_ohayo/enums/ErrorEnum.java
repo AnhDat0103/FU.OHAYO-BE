@@ -9,6 +9,7 @@ public enum ErrorEnum {
 
     // 1xxx - validation
     INVALID_FIELDS("1001","Invalid fields"),
+
     INVALID_EMAIL("1002","Email is invalid"),
     INVALID_CATEGORY_CONTENT_READING("1003","Choose right category contentt" ),
     INVALID_ANSWER_CORRECT_COUNT("1004","Have to choose exactly one correct answer for the question." ),
@@ -20,7 +21,7 @@ public enum ErrorEnum {
     EMAIL_OR_PASSWORD_INCORRECT("2004", "Email or password is incorrect."),
 
     // 3xxx - authorization
-
+    ORDER_ID_NOT_FOUND("3001", "Order ID not found"),
 
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
@@ -43,6 +44,7 @@ public enum ErrorEnum {
     LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" ),
 
+
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
@@ -55,6 +57,9 @@ public enum ErrorEnum {
 
 
     // 5xxx - server error
+    // 6xxx - PaymentErrorCode
+
+
 
     //message validation
     public static final String INVALID_STATUS_MS = "Status is invalid";
@@ -97,6 +102,7 @@ public enum ErrorEnum {
     public static final String MIN_TIME_1 = "Time must be greater than 1 minute";
     public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
     public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
+
 
     private final String code;
     private final String message;

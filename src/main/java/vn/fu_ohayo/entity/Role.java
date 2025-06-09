@@ -1,10 +1,8 @@
 package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 import vn.fu_ohayo.enums.RoleEnum;
 
 import java.util.Set;
@@ -13,9 +11,10 @@ import java.util.Set;
 @Table(name = "Roles")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id @GeneratedValue(
             strategy = GenerationType.IDENTITY
@@ -39,4 +38,9 @@ public class Role {
     )
 
     private Set<Permission> permissions;
+
+    @Override
+    public String getAuthority() {
+        return "ROLE_" + name.name();
+    }
 }

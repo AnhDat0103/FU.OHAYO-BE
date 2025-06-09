@@ -18,7 +18,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponse {
 
-    private int userId;
+    private Long userId;
 
     private String email;
 

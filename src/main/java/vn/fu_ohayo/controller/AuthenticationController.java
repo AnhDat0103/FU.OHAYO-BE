@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
@@ -109,12 +110,25 @@ public class AuthenticationController {
     @PostMapping("/complete-profile")
     public ApiResponse<String> completeProfile(@RequestParam String email, @RequestBody CompleteProfileRequest completeProfileRequest) {
         log.info(email);
+
         userService.completeProfile(completeProfileRequest, email);
         return ApiResponse.<String>builder()
                 .code("200")
                 .status("OK")
                 .message("Profile completed successfully")
                 .data("Profile completed successfully")
+                .build();
+    }
+
+    @GetMapping("/complete")
+    public ApiResponse<String> getContext() {
+        String a = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return ApiResponse.<String>builder()
+                .code("200")
+                .status("OK")
+                .message("Profile completed successfully")
+                .data(a)
                 .build();
     }
 
@@ -129,7 +143,7 @@ public class AuthenticationController {
                 .sameSite("None")
                 .maxAge(60 * 60 * 24 * 7L)
                 .build();
-
+        log.info("User logged in successfully: {}", signInRequest.getEmail());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(ApiResponse.<TokenResponse>builder()

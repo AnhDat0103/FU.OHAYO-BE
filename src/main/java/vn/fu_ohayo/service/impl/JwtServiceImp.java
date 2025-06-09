@@ -38,7 +38,7 @@ public class JwtServiceImp implements JwtService {
     private long expiryDay;
 
     @Override
-    public String generateAccessToken(long userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateAccessToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
         claims.put("scope", authorities);
@@ -46,7 +46,7 @@ public class JwtServiceImp implements JwtService {
     }
 
     @Override
-    public String generateRefreshToken(long userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateRefreshToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
         claims.put("scope", authorities);
@@ -75,7 +75,7 @@ public class JwtServiceImp implements JwtService {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * expiryMinutes))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * expiryMinutes))
                 .signWith(getKey(TokenType.ACCESS_TOKEN), SignatureAlgorithm.HS256)
                 .compact();
     }

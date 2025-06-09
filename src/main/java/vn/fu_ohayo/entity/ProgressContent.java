@@ -43,5 +43,4 @@ public class ProgressContent {
         this.createdAt = new Date();
     }
 
-
 }

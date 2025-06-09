@@ -19,8 +19,6 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.exception.AppException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
 import vn.fu_ohayo.mapper.SearchUserMapper;

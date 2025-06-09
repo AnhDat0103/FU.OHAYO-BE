@@ -8,7 +8,6 @@ import vn.fu_ohayo.dto.request.LessonRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.LessonResponse;
 import vn.fu_ohayo.enums.LessonStatus;
-import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.service.LessonService;
 
 import java.util.List;

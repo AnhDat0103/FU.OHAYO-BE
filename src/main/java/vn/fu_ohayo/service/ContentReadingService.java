@@ -2,8 +2,12 @@ package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
 import vn.fu_ohayo.dto.request.ContentReadingRequest;
-import vn.fu_ohayo.dto.response.ContentReadingResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.ContentReading;
+import vn.fu_ohayo.entity.Grammar;
+import vn.fu_ohayo.entity.Vocabulary;
+
+import java.util.List;
 
 public interface ContentReadingService {
     //    List<ContentReading> getAllContentReading() ;
@@ -14,4 +18,11 @@ public interface ContentReadingService {
     void deleteContentReadingById(Long id);
     ContentReadingResponse updatePatchContentReading(long id, ContentReadingRequest request);
     Page<ContentReadingResponse> getContentReadingPage(int page, int size);
+    ContentReadingVocabularyResponse addVocabularyToContentReading(Long contentReadingId, int vocabularyId );
+    void removeVocabularyFromContentReading(Long contentReadingId, int vocabularyId);
+    ContentReadingGrammarResponse addGrammarToContentReading(Long contentReadingId, int grammarId);
+    void removeGrammarFromContentReading(Long contentReadingId, int grammarId);
+    List<VocabularyResponse> getVocabulariesByContentReadingId(long contentReadingId);
+    List<GrammarResponse> getGrammarsByContentReadingId(long contentReadingId);
+
 }

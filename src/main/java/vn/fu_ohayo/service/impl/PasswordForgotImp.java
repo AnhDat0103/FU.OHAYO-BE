@@ -3,6 +3,7 @@ package vn.fu_ohayo.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.atn.LexerTypeAction;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +25,7 @@ public class PasswordForgotImp implements PasswordForgotService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
+    private Random random = new Random();
 
     @AllArgsConstructor
     public static class TokenInfo {

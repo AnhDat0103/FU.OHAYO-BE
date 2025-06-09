@@ -1,6 +1,5 @@
 package vn.fu_ohayo.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;

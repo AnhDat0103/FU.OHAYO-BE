@@ -9,7 +9,6 @@ import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.service.ContentSpeakingService;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -93,12 +92,12 @@ public class ContentSpeakingController {
     public  ApiResponse<ContentSpeakingResponse> patchContentSpeaking(
             @PathVariable Long id,
             @Valid @RequestBody ContentSpeakingRequest request){
-        ContentSpeakingResponse ContentSpeakingResponse = contentSpeakingService.updatePatchContentSpeaking(id,request );
+        ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePatchContentSpeaking(id,request );
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Updated all fields of content speaking")
-                .data(ContentSpeakingResponse)
+                .data(contentSpeakingResponse)
                 .build();
     }
 }

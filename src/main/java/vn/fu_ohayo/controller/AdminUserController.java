@@ -12,9 +12,11 @@ import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.service.UserService;
-import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.util.List;
+
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_CODE_RESPONSE;
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
 
 @RestController()
 @RequiredArgsConstructor
@@ -26,8 +28,8 @@ public class AdminUserController {
     @GetMapping
     public ApiResponse<List<SearchUserResponse>> searchUsers(@Valid @ModelAttribute SearchUserRequest request) {
         return ApiResponse.<List<SearchUserResponse>>builder()
-                .code("200")
-                .status("success")
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .status(HTTP_SUCCESS_RESPONSE)
                 .message("Get user by name successfully")
                 .data(userService.searchUsersByName(request))
                 .build();
@@ -55,7 +57,7 @@ public class AdminUserController {
     }
 
     @PostMapping
-    public ApiResponse<UserResponse> AddUser(@RequestBody @Valid AddUserRequest addUserRequest) {
+    public ApiResponse<UserResponse> addUser(@RequestBody @Valid AddUserRequest addUserRequest) {
         return ApiResponse.<UserResponse>builder()
                 .code("200")
                 .status("success")

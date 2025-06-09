@@ -12,6 +12,8 @@ public enum ErrorEnum {
 
     INVALID_EMAIL("1002","Email is invalid"),
     INVALID_CATEGORY_CONTENT_READING("1003","Choose right category contentt" ),
+    INVALID_ANSWER_CORRECT_COUNT("1004","Have to choose exactly one correct answer for the question." ),
+
     // 2xxx - authentication
     EMAIL_EXIST("2001","Email is used to register" ),
     PHONE_EXIST("2002", "Phone is used to register."),
@@ -45,7 +47,12 @@ public enum ErrorEnum {
 
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
-    GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." );
+    GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
+    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
+    CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
+    VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " );
+    EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." );
 
 
     // 5xxx - server error
@@ -78,7 +85,7 @@ public enum ErrorEnum {
     public static final String INVALID_SUBJECT_NAME = "Subject name must be less than 50 characters";
     public static final String NOT_EMPTY_JLPT_LEVEL = "JLPT level must not be empty";
     public static final String NOT_EMPTY_PART_OF_SPEECH = "Part of speech must not be empty";
-    public static final String Not_EMPTY_MEANING = "Meaning must not be null";
+    public static final String NOT_EMPTY_MEANING = "Meaning must not be null";
     public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
     public static final String NOT_EMPTY_SCRIPT = "script can not null";
     public static final String NOT_EMPTY_DATE = "Date can not null";
@@ -92,6 +99,8 @@ public enum ErrorEnum {
     public static final String MAX_LENGTH_200 = "input must be less than 200 characters";
     public static final String MAX_LENGTH_500 = "input must be less than 500 characters";
     public static final String MIN_TIME_1 = "Time must be greater than 1 minute";
+    public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
+    public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
 
 
     private final String code;

@@ -3,6 +3,7 @@ package vn.fu_ohayo.controller;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
@@ -32,12 +33,12 @@ public class SubjectController {
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllSubjects(page, size))
+                .data(subjectService.getAllSubjectsForAdmin(page, size))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest) {
+    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest, MultipartFile image, MultipartFile video) {
         return ApiResponse.<SubjectResponse>builder()
                 .code("201")
                 .status("success")

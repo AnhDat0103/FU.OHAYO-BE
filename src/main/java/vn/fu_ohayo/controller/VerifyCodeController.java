@@ -15,14 +15,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class VerifyCodeController {
 
-    private final PasswordForgotImp PasswordForgotImp;
+    private final PasswordForgotImp passwordForgotImp;
 
     //kiem tra ma xac nhan co dung voi ma da gui den email hay khong
     @PostMapping("/verify-reset-code")
     public ResponseEntity<?> verifyResetCode(@RequestBody VerifyCodeRequest request) {
-        System.out.println("Verifying code: " + request.getCode() + " for email: " + request.getEmail());
-        PasswordForgotImp.TokenInfo tokenInfo = PasswordForgotImp.getTokenStore().get(request.getCode());
-        if (PasswordResetValidate.isTokenValid(request.getCode(), PasswordForgotImp.getTokenStore())) {
+        PasswordForgotImp.TokenInfo tokenInfo = passwordForgotImp.getTokenStore().get(request.getCode());
+        if (PasswordResetValidate.isTokenValid(request.getCode(), passwordForgotImp.getTokenStore())) {
             return ResponseEntity.status(404).body("Invalid code");
         }
         if (!tokenInfo.email.equals(request.getEmail())) {

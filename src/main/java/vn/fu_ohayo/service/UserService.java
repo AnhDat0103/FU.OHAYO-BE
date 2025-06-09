@@ -4,7 +4,6 @@ import vn.fu_ohayo.dto.request.AddUserRequest;
 import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
-import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.SearchUserResponse;

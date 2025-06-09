@@ -1,9 +1,7 @@
 package vn.fu_ohayo.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryListeningEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
-
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor

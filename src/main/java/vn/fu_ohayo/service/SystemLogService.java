@@ -1,8 +1,6 @@
 package vn.fu_ohayo.service;
 
-import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.SystemLogRequest;
-import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.SystemLogResponse;
 
 import java.util.List;

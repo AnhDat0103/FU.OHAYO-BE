@@ -84,4 +84,5 @@ public class ContentListeningServiceImp implements ContentListeningService {
         Page<ContentListening> prs = contentListeningRepository.findAll(pageable);
         Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
         return responsePage;    }
+
 }

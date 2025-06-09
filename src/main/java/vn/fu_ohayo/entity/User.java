@@ -131,7 +131,7 @@ public class User implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
-    private Set<Subject> subjects;
+    private List<Subject> subjects;
 
     @OneToMany(mappedBy = "parent")
     private List<ParentStudent> children;

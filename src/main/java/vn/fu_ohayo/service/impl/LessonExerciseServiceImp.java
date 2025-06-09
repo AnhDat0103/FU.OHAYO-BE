@@ -67,6 +67,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                         exerciseQuestionResponses.add(ex);
                     }
             return LessonExerciseResponse.builder()
+                    .id(le.getExerciseId())
                     .title(le.getTitle())
                     .content(exerciseQuestionResponses)
                     .lessonId(lessonId)
@@ -87,6 +88,23 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
 
     @Override
     public void deleteExerciseLesson(int id) {
+
+    }
+
+    @Override
+    public Page<ExerciseQuestionResponse> getExerciseQuestionByExerciseLesson(int page, int size, int exerciseId) {
+        LessonExercise exercise = lessonExerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
+        Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(exercise, PageRequest.of(page, size));
+        return exerciseQuestions.map(e -> {
+            return ExerciseQuestionResponse.builder()
+                    .exerciseQuestionId(e.getExerciseQuestionId())
+                    .questionText(e.getQuestionText())
+                    .createdAt(e.getCreatedAt())
+                    .updatedAt(e.getUpdatedAt())
+                    .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(e))
+                    .build();
+        });
 
     }
 }

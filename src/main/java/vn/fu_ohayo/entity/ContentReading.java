@@ -66,7 +66,7 @@ public class ContentReading {
 
     @ManyToMany
     @JoinTable(
-            name = "ContentReading_Vocabulary",
+            name = "Content_Reading_Vocabulary",
             joinColumns = @JoinColumn(name = "content_reading_id"),
             inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
     )
@@ -74,7 +74,7 @@ public class ContentReading {
 
     @ManyToMany
     @JoinTable(
-            name = "ContentReading_Grammar",
+            name = "Content_Reading_Grammar",
             joinColumns = @JoinColumn(name = "content_reading_id"),
             inverseJoinColumns = @JoinColumn(name = "grammar_id")
     )

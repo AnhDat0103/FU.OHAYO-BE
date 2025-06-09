@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @org.springframework.context.annotation.Configuration
 @RequiredArgsConstructor
 
@@ -35,11 +36,12 @@ public class AuthConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(passwordEncoder());
-        authProvider.setUserDetailsService(userServiceDetail.userDetailsService());
+        authProvider.setUserDetailsService(userServiceDetail.UserServiceDetail());
         return authProvider;
     }
 

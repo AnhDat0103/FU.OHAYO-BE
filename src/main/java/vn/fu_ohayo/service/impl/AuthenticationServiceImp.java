@@ -22,6 +22,7 @@ import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
+import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.Provider;
@@ -35,7 +36,9 @@ import vn.fu_ohayo.service.JwtService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j(topic = "AUTHENTICATION-SERVICE")
 @Service
@@ -78,15 +81,17 @@ public class AuthenticationServiceImp implements AuthenticationService {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("User in contextHolder: ", SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (AuthenticationException e) {
+            log.info("Authentication failed for user: {}", request.getEmail());
             throw new AccessDeniedException(e.getMessage());
         }
         User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
-        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(user.getRole());
+        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), roles);
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
     }
 
@@ -237,16 +242,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
         User user = new User();
         if(userExist) {
             return UserFromProvider.builder().email(email).isExist(true).build();
-//              user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-//            if (!user.getProvider().equals(providerEnum)
-//                    && Provider.GOOGLE.equals(providerEnum)
-//                    && user.getProvider().equals(Provider.LOCAL)
-//                    && user.getStatus().equals(UserStatus.ACTIVE)) {
-//                return UserFromProvider.builder().email(email).isExist(false).build();
-//            }
-//            if(providerEnum.equals(user.getProvider()) && user.getStatus().equals(UserStatus.ACTIVE)) {
-//                return UserFromProvider.builder().email(email).isExist(false).build();
-//            }
         }
         user.setEmail(email);
         user.setProvider(providerEnum);

@@ -13,7 +13,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -68,7 +68,7 @@ public class Subject {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private Set<ProgressSubject> progressSubjects;
+    private List<ProgressSubject> progressSubjects;
 
     @PrePersist
     protected void onCreate() {

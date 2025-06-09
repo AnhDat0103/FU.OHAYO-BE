@@ -24,6 +24,6 @@ public class MembershipLevel {
     @Column(name = "duration", nullable = true)
     Integer durationInDays;
 
-    private Long price;
+    private double price;
 
 }

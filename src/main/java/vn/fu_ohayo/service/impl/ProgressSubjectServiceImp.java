@@ -23,37 +23,34 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
 
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final ProgressSubjectRepository progressSubjectRepository;
-    private final SubjectMapper subjectMapper;
 
 
     public ProgressSubjectServiceImp(SubjectRepository subjectRepository,
                                      UserRepository userRepository,
-                                     UserMapper userMapper,
-                                     ProgressSubjectRepository progressSubjectRepository, SubjectMapper subjectMapper) {
+                                     ProgressSubjectRepository progressSubjectRepository) {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.progressSubjectRepository = progressSubjectRepository;
-        this.subjectMapper = subjectMapper;
     }
     @Override
-    public void enrollCourse(int courseId, long userId) {
+    public void enrollCourse(int courseId, String email) {
         Subject subject = subjectRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (progressSubjectRepository.existsBySubjectAndUser(subject, user)) {
-            throw new AppException(ErrorEnum.USER_ALREADY_ENROLLED);
+        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUserAndProgressStatus(subject, user, ProgressStatus.IN_PROGRESS);
+        if (existingProgress != null) {
+            existingProgress.setStartDate(new Date());
+            return;
         }
 
         ProgressSubject progressSubject = ProgressSubject.builder()
                 .subject(subject)
                 .startDate(new Date())
-                .subject(subject)
+                .user(user)
                 .progressStatus(ProgressStatus.IN_PROGRESS)
                 .build();
         progressSubjectRepository.save(progressSubject);

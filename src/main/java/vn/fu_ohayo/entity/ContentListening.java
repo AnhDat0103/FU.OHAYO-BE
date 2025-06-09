@@ -62,6 +62,9 @@ public class ContentListening {
     @OneToMany(mappedBy = "contentListening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ExerciseQuestion> exerciseQuestions;
 
+    @OneToMany(mappedBy = "contentListening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProgressContent> ProgressContent;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();

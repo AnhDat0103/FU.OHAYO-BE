@@ -46,14 +46,16 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (progressSubjectRepository.existsBySubjectAndUser(subject, user)) {
-            throw new AppException(ErrorEnum.USER_ALREADY_ENROLLED);
+        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUser(subject, user);
+        if (existingProgress != null) {
+            existingProgress.setStartDate(new Date());
+            return;
         }
 
         ProgressSubject progressSubject = ProgressSubject.builder()
                 .subject(subject)
                 .startDate(new Date())
-                .subject(subject)
+                .user(user)
                 .progressStatus(ProgressStatus.IN_PROGRESS)
                 .build();
         progressSubjectRepository.save(progressSubject);

@@ -8,5 +8,5 @@ import vn.fu_ohayo.entity.User;
 
 @Repository
 public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject, Integer> {
-    boolean existsBySubjectAndUser(Subject subject, User user);
+    ProgressSubject findBySubjectAndUser(Subject subject, User user);
 }

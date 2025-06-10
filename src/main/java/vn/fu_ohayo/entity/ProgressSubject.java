@@ -34,6 +34,9 @@ public class ProgressSubject {
     @Column(name = "start_date")
     private Date startDate;
 
+    @Column(name = "viewed_at")
+    private Date viewedAt;
+
     @Column(name = "end_date")
     private Date endDate;
 

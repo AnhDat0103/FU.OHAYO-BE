@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SubjectService {
 
-     Page<SubjectResponse> getAllActiveSubjects(int page, int size);
+     Page<SubjectResponse> getAllActiveSubjects(int page, int size, long userId);
      SubjectResponse createSubject(SubjectRequest subjectRequest);
      SubjectResponse updateSubject(int id, SubjectRequest subjectRequest);
      void deleteSubject(int id);

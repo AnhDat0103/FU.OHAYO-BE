@@ -34,22 +34,28 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         this.progressSubjectRepository = progressSubjectRepository;
     }
     @Override
-    public void enrollCourse(int courseId, String email) {
+    public void enrollCourse(int courseId, long userId) {
         Subject subject = subjectRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUserAndProgressStatus(subject, user, ProgressStatus.IN_PROGRESS);
+        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUser(subject, user);
         if (existingProgress != null) {
-            existingProgress.setStartDate(new Date());
-            return;
+            if (existingProgress.getProgressStatus() == ProgressStatus.COMPLETED) {
+                return;
+            }
+            if (existingProgress.getProgressStatus() == ProgressStatus.IN_PROGRESS) {
+                existingProgress.setViewedAt(new Date());
+                return;
+            }
         }
 
         ProgressSubject progressSubject = ProgressSubject.builder()
                 .subject(subject)
                 .startDate(new Date())
+                .viewedAt(new Date())
                 .user(user)
                 .progressStatus(ProgressStatus.IN_PROGRESS)
                 .build();

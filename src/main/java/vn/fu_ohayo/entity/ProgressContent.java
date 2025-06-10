@@ -2,10 +2,7 @@ package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.Date;
@@ -15,6 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
+@Setter
+@Getter
 @Table(name = "Content_Progress")
 public class ProgressContent {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +36,10 @@ public class ProgressContent {
     @Column(name = "correct_answers")
     private int correctAnswers;
 
+    @Version
+    @Column (name = "version")
+    private int version;
+    
     @Enumerated(EnumType.STRING)
     private ProgressStatus progressStatus;
 

@@ -13,6 +13,4 @@ public interface ContentListeningService {
     void deleteContentListeningById(Long id);
     ContentListeningResponse updatePatchContentListening(long id, ContentListeningRequest request);
     Page<ContentListeningResponse> getContentListeningPage(int page, int size);
-    List<ContentListening> getContentListeningByUserId(Long id);
-
 }

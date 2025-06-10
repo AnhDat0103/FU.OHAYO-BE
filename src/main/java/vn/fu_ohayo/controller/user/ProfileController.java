@@ -18,13 +18,11 @@ public class ProfileController {
     private final ExerciseResultService exerciseResultService;
     private final ProgressGrammarService progressGrammarService;
     private final ProgressVocabularyService progressVocabularyService;
-    private final GrammarService grammarService;
 
-    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService, GrammarService grammarService) {
+    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService) {
         this.exerciseResultService = exerciseResultService;
         this.progressGrammarService = progressGrammarService;
         this.progressVocabularyService = progressVocabularyService;
-        this.grammarService = grammarService;
     }
 
     @GetMapping("/overview/learning_progress")
@@ -43,6 +41,39 @@ public class ProfileController {
                 .status("success")
                 .message("Fetched all lessons successfully")
                 .data(response)
+                .build();
+    }
+
+    @GetMapping("/progress/vocabulary")
+    ApiResponse<?> getProgressVocabularyByUserId(
+            @RequestParam long userId
+    ) {
+        return ApiResponse.<Object>builder()
+                .status("success")
+                .message("Fetched vocabulary progress successfully")
+                .data(progressVocabularyService.getProgressEachSubjectByUserId(userId))
+                .build();
+    }
+
+    @GetMapping("/progress/grammar")
+    ApiResponse<?> getProgressGrammarByUserId(
+            @RequestParam long userId
+    ) {
+        return ApiResponse.<Object>builder()
+                .status("success")
+                .message("Fetched grammar progress successfully")
+                .data(progressGrammarService.getProgressEachSubjectByUserId(userId))
+                .build();
+    }
+
+    @GetMapping("/progress/exercise")
+    ApiResponse<?> getProgressExerciseByUserId(
+            @RequestParam long userId
+    ) {
+        return ApiResponse.<Object>builder()
+                .status("success")
+                .message("Fetched exercise progress successfully")
+                .data(exerciseResultService.getProgressEachSubjectByUserId(userId))
                 .build();
     }
 }

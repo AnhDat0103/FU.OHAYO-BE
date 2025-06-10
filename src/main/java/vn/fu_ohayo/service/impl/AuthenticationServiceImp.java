@@ -106,7 +106,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
             User user = userRepository.findById(response.getId())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
-            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
+            Set<GrantedAuthority> roles = new HashSet<>();
+            roles.add(user.getRole());
+            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
             return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
         } catch (Exception e) {
             log.error("Error generating refresh token: {}", e.getMessage());

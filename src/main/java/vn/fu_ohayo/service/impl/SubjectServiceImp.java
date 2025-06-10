@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.SubjectRequest;
+import vn.fu_ohayo.dto.response.ProgressSubjectResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -48,7 +50,7 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public Page<SubjectResponse> getAllSubjects(int page, int size) {
+    public Page<SubjectResponse> getAllActiveSubjects(int page, int size) {
         return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE, PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
@@ -71,19 +73,24 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public Page<SubjectResponse> getAllByUserId(int page, int size, long userId) {
+    public Page<ProgressSubjectResponse> getAllByUserId(int page, int size, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        Page<ProgressSubject> progressSubjects = progressSubjectRepository.findAllByUserAndSubject_Status(user, SubjectStatus.ACTIVE, PageRequest.of(page, size));
 
-        Page<Subject> subject = progressSubjectRepository.findAllSubjectsByUserAndSubject_Status(user, SubjectStatus.ACTIVE, PageRequest.of(page, size));
-        if( subject != null && subject.hasContent()) {
-            return subject.map(subjectMapper::toSubjectResponse)
-                    .map(s -> {
-                        s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
-                        s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
-                        return s;
-                    });
+        if (progressSubjects.hasContent()) {
+            return progressSubjects.map(ps -> {
+                ProgressSubjectResponse response = new ProgressSubjectResponse();
+                response.setProgressId(ps.getProgressId());
+                response.setUser(userMapper.toUserResponse(ps.getUser()));
+                response.setSubject(subjectMapper.toSubjectResponse(ps.getSubject()));
+                response.setProgressStatus(ps.getProgressStatus());
+                response.getSubject().setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(ps.getSubject().getSubjectId(), LessonStatus.PUBLIC), 0));
+                response.getSubject().setCountUsers(
+                        Math.max(progressSubjectRepository.countUserBySubject_SubjectId(ps.getSubject().getSubjectId()), 0));
+                return response;
+            });
         }
-        return getAllSubjects(page, size);
+        return Page.empty();
     }
 
 

@@ -22,6 +22,8 @@ import java.security.Key;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Slf4j(topic = "JwtServiceImp")
 @Service
 public class JwtServiceImp implements JwtService {
@@ -40,16 +42,28 @@ public class JwtServiceImp implements JwtService {
     @Override
     public String generateAccessToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        if (authorities == null) {
+            authorities = List.of();
+        }
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
         claims.put("id", userId);
-        claims.put("scope", authorities);
+        claims.put("scope", roles);
         return generateAccessToken(claims, email);
     }
 
     @Override
     public String generateRefreshToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        if (authorities == null) {
+            authorities = List.of();
+        }
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
         claims.put("id", userId);
-        claims.put("scope", authorities.stream().map(grantedAuthority -> grantedAuthority.getAuthority()));
+        claims.put("scope", roles);
         return generateRefreshToken(claims, email);
     }
 

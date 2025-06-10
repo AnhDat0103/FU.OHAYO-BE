@@ -2,6 +2,7 @@ package vn.fu_ohayo.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,6 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
             "SELECT ps.subject FROM ProgressSubject ps WHERE ps.user = :user AND ps.subject.status = :subjectStatus"
     )
     Page<Subject> findAllSubjectsByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
+
+    Page<ProgressSubject> findAllByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
 }

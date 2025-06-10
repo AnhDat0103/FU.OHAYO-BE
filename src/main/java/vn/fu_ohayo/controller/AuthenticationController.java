@@ -26,12 +26,10 @@ import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
-import vn.fu_ohayo.service.ParentStudentController;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -45,7 +43,6 @@ public class AuthenticationController {
     UserRepository userRepository;
     AuthenticationServiceImp authenticationService;
     JwtService jwtService;
-    ParentStudentController parentStudentController;
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
@@ -140,15 +137,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @GetMapping("/generateCode")
-    public ApiResponse<String> generateCode () {
-        return ApiResponse.<String>builder()
-                .message("Sucess")
-                .status("OK")
-                .code("200")
-                .data(parentStudentController.generateCode())
-                .build();
-    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
         TokenResponse tokenResponse = authenticationService.getAccessToken(signInRequest);

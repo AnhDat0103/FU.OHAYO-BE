@@ -49,7 +49,7 @@ public class JwtServiceImp implements JwtService {
     public String generateRefreshToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
-        claims.put("scope", authorities);
+        claims.put("scope", authorities.stream().map(grantedAuthority -> grantedAuthority.getAuthority()));
         return generateRefreshToken(claims, email);
     }
 

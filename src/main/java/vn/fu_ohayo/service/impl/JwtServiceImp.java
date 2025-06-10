@@ -42,6 +42,9 @@ public class JwtServiceImp implements JwtService {
     @Override
     public String generateAccessToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        if (authorities == null) {
+            authorities = List.of();
+        }
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
@@ -53,6 +56,9 @@ public class JwtServiceImp implements JwtService {
     @Override
     public String generateRefreshToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        if (authorities == null) {
+            authorities = List.of();
+        }
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());

@@ -17,6 +17,7 @@ import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.ProgressSubjectService;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class ProgressSubjectServiceImp implements ProgressSubjectService {
@@ -41,15 +42,11 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUser(subject, user);
+        ProgressSubject existingProgress = progressSubjectRepository.findProgressSubjectBySubjectAndUser(subject, user);
+
         if (existingProgress != null) {
-            if (existingProgress.getProgressStatus() == ProgressStatus.COMPLETED) {
-                return;
-            }
-            if (existingProgress.getProgressStatus() == ProgressStatus.IN_PROGRESS) {
                 existingProgress.setViewedAt(new Date());
                 return;
-            }
         }
 
         ProgressSubject progressSubject = ProgressSubject.builder()

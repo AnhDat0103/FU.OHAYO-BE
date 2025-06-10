@@ -1,4 +1,4 @@
-package vn.fu_ohayo.controller;
+package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.GrammarRequest;
 import vn.fu_ohayo.dto.request.PatchGrammarRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.service.GrammarService;
 

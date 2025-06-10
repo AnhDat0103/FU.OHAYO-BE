@@ -1,4 +1,4 @@
-package vn.fu_ohayo.controller;
+package vn.fu_ohayo.controller.admin;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;

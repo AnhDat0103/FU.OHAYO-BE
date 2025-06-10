@@ -13,6 +13,7 @@ import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.UserProfileDTO;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -23,6 +24,7 @@ import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
 import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
+import vn.fu_ohayo.repository.SubjectRepository;
 import vn.fu_ohayo.repository.RoleRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
@@ -45,6 +47,7 @@ public class UserServiceImp implements UserService {
     AdminUpdateUserMapper adminUpdateUserMapper;
     RoleRepository roleRepository;
     private final SearchUserMapper searchUserMapper;
+    SubjectRepository subjectRepository;
 
 
     @Override
@@ -180,6 +183,5 @@ public class UserServiceImp implements UserService {
 
         return userMapper.toUserResponse(userRepository.save(userMapper.toUser(addUserRequest)));
     }
-
 
 }

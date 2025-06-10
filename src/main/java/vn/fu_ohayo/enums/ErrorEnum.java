@@ -9,7 +9,6 @@ public enum ErrorEnum {
 
     // 1xxx - validation
     INVALID_FIELDS("1001","Invalid fields"),
-
     INVALID_EMAIL("1002","Email is invalid"),
     INVALID_CATEGORY_CONTENT_READING("1003","Choose right category contentt" ),
     INVALID_ANSWER_CORRECT_COUNT("1004","Have to choose exactly one correct answer for the question." ),
@@ -44,15 +43,15 @@ public enum ErrorEnum {
     LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" ),
 
-
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
     GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
     CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
     VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
-    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " );
-    EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." );
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
+    EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." ),
+    USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." );
 
 
     // 5xxx - server error
@@ -101,7 +100,6 @@ public enum ErrorEnum {
     public static final String MIN_TIME_1 = "Time must be greater than 1 minute";
     public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
     public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
-
 
     private final String code;
     private final String message;

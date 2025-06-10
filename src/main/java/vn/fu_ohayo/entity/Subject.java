@@ -44,6 +44,12 @@ public class Subject {
 
     private String description;
 
+    @Size(max = 255, message = ErrorEnum.INVALID_THUMBNAIL_URL)
+    private String thumbnailUrl;
+
+    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
+    private String videoUrl;
+
     @Enumerated(EnumType.STRING)
     private SubjectStatus status;
 
@@ -54,7 +60,7 @@ public class Subject {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Lesson> lessons;
+    private java.util.List<Lesson> lessons;
 
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
     private Set<User> users;

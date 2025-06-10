@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Subject;
+import vn.fu_ohayo.enums.LessonStatus;
 
 import java.util.Optional;
 
@@ -18,4 +19,10 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     Page<Lesson> findAllBySubject(Subject subject, Pageable pageable);
 
     Optional<Lesson> getLessonByLessonId(int lessonId);
+
+    boolean existsByNameAndLessonIdNot(String name, int lessonId);
+
+    int countAllBySubject_SubjectIdAndStatus(int subjectId, LessonStatus status);
+
+    int countAllBySubject_SubjectId(int subjectSubjectId);
 }

@@ -73,10 +73,10 @@ public class VocabularyServiceImp implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
         );
-        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLesson(vocabularyRequest.getKanji(),
+        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLessonAndVocabularyIdNot(vocabularyRequest.getKanji(),
                     vocabularyRequest.getKana(),
                     vocabularyRequest.getMeaning(),
-                    lesson)){
+                    lesson, vocabularyId)){
                 throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         if(vocabularyRequest.getKanji() != null) {
@@ -127,6 +127,12 @@ public class VocabularyServiceImp implements VocabularyService {
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
         return vocabularyRepository.findAllByLesson(PageRequest.of(page, size), lesson)
+                .map(vocabularyMapper::toVocabularyResponse);
+    }
+
+    @Override
+    public Page<VocabularyResponse> getAllVocabularíesPage(int page, int size) {
+        return vocabularyRepository.findAll(PageRequest.of(page, size))
                 .map(vocabularyMapper::toVocabularyResponse);
     }
 }

@@ -1,7 +1,7 @@
 package vn.fu_ohayo.dto.request;
 
+
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,16 +10,15 @@ import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.List;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class ExerciseQuestionRequest {
+public class LessonExerciseRequest {
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
-    private String questionText;
-
-    @Size(min = 2, message = "The list must contain at least 2 answer")
-    private List<AnswerQuestionRequest> answers;
+    private String title;
+    private long duration;
+    private List<ExerciseQuestionRequest> content;
+    private int lessonId;
 }

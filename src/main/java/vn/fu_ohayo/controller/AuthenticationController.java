@@ -158,7 +158,7 @@ public class AuthenticationController {
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(60 * 60 * 24 * 7L)
                 .build();
         log.info("User logged in successfully: {}", signInRequest.getEmail());
         return ResponseEntity.ok()
@@ -180,7 +180,7 @@ public class AuthenticationController {
                 .secure(true)
                 .path("/")
                 .sameSite("None")
-                .maxAge(60 * 60 * 24 * 7)
+                .maxAge(7L * 24 * 60 * 60)
                 .build();
 
         return ResponseEntity.ok()

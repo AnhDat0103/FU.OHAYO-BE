@@ -8,14 +8,11 @@ import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
-import vn.fu_ohayo.repository.ContentRepository;
-import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.repository.DialogueRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DialogueServiceImp implements DialogueService {

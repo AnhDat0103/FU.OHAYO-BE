@@ -12,7 +12,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "Vocabularies",
@@ -46,7 +46,7 @@ public class Vocabulary {
     @Size(max = 50, message = ErrorEnum.MAX_LENGTH_50)
     private String romaji; // e.g., "kōkō" for 高校
 
-    @NotEmpty(message = ErrorEnum.Not_EMPTY_MEANING)
+    @NotEmpty(message = ErrorEnum.NOT_EMPTY_MEANING)
     @Size(max = 100, message =  ErrorEnum.MAX_LENGTH_100)
     private String meaning;
 
@@ -70,7 +70,7 @@ public class Vocabulary {
     private JlptLevel jlptLevel;
     
     @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
+    @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
     @Column(name = "created_at")
@@ -80,10 +80,10 @@ public class Vocabulary {
     private java.util.Date updatedAt;
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
-    private Set<ContentReading> contentReadings;
+    private List<ContentReading> contentReadings;
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
-    private Set<FavoriteVocabulary> favoriteVocabularies ;
+    private List<FavoriteVocabulary> favoriteVocabularies ;
 
     @PrePersist
     protected void onCreate() {

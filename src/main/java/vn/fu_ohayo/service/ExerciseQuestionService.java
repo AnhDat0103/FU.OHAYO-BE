@@ -1,7 +1,7 @@
 package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
-import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
+import vn.fu_ohayo.dto.request.ExerciseQuestionRequestForListening;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.entity.ExerciseQuestion;
@@ -14,12 +14,11 @@ import java.util.Set;
 public interface ExerciseQuestionService {
 
 
-    Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size);
+    Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size, long contentListeningId);
     ExerciseQuestionResponse getExerciseQuestionById(int id);
-    ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest exerciseQuestionRequest);
+    ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequestForListening ExerciseQuestionRequestForListening);
     void deleteExerciseQuestionById(int id);
-    ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequest exerciseQuestionRequest);
+    ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequestForListening ExerciseQuestionRequestForListening);
     List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(
-            List<ExerciseQuestionRequest> exerciseQuestionRequests);
-//    List<AnswerQuestionResponse> getAnwerQuestionByExerciseQuestionId(int id);
+            List<ExerciseQuestionRequestForListening> ExerciseQuestionRequestForListenings);
 }

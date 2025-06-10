@@ -1,7 +1,6 @@
 package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedModel;
 import vn.fu_ohayo.dto.request.LessonPatchRequest;
 import vn.fu_ohayo.dto.request.LessonRequest;
 import vn.fu_ohayo.dto.response.LessonResponse;

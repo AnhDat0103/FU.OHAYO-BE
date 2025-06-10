@@ -7,7 +7,6 @@ import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.enums.JlptLevel;
-import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.PartOfSpeech;
 import vn.fu_ohayo.service.VocabularyService;
 
@@ -90,6 +89,19 @@ public class VocabularyController {
                 .status("success")
                 .message("Fetched lesson statuses successfully")
                 .data(partOfSpeeches)
+                .build();
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<Page<VocabularyResponse>> getAllVocabularies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabularíesPage(page, size);
+        return ApiResponse.<Page<VocabularyResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched all vocabularies successfully")
+                .data(vocabularyResponses)
                 .build();
     }
 

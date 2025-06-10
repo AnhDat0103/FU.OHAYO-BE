@@ -6,7 +6,6 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.Provider;
 
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -16,5 +15,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailAndProvider(String email, Provider provider);
     Optional<User> findByEmailAndProvider(String email, Provider provider);
     boolean existsByPhone(String phone);
-
 }

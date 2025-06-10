@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
         User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        Set<Role> roles = new HashSet<>();
+        Set<GrantedAuthority> roles = new HashSet<>();
         roles.add(user.getRole());
         String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
         String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), roles);

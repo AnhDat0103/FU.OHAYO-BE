@@ -1,6 +1,6 @@
 package vn.fu_ohayo.service;
 
-public interface ParentStudentController {
+public interface ParentStudentService {
     String generateCode();
     String addParentStudent();
 

@@ -133,4 +133,9 @@ public class GrammarServiceImp implements GrammarService {
         Page<Grammar> grammarPage = grammarRepository.findAllByLessonAndDeletedIsFalse(lesson, PageRequest.of(page, size));
         return grammarPage.map(grammarMapper::toGrammarResponse);
     }
+
+    @Override
+    public Page<GrammarResponse> getAllGrammarsPage(int page, int size) {
+        return grammarRepository.findAll(PageRequest.of(page, size))
+                .map(grammarMapper::toGrammarResponse);    }
 }

@@ -1,10 +1,12 @@
 package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.LessonStatus;
 
 import java.util.Date;
@@ -47,18 +49,21 @@ public class Lesson {
     @Enumerated(EnumType.STRING)
     private LessonStatus status;
 
+//    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
+//    private String videoUrl;
+
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Vocabulary> vocabularies;
+    private java.util.List<Vocabulary> vocabularies;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Grammar> grammars;
+    private java.util.List<Grammar> grammars;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<LessonExercise> lessonExercises;
+    private java.util.List<LessonExercise> lessonExercises;
 
     @PrePersist
     protected void onCreate() {

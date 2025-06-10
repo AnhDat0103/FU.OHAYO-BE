@@ -26,4 +26,5 @@ public interface UserService {
     UserResponse deleteUser(Long userId);
     UserResponse updateUser(Long userId, AdminUpdateUserRequest adminUpdateUserRequest);
     UserResponse addUser(AddUserRequest addUserRequest);
+
 }

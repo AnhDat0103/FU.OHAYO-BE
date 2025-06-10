@@ -20,7 +20,7 @@ public enum ErrorEnum {
     EMAIL_OR_PASSWORD_INCORRECT("2004", "Email or password is incorrect."),
 
     // 3xxx - authorization
-
+    ORDER_ID_NOT_FOUND("3001", "Order ID not found"),
 
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
@@ -46,10 +46,18 @@ public enum ErrorEnum {
     VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
-    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." );
+    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
+    CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
+    VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
+    EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." ),
+    USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." );
 
 
     // 5xxx - server error
+    // 6xxx - PaymentErrorCode
+
+
 
     //message validation
     public static final String INVALID_STATUS_MS = "Status is invalid";

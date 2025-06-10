@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
@@ -31,7 +30,6 @@ import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -109,6 +107,7 @@ public class AuthenticationController {
     @PostMapping("/complete-profile")
     public ApiResponse<String> completeProfile(@RequestParam String email, @RequestBody CompleteProfileRequest completeProfileRequest) {
         log.info(email);
+
         userService.completeProfile(completeProfileRequest, email);
         return ApiResponse.<String>builder()
                 .code("200")
@@ -117,6 +116,27 @@ public class AuthenticationController {
                 .data("Profile completed successfully")
                 .build();
     }
+
+    @GetMapping("/complete")
+    public ApiResponse<String> getContext() {
+        String a = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if("anonymousUser".equals(a)) {
+            return ApiResponse.<String>builder()
+                    .code("200")
+                    .status("OK")
+                    .message("Profile completed successfully")
+                    .data("failed")
+                    .build();
+        }
+        return ApiResponse.<String>builder()
+                .code("200")
+                .status("OK")
+                .message("Profile completed successfully")
+                .data(a)
+                .build();
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
@@ -129,7 +149,7 @@ public class AuthenticationController {
                 .sameSite("None")
                 .maxAge(60 * 60 * 24 * 7L)
                 .build();
-
+        log.info("User logged in successfully: {}", signInRequest.getEmail());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(ApiResponse.<TokenResponse>builder()

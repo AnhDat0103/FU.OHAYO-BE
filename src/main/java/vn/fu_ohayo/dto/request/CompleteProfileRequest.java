@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.fu_ohayo.enums.Gender;
+import vn.fu_ohayo.enums.RoleEnum;
 
 import java.util.Date;
 
@@ -23,6 +24,8 @@ public class CompleteProfileRequest {
     @NotNull
     private Date dob;
 
+    @NotNull
+    private RoleEnum role;
 
     private String address;
 

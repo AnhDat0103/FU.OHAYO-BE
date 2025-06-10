@@ -20,10 +20,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Mã giao dịch từ VNPAY
-    @Column(name = "transaction_id", unique = true, nullable = false)
-    private String transactionId;
-
     // Người dùng thực hiện thanh toán
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id", nullable = false)

@@ -21,9 +21,9 @@ public class MembershipLevel {
     @Column(name = "level_name", nullable = false, unique = true)
     vn.fu_ohayo.enums.MembershipLevel name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "duration", nullable = true)
     Integer durationInDays;
 
-    private int price;
+    private double price;
 
 }

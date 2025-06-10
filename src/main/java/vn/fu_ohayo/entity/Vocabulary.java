@@ -12,7 +12,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "Vocabularies",
@@ -80,10 +80,10 @@ public class Vocabulary {
     private java.util.Date updatedAt;
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
-    private Set<ContentReading> contentReadings;
+    private List<ContentReading> contentReadings;
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
-    private Set<FavoriteVocabulary> favoriteVocabularies ;
+    private List<FavoriteVocabulary> favoriteVocabularies ;
 
     @PrePersist
     protected void onCreate() {

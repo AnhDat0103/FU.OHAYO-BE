@@ -22,6 +22,8 @@ import java.security.Key;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Slf4j(topic = "JwtServiceImp")
 @Service
 public class JwtServiceImp implements JwtService {
@@ -38,18 +40,24 @@ public class JwtServiceImp implements JwtService {
     private long expiryDay;
 
     @Override
-    public String generateAccessToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateAccessToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
         claims.put("id", userId);
-        claims.put("scope", authorities);
+        claims.put("scope", roles);
         return generateAccessToken(claims, email);
     }
 
     @Override
-    public String generateRefreshToken(int userId, String email, Collection<? extends GrantedAuthority> authorities) {
+    public String generateRefreshToken(Long userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
         claims.put("id", userId);
-        claims.put("scope", authorities);
+        claims.put("scope", roles);
         return generateRefreshToken(claims, email);
     }
 
@@ -75,7 +83,7 @@ public class JwtServiceImp implements JwtService {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * expiryMinutes))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * expiryMinutes))
                 .signWith(getKey(TokenType.ACCESS_TOKEN), SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -20,6 +20,4 @@ public class ExerciseQuestionResponse {
     private Date createdAt;
     private Date updatedAt;
     private List<AnswerQuestionRequest> answerQuestions;
-
-
 }

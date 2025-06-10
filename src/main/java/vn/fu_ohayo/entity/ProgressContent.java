@@ -31,9 +31,11 @@ public class ProgressContent {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "score")
-    @Size(max = 10)
-    private int score;
+    @Column(name = "total_questions")
+    private int totalQuestions;
+
+    @Column(name = "correct_answers")
+    private int correctAnswers;
 
     @Enumerated(EnumType.STRING)
     private ProgressStatus progressStatus;

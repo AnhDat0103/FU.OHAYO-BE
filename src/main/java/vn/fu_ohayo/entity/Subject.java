@@ -13,7 +13,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -60,10 +60,11 @@ public class Subject {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private java.util.Set<Lesson> lessons;
+    @JsonIgnore
+    private java.util.List<Lesson> lessons;
 
-    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
-    private Set<User> users;
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProgressSubject> progressSubjects;
 
     @PrePersist
     protected void onCreate() {

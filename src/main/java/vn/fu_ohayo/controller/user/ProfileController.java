@@ -1,15 +1,16 @@
 package vn.fu_ohayo.controller.user;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.LearningProgressOverviewResponse;
-import vn.fu_ohayo.service.ExerciseResultService;
-import vn.fu_ohayo.service.GrammarService;
-import vn.fu_ohayo.service.ProgressGrammarService;
-import vn.fu_ohayo.service.ProgressVocabularyService;
+import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.service.*;
 
 @RestController
 @RequestMapping("/profile")
@@ -18,17 +19,21 @@ public class ProfileController {
     private final ExerciseResultService exerciseResultService;
     private final ProgressGrammarService progressGrammarService;
     private final ProgressVocabularyService progressVocabularyService;
+    private final UserService userService;
 
-    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService) {
+    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService, UserService userService) {
         this.exerciseResultService = exerciseResultService;
         this.progressGrammarService = progressGrammarService;
         this.progressVocabularyService = progressVocabularyService;
+        this.userService = userService;
     }
 
     @GetMapping("/overview/learning_progress")
     ApiResponse<LearningProgressOverviewResponse> getLearningProgressResponse(
-            @RequestParam long userId
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        long userId = userService.getUserByEmail(email).getUserId();
          LearningProgressOverviewResponse response = LearningProgressOverviewResponse.builder()
                  .totalVocabularyAllSubject(progressVocabularyService.countAllVocabularySubjectInProgressByUserId(userId))
                  .totalVocabularyLearn(progressVocabularyService.countVocabularyLearnSubjectInProgressByUserId(userId))
@@ -46,8 +51,10 @@ public class ProfileController {
 
     @GetMapping("/progress/vocabulary")
     ApiResponse<?> getProgressVocabularyByUserId(
-            @RequestParam long userId
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        long userId = userService.getUserByEmail(email).getUserId();
         return ApiResponse.<Object>builder()
                 .status("success")
                 .message("Fetched vocabulary progress successfully")
@@ -57,8 +64,10 @@ public class ProfileController {
 
     @GetMapping("/progress/grammar")
     ApiResponse<?> getProgressGrammarByUserId(
-            @RequestParam long userId
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        long userId = userService.getUserByEmail(email).getUserId();
         return ApiResponse.<Object>builder()
                 .status("success")
                 .message("Fetched grammar progress successfully")
@@ -68,8 +77,10 @@ public class ProfileController {
 
     @GetMapping("/progress/exercise")
     ApiResponse<?> getProgressExerciseByUserId(
-            @RequestParam long userId
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        long userId = userService.getUserByEmail(email).getUserId();
         return ApiResponse.<Object>builder()
                 .status("success")
                 .message("Fetched exercise progress successfully")

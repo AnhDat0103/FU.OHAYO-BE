@@ -184,4 +184,9 @@ public class UserServiceImp implements UserService {
         return userMapper.toUserResponse(userRepository.save(userMapper.toUser(addUserRequest)));
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+    }
+
 }

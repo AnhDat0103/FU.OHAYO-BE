@@ -57,7 +57,7 @@ public class User implements UserDetails, Serializable {
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 

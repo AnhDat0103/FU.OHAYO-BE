@@ -25,7 +25,6 @@ public class ParentStudent {
     @JoinColumn(name = "parent_id", referencedColumnName = "user_id")
     private User parent;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", referencedColumnName = "user_id")
     private User student;

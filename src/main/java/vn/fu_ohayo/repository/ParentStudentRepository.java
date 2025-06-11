@@ -9,6 +9,6 @@ public interface ParentStudentRepository extends JpaRepository<ParentStudent, In
 {
     ParentStudent findByVerificationCode(String code);
     boolean existsByVerificationCode(String verificationCode);
-    Optional<ParentStudent> findByVerificationCodeAndStudentEmail(String verificationCode, String email);
+    Optional<ParentStudent> findByVerificationCodeAndStudentUserId(String verificationCode, Long id);
 
 }

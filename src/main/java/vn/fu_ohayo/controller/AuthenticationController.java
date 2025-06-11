@@ -23,6 +23,7 @@ import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
@@ -43,6 +44,7 @@ public class AuthenticationController {
     UserRepository userRepository;
     AuthenticationServiceImp authenticationService;
     JwtService jwtService;
+    UserMapper userMapper;
 
     @PostMapping
     public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
@@ -183,7 +185,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<ApiResponse<User>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<ApiResponse<UserResponse>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
 
         var response = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN);
@@ -191,12 +193,13 @@ public class AuthenticationController {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
         User user = userRepository.findById(response.getId()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        UserResponse userResponse  = userMapper.toUserResponse(user);
         return ResponseEntity.ok(
-                ApiResponse.<User>builder()
+                ApiResponse.<UserResponse>builder()
                         .code("200")
                         .status("OK")
                         .message("User retrieved successfully")
-                        .data(user)
+                        .data(userResponse)
                         .build()
         );
     }

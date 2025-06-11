@@ -3,21 +3,14 @@ package vn.fu_ohayo.controller.user;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import vn.fu_ohayo.config.PendingApprovalStorage;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.VerifyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.LearningProgressOverviewResponse;
-import vn.fu_ohayo.entity.User;
-import vn.fu_ohayo.mapper.UserMapper;
-import vn.fu_ohayo.service.*;
+import vn.fu_ohayo.dto.response.ApprovalResponse;
+import vn.fu_ohayo.service.ParentStudentService;
 
 @RestController()
 @RequestMapping("/parent-student")
@@ -25,12 +18,8 @@ import vn.fu_ohayo.service.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ParentStudentController {
    ParentStudentService parentStudentService;
-   PendingApprovalStorage storage;
-    ExerciseResultService exerciseResultService;
-    ProgressGrammarService progressGrammarService;
-    ProgressVocabularyService progressVocabularyService;
-    UserService userService;
-    UserMapper userMapper;
+    @Autowired
+    SimpMessagingTemplate messa;
 
     @GetMapping("/generateCode")
     public ApiResponse<String> generateCode () {
@@ -42,83 +31,24 @@ public class ParentStudentController {
                 .build();
     }
 
-    @GetMapping("extract-code")
-     public ApiResponse<String> extractCode (@RequestParam String code) {
-        return ApiResponse.<String>builder()
-                .message("Sucess")
-                .status("OK")
-                .code("200")
-                .data(parentStudentService.generateCode())
-                .build();
-    }
 
-    @MessageMapping("/request-verify")
+    @MessageMapping("/parent/approve")
     public void handleVerifyRequest(VerifyRequest request) {
-        storage.save(request.getClientId(), request.getParentCode());
-        // Không gửi phản hồi vội
+        String mess = parentStudentService.extractCode(request.getParentCode(), request.getClientId());
+        if(!"".equals(mess)) {
+            messa.convertAndSend("/topic/approval",
+                    new ApprovalResponse(request.getClientId(), false, mess));
+        }
+        messa.convertAndSend("/topic/approval",
+                new ApprovalResponse(request.getClientId(), false, "Your code have send. Wait for verify of parent!"));
     }
 
-    @GetMapping("/student/overview")
-    ApiResponse<LearningProgressOverviewResponse> getLearningProgressResponse(
-            @RequestParam long userId
-    ) {
-        LearningProgressOverviewResponse response = LearningProgressOverviewResponse.builder()
-                .totalVocabularyAllSubject(progressVocabularyService.countAllVocabularySubjectInProgressByUserId(userId))
-                .totalVocabularyLearn(progressVocabularyService.countVocabularyLearnSubjectInProgressByUserId(userId))
-                .exerciseAllSubject(exerciseResultService.countAllExerciseSubjectInProgressByUserId(userId))
-                .exerciseCompleted(exerciseResultService.countExerciseDoneSubjectInProgressByUserId(userId))
-                .totalGrammarAllSubject(progressVocabularyService.countAllVocabularySubjectInProgressByUserId(userId))
-                .totalGrammarLearn(progressGrammarService.countGrammarLearnSubjectInProgressByUserId(userId))
-                .build();
-        return ApiResponse.<LearningProgressOverviewResponse>builder()
-                .status("success")
-                .message("Fetched all lessons successfully")
-                .data(response)
-                .build();
-    }
 
-    @GetMapping("/student/vocabulary")
-    ApiResponse<?> getProgressVocabularyByUserId(
-            @RequestParam long userId
-    ) {
-        return ApiResponse.<Object>builder()
-                .status("success")
-                .message("Fetched vocabulary progress successfully")
-                .data(progressVocabularyService.getProgressEachSubjectByUserId(userId))
-                .build();
-    }
 
-    @GetMapping("/student/grammar")
-    ApiResponse<?> getProgressGrammarByUserId(
-            @RequestParam long userId
-
-    ) {
-        return ApiResponse.<Object>builder()
-                .status("success")
-                .message("Fetched grammar progress successfully")
-                .data(progressGrammarService.getProgressEachSubjectByUserId(userId))
-                .build();
-    }
-
-    @GetMapping("/student/exercise")
-    ApiResponse<?> getProgressExerciseByUserId(
-            @RequestParam long userId
-    ) {
-        return ApiResponse.<Object>builder()
-                .status("success")
-                .message("Fetched exercise progress successfully")
-                .data(exerciseResultService.getProgressEachSubjectByUserId(userId))
-                .build();
-    }
-
-    @GetMapping("/student/information")
-    ApiResponse<?> getStudentInformation(
-            @RequestParam long userId
-    ) {
-        return ApiResponse.<Object>builder()
-                .status("success")
-                .message("Fetched student information successfully")
-                .data(userMapper.toUserResponse(userService.getUserById(userId)))
-                .build();
+    @MessageMapping("/hello") // client gửi tới /app/hello
+    public void handleHello(String message) {
+        System.out.println("Nhận được từ client: " + message);
+        messa.convertAndSend("/topic/greetings", "Hello từ server! Nội dung: " + message);
     }
 }
+

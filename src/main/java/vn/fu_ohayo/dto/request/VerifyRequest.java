@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class VerifyRequest {
-    private String clientId;
+    private Long clientId;
     private String parentCode;
 }

@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.LearningProgressOverviewResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
-import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.service.*;
 
 @RestController
@@ -22,14 +20,12 @@ public class ProfileController {
     private final ProgressGrammarService progressGrammarService;
     private final ProgressVocabularyService progressVocabularyService;
     private final UserService userService;
-    private final UserMapper userMapper;
 
-    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService, UserService userService, UserMapper userMapper) {
+    public ProfileController(ExerciseResultService exerciseResultService, ProgressGrammarService progressGrammarService, ProgressVocabularyService progressVocabularyService, UserService userService) {
         this.exerciseResultService = exerciseResultService;
         this.progressGrammarService = progressGrammarService;
         this.progressVocabularyService = progressVocabularyService;
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @GetMapping("/overview/learning_progress")
@@ -91,26 +87,4 @@ public class ProfileController {
                 .data(exerciseResultService.getProgressEachSubjectByUserId(userId))
                 .build();
     }
-    @GetMapping("/information")
-    public ApiResponse<?> getInformationByUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = auth.getPrincipal();
-
-        String email;
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else if (principal instanceof String) {
-            email = (String) principal;
-        } else {
-            throw new IllegalStateException("Unexpected principal type: " + principal.getClass());
-        }
-
-        UserResponse userResponse = userMapper.toUserResponse(userService.getUserByEmail(email));
-        return ApiResponse.<UserResponse>builder()
-                .status("success")
-                .message("Fetched user information successfully")
-                .data(userResponse)
-                .build();
-    }
-
 }

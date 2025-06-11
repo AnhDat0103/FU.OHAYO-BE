@@ -3,6 +3,7 @@ package vn.fu_ohayo.controller.user;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import vn.fu_ohayo.service.ParentStudentService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ParentStudentController {
    ParentStudentService parentStudentService;
+    @Autowired
     SimpMessagingTemplate messa;
 
     @GetMapping("/generateCode")
@@ -40,4 +42,13 @@ public class ParentStudentController {
         messa.convertAndSend("/topic/approval",
                 new ApprovalResponse(request.getClientId(), false, "Your code have send. Wait for verify of parent!"));
     }
+
+
+
+    @MessageMapping("/hello") // client gửi tới /app/hello
+    public void handleHello(String message) {
+        System.out.println("Nhận được từ client: " + message);
+        messa.convertAndSend("/topic/greetings", "Hello từ server! Nội dung: " + message);
+    }
 }
+

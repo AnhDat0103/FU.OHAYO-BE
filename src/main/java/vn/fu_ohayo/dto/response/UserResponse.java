@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
+import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.UserStatus;
 
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,23 +22,16 @@ import java.util.List;
 public class UserResponse {
 
     private Long userId;
-
     private String email;
-
     private String fullName;
-
     private Gender gender;
-
     private String phone;
-
     private String address;
-
-    private MembershipLevel membershipLevel;
-
-    private UserStatus status;
-
-    private Role role;
-
+    private Date dob;
     private String avatar;
+    private UserStatus status;
+    private MembershipLevel membershipLevel;
+    private Provider provider;
+    private String roleName;
 
 }

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.LessonStatus;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -19,5 +21,7 @@ public class LessonResponse {
 
     private String description;
 
-    private LessonStatus status;
+    private List<VocabularyResponse> vocabularies;
+
+    private List<GrammarResponse> grammars;
 }

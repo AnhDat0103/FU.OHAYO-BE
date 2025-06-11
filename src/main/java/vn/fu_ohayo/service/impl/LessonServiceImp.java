@@ -5,12 +5,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.LessonPatchRequest;
 import vn.fu_ohayo.dto.request.LessonRequest;
+import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.dto.response.LessonResponse;
+import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Subject;
+import vn.fu_ohayo.entity.Vocabulary;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.GrammarMapper;
 import vn.fu_ohayo.mapper.LessonMapper;
+import vn.fu_ohayo.mapper.VocabularyMapper;
 import vn.fu_ohayo.repository.GrammarRepository;
 import vn.fu_ohayo.repository.LessonRepository;
 import vn.fu_ohayo.repository.SubjectRepository;
@@ -27,16 +33,22 @@ public class LessonServiceImp implements LessonService {
     private final SubjectRepository subjectRepository;
     private final VocabularyRepository vocabularyRepository;
     private final GrammarRepository grammarRepository;
+    private final VocabularyMapper vocabularyMapper;
+    private final GrammarMapper grammarMapper;
 
     public LessonServiceImp(LessonRepository lessonRepository, LessonMapper lessonMapper,
                             SubjectRepository subjectRepository,
                             VocabularyRepository vocabularyRepository,
-                            GrammarRepository grammarRepository) {
+                            GrammarRepository grammarRepository,
+                            VocabularyMapper vocabularyMapper,
+                            GrammarMapper grammarMapper) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
         this.subjectRepository = subjectRepository;
         this.vocabularyRepository = vocabularyRepository;
         this.grammarRepository = grammarRepository;
+        this.vocabularyMapper = vocabularyMapper;
+        this.grammarMapper = grammarMapper;
     }
 
     @Override
@@ -78,6 +90,29 @@ public class LessonServiceImp implements LessonService {
         return lessonMapper.toLessonResponse(lessonRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         ));
+    }
+
+    @Override
+    public List<LessonResponse> getLessonBySubjectId(int subjectId) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
+                () -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND)
+        );
+
+        return lessonRepository.findAllBySubjectAndStatus(subject, LessonStatus.PUBLIC).stream().map(
+                lesson -> {
+                    LessonResponse lessonResponse = lessonMapper.toLessonResponse(lesson);
+                    List<VocabularyResponse> vocabularyResponses = vocabularyRepository.findAllByLesson(lesson)
+                            .stream()
+                            .map(vocabularyMapper::toVocabularyResponse)
+                            .toList();
+                    List<GrammarResponse> grammarResponses = grammarRepository.findAllByLessonAndDeletedIsFalse(lesson)
+                            .stream().map(grammarMapper::toGrammarResponse)
+                            .toList();
+                    lessonResponse.setVocabularies(vocabularyResponses);
+                    lessonResponse.setGrammars(grammarResponses);
+                    return lessonResponse;
+                }
+        ).toList();
     }
 
     @Override

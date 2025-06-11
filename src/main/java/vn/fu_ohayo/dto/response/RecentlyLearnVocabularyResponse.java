@@ -1,6 +1,5 @@
 package vn.fu_ohayo.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,23 +7,13 @@ import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.Date;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class ProgressSubjectResponse {
+public class RecentlyLearnVocabularyResponse {
     private int progressId;
-
-    private UserResponse user;
-
-    private SubjectResponse subject;
-
+    private VocabularyResponse vocabulary;
     private ProgressStatus progressStatus;
-
-    private Date startDate;
-
-    private Date viewedAt;
-
-    private Date endDate;
+    private Date reviewedAt;
 }

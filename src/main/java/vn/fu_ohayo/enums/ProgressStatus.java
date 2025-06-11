@@ -1,7 +1,6 @@
 package vn.fu_ohayo.enums;
 
 public enum ProgressStatus {
-    NOT_STARTED,
     IN_PROGRESS,
     COMPLETED;
 

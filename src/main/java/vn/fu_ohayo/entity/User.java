@@ -5,10 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
@@ -39,13 +36,13 @@ import java.util.Set;
 )
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 
 public class User implements UserDetails, Serializable {
-    @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
+    @Id @GeneratedValue(
+             strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
     private Long userId;
@@ -58,7 +55,7 @@ public class User implements UserDetails, Serializable {
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -79,6 +76,8 @@ public class User implements UserDetails, Serializable {
     private String address;
 
     private Date dob;
+
+    private String avatar;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -175,13 +174,5 @@ public class User implements UserDetails, Serializable {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' + '}';
     }
 }

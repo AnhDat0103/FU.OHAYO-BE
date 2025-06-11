@@ -15,12 +15,12 @@ public class ContentListeningControllerUser {
 
     private final ContentListeningService contentListeningService;
 
-    @PostMapping("/{user-id}")
-    public ResponseEntity<?> getContentListeningByUserId(@PathVariable("user-id") Long userId) {
-        List<ContentListening> contentListenings = contentListeningService.getContentListeningByUserId(userId);
-        if (contentListenings.isEmpty()) {
-            return ResponseEntity.status(404).body("No content listening found for this user");
-        }
-        return ResponseEntity.ok(contentListenings);
-    }
+//    @PostMapping("/{user-id}")
+//    public ResponseEntity<?> getContentListeningByUserId(@PathVariable("user-id") Long userId) {
+//        List<ContentListening> contentListenings = contentListeningService.getContentListeningByUserId(userId);
+//        if (contentListenings.isEmpty()) {
+//            return ResponseEntity.status(404).body("No content listening found for this user");
+//        }
+//        return ResponseEntity.ok(contentListenings);
+//    }
 }

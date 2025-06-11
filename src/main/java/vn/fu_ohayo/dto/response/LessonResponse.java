@@ -21,6 +21,12 @@ public class LessonResponse {
 
     private String description;
 
+    private String thumbnailUrl;
+
+    private LessonStatus status;
+
+    private String videoUrl;
+
     private List<VocabularyResponse> vocabularies;
 
     private List<GrammarResponse> grammars;

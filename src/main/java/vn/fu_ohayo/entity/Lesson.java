@@ -50,8 +50,11 @@ public class Lesson {
     @Enumerated(EnumType.STRING)
     private LessonStatus status;
 
-//    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
-//    private String videoUrl;
+    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
+    private String videoUrl;
+
+    @Size(max = 255, message = ErrorEnum.INVALID_THUMBNAIL_URL)
+    private String thumbnailUrl;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)

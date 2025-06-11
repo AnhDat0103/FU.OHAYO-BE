@@ -7,5 +7,8 @@ import java.util.Optional;
 
 public interface ParentStudentRepository extends JpaRepository<ParentStudent, Integer>
 {
-    Optional<ParentStudent> findByVerificationCode(String code);
+    ParentStudent findByVerificationCode(String code);
+    boolean existsByVerificationCode(String verificationCode);
+    Optional<ParentStudent> findByVerificationCodeAndStudentEmail(String verificationCode, String email);
+
 }

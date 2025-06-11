@@ -14,6 +14,8 @@ import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentListeningRepository;
 import vn.fu_ohayo.service.ContentListeningService;
 
+import java.util.List;
+
 @Service
 public class ContentListeningServiceImp implements ContentListeningService {
     private final ContentListeningRepository contentListeningRepository;
@@ -85,4 +87,5 @@ public class ContentListeningServiceImp implements ContentListeningService {
         Page<ContentListening> prs = contentListeningRepository.findAll(pageable);
         Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
         return responsePage;    }
-    }
+
+}

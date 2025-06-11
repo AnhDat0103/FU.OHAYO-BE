@@ -43,9 +43,8 @@ import java.util.Set;
 @Builder
 
 public class User implements UserDetails, Serializable {
-    @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
+    @Id @GeneratedValue(
+             strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
     private Long userId;
@@ -58,7 +57,7 @@ public class User implements UserDetails, Serializable {
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -79,6 +78,8 @@ public class User implements UserDetails, Serializable {
     private String address;
 
     private Date dob;
+
+    private String avatar;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.ParentCodeStatus;
 import vn.fu_ohayo.enums.Relationship;
 
 @Entity
@@ -25,17 +26,13 @@ public class ParentStudent {
     @JoinColumn(name = "parent_id", referencedColumnName = "user_id")
     private User parent;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", referencedColumnName = "user_id")
     private User student;
 
-    @Column(name = "relationship")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Relationship relationship;
-
-    @Column(name = "is_verified")
-    private boolean isVerified;
+    private ParentCodeStatus parentCodeStatus;
 
     @Column(name = "verification_code")
     private String verificationCode;

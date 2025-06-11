@@ -1,6 +1,5 @@
 package vn.fu_ohayo.service.impl;
 
-import org.checkerframework.checker.units.qual.A;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +11,6 @@ import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Vocabulary;
-import vn.fu_ohayo.enums.CategoryReadingEnum;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;

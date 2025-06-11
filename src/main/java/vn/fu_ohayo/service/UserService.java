@@ -28,6 +28,6 @@ public interface UserService {
     UserResponse updateUser(Long userId, AdminUpdateUserRequest adminUpdateUserRequest);
     UserResponse addUser(AddUserRequest addUserRequest);
     User getUserByEmail(String email);
-
+    User getUserById(Long userId);
 
 }

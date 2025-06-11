@@ -40,21 +40,22 @@ public class SubjectController {
     @GetMapping("/all-courses")
     public ApiResponse<Page<SubjectResponse>> getAllSubjects(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam() long userId
     ) {
 
         return ApiResponse.<Page<SubjectResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllActiveSubjects(page, size))
+                .data(subjectService.getAllActiveSubjects(page, size, userId))
                 .build();
     }
 
     @GetMapping("/students")
     public  ApiResponse<Page<ProgressSubjectResponse>> getAllByUserId(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "6") int size,
             @RequestParam() long userId
     ){
         Page<ProgressSubjectResponse> subjectResponses = subjectService.getAllByUserId(page, size, userId);

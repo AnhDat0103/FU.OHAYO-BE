@@ -12,12 +12,17 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.List;
+import java.util.Optional;
+
 import vn.fu_ohayo.enums.SubjectStatus;
 
 @Repository
 public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject, Integer> {
     boolean existsBySubjectAndUser(Subject subject, User user);
     List<ProgressSubject> findAllByUserAndProgressStatus(User user, ProgressStatus progressStatus);
+
+    ProgressSubject findProgressSubjectBySubjectAndUser(Subject subject, User user);
+
     ProgressSubject findBySubjectAndUserAndProgressStatus(Subject subject, User user, ProgressStatus progressStatus);
 
     int countUserBySubject_SubjectId(int subjectId);
@@ -28,4 +33,5 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
     Page<Subject> findAllSubjectsByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
 
     Page<ProgressSubject> findAllByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
+
 }

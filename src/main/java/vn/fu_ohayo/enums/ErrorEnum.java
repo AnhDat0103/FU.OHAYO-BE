@@ -51,7 +51,8 @@ public enum ErrorEnum {
     VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
     GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
     EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." ),
-    USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." );
+    USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." ),
+    PROGRESS_NOT_FOUND("4021", "Progress not found for the user and subject." ),;
 
 
     // 5xxx - server error

@@ -24,5 +24,7 @@ public class ProgressSubjectResponse {
 
     private Date startDate;
 
+    private Date viewedAt;
+
     private Date endDate;
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ProgressSubjectResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.enums.SubjectStatus;
 import vn.fu_ohayo.service.SubjectService;
@@ -23,7 +24,7 @@ public class SubjectController {
     }
 
     @GetMapping
-    public ApiResponse<Page<SubjectResponse>> getAllSubjects(
+    public ApiResponse<Page<SubjectResponse>> getAllSubjectsAdmin(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
@@ -33,6 +34,36 @@ public class SubjectController {
                 .status("success")
                 .message("Get all subjects successfully")
                 .data(subjectService.getAllSubjectsForAdmin(page, size))
+                .build();
+    }
+
+    @GetMapping("/all-courses")
+    public ApiResponse<Page<SubjectResponse>> getAllSubjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam() long userId
+    ) {
+
+        return ApiResponse.<Page<SubjectResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Get all subjects successfully")
+                .data(subjectService.getAllActiveSubjects(page, size, userId))
+                .build();
+    }
+
+    @GetMapping("/students")
+    public  ApiResponse<Page<ProgressSubjectResponse>> getAllByUserId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam() long userId
+    ){
+        Page<ProgressSubjectResponse> subjectResponses = subjectService.getAllByUserId(page, size, userId);
+        return ApiResponse.<Page<ProgressSubjectResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched subjects by user ID successfully")
+                .data(subjectResponses)
                 .build();
     }
 
@@ -88,18 +119,4 @@ public class SubjectController {
                 .build();
     }
 
-    @GetMapping("/students")
-    public  ApiResponse<Page<SubjectResponse>> getAllByUserId(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam() long userId
-            ){
-        Page<SubjectResponse> subjectResponses = subjectService.getAllByUserId(page, size, userId);
-        return ApiResponse.<Page<SubjectResponse>>builder()
-                .code("200")
-                .status("success")
-                .message("Fetched subjects by user ID successfully")
-                .data(subjectResponses)
-                .build();
-    }
 }

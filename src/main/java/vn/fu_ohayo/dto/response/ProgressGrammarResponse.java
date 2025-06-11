@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class ProgressVocabularyResponse {
+public class ProgressGrammarResponse {
     List<CountLearnBySubjectResponse> countLearnBySubjectResponses;
-    List<RecentlyLearnVocabularyResponse> recentlyLearnVocabularyRespons;
+    List<RecentlyLearnGrammarResponse> recentlyLearnGrammarResponses;
 }

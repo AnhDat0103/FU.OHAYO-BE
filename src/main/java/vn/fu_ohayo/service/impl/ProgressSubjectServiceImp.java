@@ -17,6 +17,7 @@ import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.ProgressSubjectService;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class ProgressSubjectServiceImp implements ProgressSubjectService {
@@ -34,22 +35,24 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         this.progressSubjectRepository = progressSubjectRepository;
     }
     @Override
-    public void enrollCourse(int courseId, String email) {
+    public void enrollCourse(int courseId, long userId) {
         Subject subject = subjectRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        ProgressSubject existingProgress = progressSubjectRepository.findBySubjectAndUserAndProgressStatus(subject, user, ProgressStatus.IN_PROGRESS);
+        ProgressSubject existingProgress = progressSubjectRepository.findProgressSubjectBySubjectAndUser(subject, user);
+
         if (existingProgress != null) {
-            existingProgress.setStartDate(new Date());
-            return;
+                existingProgress.setViewedAt(new Date());
+                return;
         }
 
         ProgressSubject progressSubject = ProgressSubject.builder()
                 .subject(subject)
                 .startDate(new Date())
+                .viewedAt(new Date())
                 .user(user)
                 .progressStatus(ProgressStatus.IN_PROGRESS)
                 .build();

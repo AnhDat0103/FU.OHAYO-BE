@@ -1,6 +1,6 @@
 package vn.fu_ohayo.dto.response;
 
-
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-public class ProgressSubjectResponse {
+public class SubjectProgressResponse {
     private int progressId;
 
     private UserResponse user;
@@ -23,8 +23,6 @@ public class ProgressSubjectResponse {
     private ProgressStatus progressStatus;
 
     private Date startDate;
-
-    private Date viewedAt;
 
     private Date endDate;
 }

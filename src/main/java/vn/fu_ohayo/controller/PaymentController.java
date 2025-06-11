@@ -18,6 +18,7 @@ import vn.fu_ohayo.mapper.MembershipMapper;
 import vn.fu_ohayo.repository.MemberShipLevelOfUserRepository;
 import vn.fu_ohayo.repository.MemberShipLevelRepository;
 import vn.fu_ohayo.service.PaymentService;
+import vn.fu_ohayo.service.VnpayService;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Slf4j( topic = "PaymentController")
 public class PaymentController {
-    PaymentService vnPayService;
+    VnpayService vnPayService;
     MemberShipLevelRepository memberShipLevelRepository;
     MembershipMapper membershipMapper;
     MemberShipLevelOfUserRepository mouRepository;

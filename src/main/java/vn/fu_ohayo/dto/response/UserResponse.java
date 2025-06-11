@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.UserStatus;
@@ -33,5 +34,9 @@ public class UserResponse {
     private MembershipLevel membershipLevel;
 
     private UserStatus status;
+
+    private Role role;
+
+    private String avatar;
 
 }

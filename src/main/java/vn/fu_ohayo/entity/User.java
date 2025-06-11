@@ -77,6 +77,8 @@ public class User implements UserDetails, Serializable {
 
     private Date dob;
 
+    private String avatar;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.INACTIVE;

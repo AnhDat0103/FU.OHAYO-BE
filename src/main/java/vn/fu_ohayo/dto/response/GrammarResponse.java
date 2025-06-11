@@ -1,11 +1,11 @@
 package vn.fu_ohayo.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
@@ -30,7 +30,8 @@ public class GrammarResponse {
 
     private JlptLevel jlptLevel;
 
-    private LessonResponse lesson;
+//    @JsonIgnore
+//    private LessonResponse lesson;
 
     private Date updateAt;
 

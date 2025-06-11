@@ -10,6 +10,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.LessonStatus;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -49,8 +50,11 @@ public class Lesson {
     @Enumerated(EnumType.STRING)
     private LessonStatus status;
 
-//    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
-//    private String videoUrl;
+    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
+    private String videoUrl;
+
+    @Size(max = 255, message = ErrorEnum.INVALID_THUMBNAIL_URL)
+    private String thumbnailUrl;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
@@ -64,6 +68,10 @@ public class Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<LessonExercise> lessonExercises;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProgressLesson> progressLessons;
+
 
     @PrePersist
     protected void onCreate() {

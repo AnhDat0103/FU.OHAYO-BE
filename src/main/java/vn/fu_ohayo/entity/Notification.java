@@ -7,8 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.enums.NotificationType;
-import vn.fu_ohayo.enums.PaymentStatus;
+import vn.fu_ohayo.enums.NotificationEnum;
 
 import java.util.Date;
 
@@ -60,9 +59,5 @@ public class Notification {
     public String getTitle() {
         return type.getTitle();
     }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private NotificationType type;
 
 }

@@ -153,6 +153,9 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProgressContent> progressContents;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProgressLesson> progressLessons;
+
     @Column(name = "created_at")
     private Date createdAt;
 
@@ -176,13 +179,5 @@ public class User implements UserDetails, Serializable {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' + '}';
     }
 }

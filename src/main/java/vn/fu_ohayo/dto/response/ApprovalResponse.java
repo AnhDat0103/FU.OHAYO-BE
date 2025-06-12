@@ -1,0 +1,12 @@
+package vn.fu_ohayo.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class ApprovalResponse {
+    private Long clientId;
+    private boolean approved;
+    private String mess;
+}

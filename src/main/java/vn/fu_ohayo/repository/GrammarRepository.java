@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Lesson;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,7 @@ public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
     int countAllByLessonAndDeletedIsFalse(Lesson lesson);
 
     Page<Grammar> findAllByLessonAndDeletedIsFalse(Lesson lesson, Pageable pageable);
+    List<Grammar> findAllByLessonAndDeletedIsFalse(Lesson lesson);
 
     Optional<Grammar> findByTitleJpAndLesson(String titleJp, Lesson lesson);
 

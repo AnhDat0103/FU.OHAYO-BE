@@ -14,7 +14,7 @@ public interface AnswerQuestionRepository extends JpaRepository<AnswerQuestion, 
     List<AnswerQuestion> findByExerciseQuestion(ExerciseQuestion exerciseQuestion);
 
     @Query(
-            "SELECT new vn.fu_ohayo.dto.request.AnswerQuestionRequest(a.answerText, a.isCorrect)" +
+            "SELECT new vn.fu_ohayo.dto.request.AnswerQuestionRequest(a.answerId,a.answerText, a.isCorrect)" +
                     "FROM AnswerQuestion a " +
                     "WHERE a.exerciseQuestion = :exerciseQuestion"
     )

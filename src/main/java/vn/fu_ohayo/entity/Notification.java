@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.NotificationType;
+import vn.fu_ohayo.enums.PaymentStatus;
 
 import java.util.Date;
 
@@ -45,5 +47,9 @@ public class Notification {
 
     @Column(name = "status")
     private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private NotificationType type;
 
 }

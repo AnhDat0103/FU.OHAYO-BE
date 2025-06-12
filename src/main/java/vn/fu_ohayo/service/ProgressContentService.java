@@ -6,6 +6,6 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.ContentListening;
 
 public interface ProgressContentService {
-    ProgressContent saveUserListeningProgress(User user, ContentListening contentListening, int progress);
+    ProgressContent saveUserListeningProgress(User user, ContentListening contentListening, int correct_answers, int total_questions);
     ProgressContent saveUserReadingProgress(User user, ContentReading contentReading, int progress);
 }

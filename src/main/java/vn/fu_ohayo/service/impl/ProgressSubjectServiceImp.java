@@ -45,11 +45,11 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         this.progressSubjectMapper = progressSubjectMapper;
     }
     @Override
-    public void enrollCourse(int courseId, long userId) {
+    public void enrollCourse(int courseId, String email) {
         Subject subject = subjectRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         ProgressSubject existingProgress = progressSubjectRepository.findProgressSubjectBySubjectAndUser(subject, user);
@@ -70,8 +70,8 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
     }
 
     @Override
-    public ProgressSubjectResponse getProgressSubject(long userId, int subjectId) {
-        User user = userRepository.findById(userId)
+    public ProgressSubjectResponse getProgressSubject(String email, int subjectId) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         Subject subject = subjectRepository.findById(subjectId)

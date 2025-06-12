@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.NotificationEnum;
-import vn.fu_ohayo.enums.NotificationType;
-import vn.fu_ohayo.enums.PaymentStatus;
 
 import java.util.Date;
 

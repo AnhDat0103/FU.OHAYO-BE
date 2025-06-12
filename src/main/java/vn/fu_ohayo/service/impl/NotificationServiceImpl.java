@@ -4,17 +4,15 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import vn.fu_ohayo.dto.response.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.enums.NotificationEnum;
+import vn.fu_ohayo.enums.NotificationType;
 import vn.fu_ohayo.mapper.NotificationMapper;
 import vn.fu_ohayo.repository.NotificationRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.NotificationService;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -59,8 +57,8 @@ public class NotificationServiceImpl implements NotificationService {
         logger.info("Sending notification to user: {}", notification.getUser().getUserId());
         Notification savedNotification = notificationRepository.save(notification);
         if (notification.getType() == NotificationEnum.ACCEPT_STUDENT) {
-            logger.info("Notification type: ACCEPT_STUDENT");
-            messagingTemplate.convertAndSend("/topic/ACCEPT_STUDENT-user-" + notification.getUser().getUserId(), notification);
+            logger.info("Notification type: CONFIRMATION");
+            messagingTemplate.convertAndSend("/topic/confirmation-user-" + notification.getUser().getUserId(), notification);
         } else if (notification.getType() == NotificationEnum.PAYMENT) {
             logger.info("Notification type: PAYMENT");
             messagingTemplate.convertAndSend("/topic/payment-user-" + notification.getUser().getUserId(), notification);
@@ -77,10 +75,10 @@ public class NotificationServiceImpl implements NotificationService {
         if (optional.isPresent()) {
             Notification notification = optional.get();
             if (notification.getType() == NotificationEnum.ACCEPT_STUDENT) {
-                // ACCEPT_STUDENT logic
+                // Confirmation logic
                 notification.setStatus(isConfirmed);
                 notificationRepository.save(notification);
-                messagingTemplate.convertAndSend("/topic/ACCEPT_STUDENT-user-" + notification.getUser().getUserId(), notification);
+                messagingTemplate.convertAndSend("/topic/confirmation-user-" + notification.getUser().getUserId(), notification);
             } else if (notification.getType() == NotificationEnum.PAYMENT) {
                 // Payment logic
                 notification.setStatus(isConfirmed);

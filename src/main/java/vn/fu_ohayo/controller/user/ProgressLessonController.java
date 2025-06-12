@@ -1,5 +1,8 @@
 package vn.fu_ohayo.controller.user;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,14 +20,15 @@ public class ProgressLessonController {
     }
     @GetMapping
     public ApiResponse<ProgressLessonResponse> getProgressLessons(
-            long userId,
             int lessonId
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
         return ApiResponse.<ProgressLessonResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Get progress lessons successfully")
-                .data(progressLessonService.getProgressLessons(userId, lessonId))
+                .data(progressLessonService.getProgressLessons(username, lessonId))
                 .build();
     }
 }

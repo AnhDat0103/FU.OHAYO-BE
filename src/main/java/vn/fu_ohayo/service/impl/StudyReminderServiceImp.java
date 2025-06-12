@@ -13,6 +13,7 @@ import vn.fu_ohayo.repository.StudyReminderRepository;
 import vn.fu_ohayo.service.StudyReminderService;
 import vn.fu_ohayo.service.UserService;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,11 +53,14 @@ public class StudyReminderServiceImp implements StudyReminderService {
         StudyReminder studyReminder = getStudyReminderById(studyReminderId);
         if (request.getNote() != null) {
             studyReminder.setNote(request.getNote());
-        } else if (request.getTime() != null) {
+        }
+        if (request.getTime() != null) {
             studyReminder.setTime(request.getTime());
-        } else if (request.getIsActive() != null) {
+        }
+        if (request.getIsActive() != null) {
             studyReminder.setIsActive(request.getIsActive());
-        } else if (request.getDaysOfWeek() != null) {
+        }
+        if (request.getDaysOfWeek() != null) {
             studyReminder.setDaysOfWeek(request.getDaysOfWeek());
         }
         return studyReminderMapper.toStudyReminderResponse(studyReminderRepository.save(studyReminder));

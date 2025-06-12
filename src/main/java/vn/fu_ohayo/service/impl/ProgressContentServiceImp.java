@@ -17,13 +17,12 @@ public class ProgressContentServiceImp implements ProgressContentService {
     private final ProgressContentRepository progressContentRepository;
 
     @Override
-    public ProgressContent saveUserListeningProgress(User user, ContentListening contentListening, int progress) {
-        Optional<ProgressContent> existing = progressContentRepository
-                .findByProgressIdAndUser_UserId(user.getUserId(), contentListening.getContentListeningId());
-        ProgressContent progressContent = existing.orElseGet(ProgressContent::new);
+    public ProgressContent saveUserListeningProgress(User user, ContentListening contentListening, int correct_answers, int total_questions) {
+        ProgressContent progressContent = new ProgressContent();
         progressContent.setUser(user);
         progressContent.setContent(contentListening.getContent());
-        progressContent.setProgressId(progress);
+        progressContent.setCorrectAnswers(correct_answers);
+        progressContent.setTotalQuestions(total_questions); 
         return progressContentRepository.save(progressContent);
     }
 

@@ -8,6 +8,7 @@ import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.entity.ProgressContent;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentListeningRepository;

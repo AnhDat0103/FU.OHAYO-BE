@@ -8,5 +8,6 @@ import vn.fu_ohayo.entity.Notification;
 public interface NotificationService {
     void confirmNotification(Long notificationId);
     void denyPayment(Long notificationId);
-    List<NotificationDTO> getAllOfUser(Long userId);
+    Notification notifyUser(Notification notification);
+    void handleNotificationAction(Long notificationId, boolean isConfirmed);
 }

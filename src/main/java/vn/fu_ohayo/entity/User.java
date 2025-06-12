@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
@@ -36,8 +39,7 @@ import java.util.Set;
 )
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 
 public class User implements UserDetails, Serializable {
@@ -162,6 +164,9 @@ public class User implements UserDetails, Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Notification> notifications;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<StudyReminder> studyReminders;
 
     @PrePersist
     protected void onCreate() {

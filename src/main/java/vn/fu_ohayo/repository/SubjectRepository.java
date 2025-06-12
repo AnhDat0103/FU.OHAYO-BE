@@ -17,6 +17,7 @@ import vn.fu_ohayo.enums.SubjectStatus;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
@@ -31,11 +32,11 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     @Query(
             "SELECT s FROM Subject s LEFT JOIN ProgressSubject ps ON s.subjectId = ps.subject.subjectId\n" +
-                    "    AND ps.user.userId = :userId AND s.status = :status\n" +
+                    "    AND ps.user.email = :email AND s.status = :status\n" +
                     "WHERE ps.subject.subjectId IS NULL "
     )
-    Page<Subject> findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus status,long userId ,Pageable pageable);
+    Page<Subject> findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus status,String email ,Pageable pageable);
 
 
-
+    Page<Subject> findAllByStatus(SubjectStatus status, Pageable pageable);
 }

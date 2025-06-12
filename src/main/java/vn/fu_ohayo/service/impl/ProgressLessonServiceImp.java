@@ -31,8 +31,8 @@ public class ProgressLessonServiceImp  implements ProgressLessonService {
         this.progressLessonMapper = progressLessonMapper;
     }
     @Override
-    public ProgressLessonResponse getProgressLessons(long userId, int lessonId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+    public ProgressLessonResponse getProgressLessons(String email, int lessonId) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new AppException(ErrorEnum.LESSON_NOT_FOUND));
         ProgressLesson progressLesson = progressLessonRepository.findByUserAndLesson(user, lesson);
         return progressLessonMapper.toProgressLessonMapper(progressLesson);

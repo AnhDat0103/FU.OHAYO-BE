@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ApprovalResponse {
-    private Long clientId;
     private boolean approved;
     private String mess;
 }

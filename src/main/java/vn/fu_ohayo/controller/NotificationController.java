@@ -1,5 +1,6 @@
 package vn.fu_ohayo.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,4 +31,10 @@ public class NotificationController {
         Notification saved = notificationService.notifyUser(notification);
         return ResponseEntity.ok(saved);
     }
+
+//    @GetMapping("/{userId}/notificationUser")
+//    public ResponseEntity<?> getAllNotificationsOfUser (@PathVariable("notificationId") Long notificationId) {
+//
+//
+//    }
 }

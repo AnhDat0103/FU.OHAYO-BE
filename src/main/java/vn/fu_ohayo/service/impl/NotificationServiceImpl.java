@@ -4,12 +4,16 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.response.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.enums.NotificationType;
 import vn.fu_ohayo.repository.NotificationRepository;
+import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.NotificationService;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -17,14 +21,15 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
-
+    private  final UserRepository userRepository;
+    private  final NotificationMapper notificationMapper;
     @Override
     public void confirmNotification(Long notificationId) {
         logger.info("Confirm notification with ID: {}", notificationId);
         Optional<Notification> optional = notificationRepository.findById(notificationId);
         if (optional.isPresent()) {
             Notification notification = optional.get();
-            notification.setStatus("confirmed");
+            notification.setStatus(true);
             notificationRepository.save(notification);
             messagingTemplate.convertAndSend("/topic/user-" + notification.getUser().getUserId(), notification);
         } else {
@@ -39,7 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
         Optional<Notification> optional = notificationRepository.findById(notificationId);
         if (optional.isPresent()) {
             Notification notification = optional.get();
-            notification.setStatus("denied");
+            notification.setStatus(false);
             notificationRepository.save(notification);
             messagingTemplate.convertAndSend("/topic/user-" + notification.getUser().getUserId(), notification);
         } else {

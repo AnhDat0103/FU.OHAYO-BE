@@ -1,5 +1,7 @@
 package vn.fu_ohayo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +16,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "roleId")
 public class Role implements GrantedAuthority {
 
     @Id @GeneratedValue(

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -14,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class ExtractTokenResponse {
     private String email;
     private Long id;
+    private List<String> role;
 }

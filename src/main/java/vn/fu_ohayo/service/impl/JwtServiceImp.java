@@ -73,7 +73,8 @@ public class JwtServiceImp implements JwtService {
         Claims claims = extractAllClaims(token, type);
         String email = claims.getSubject();
         Long id = claims.get("id", Long.class);
-        return new ExtractTokenResponse(email, id);
+        List<String> scope = (List<String>) claims.get("scope");
+        return new ExtractTokenResponse(email, id, scope);
     }
 
     private Claims extractAllClaims(String token, TokenType type) {

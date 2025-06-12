@@ -31,6 +31,9 @@ public class UserResponseQuestion {
     @JoinColumn(name = "answer_question_id")
     private AnswerQuestion answerQuestion;
 
+    @Column(name = "is_correct")
+    private Boolean isCorrect;
+
     @Column(name = "created_at")
     private Date createdAt;
 

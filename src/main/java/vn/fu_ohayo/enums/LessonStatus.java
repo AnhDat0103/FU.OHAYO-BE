@@ -1,7 +1,6 @@
 package vn.fu_ohayo.enums;
 
 public enum LessonStatus {
-
     PUBLIC,
     PRIVATE,
     DRAFT;

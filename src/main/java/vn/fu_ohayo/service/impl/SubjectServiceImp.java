@@ -145,7 +145,12 @@ public class SubjectServiceImp implements SubjectService {
     @Override
     public SubjectResponse getSubjectById(int id) {
         return subjectRepository.findById(id)
-                .map(subjectMapper::toSubjectResponse)
+                .map(s -> {
+                    SubjectResponse response = subjectMapper.toSubjectResponse(s);
+                    response.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
+                    response.setCountUsers(Math.max(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()), 0));
+                    return response;
+                })
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
     }
 

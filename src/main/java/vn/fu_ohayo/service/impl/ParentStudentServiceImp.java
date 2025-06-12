@@ -32,6 +32,10 @@ public class ParentStudentServiceImp implements ParentStudentService {
     public String generateCode() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Email lafa" ,email);
+        List<ParentStudent> list = parentStudentRepository.findByParentEmail(email);
+        if(list.size() == 3) {
+            return "";
+        }
         SecureRandom random = new SecureRandom();
         StringBuilder sb ;
         boolean isDuplicate = false;
@@ -62,28 +66,31 @@ public class ParentStudentServiceImp implements ParentStudentService {
     }
 
     @Override
-    public String extractCode(String code, Long id) {
-        var parentStudent1 = parentStudentRepository.findByVerificationCode(code);
+    public String extractCode(String code) {
 
-        if(parentStudent1.getParent() == null) {
+        ParentStudent parentStudent1 = parentStudentRepository.findByVerificationCode(code);
+        log.info("CODE LA" + code);
+        if(parentStudent1 == null) {
             return "The code isn't existed.";
         }
-
-        Optional<ParentStudent> parentStudent = parentStudentRepository.findByVerificationCodeAndStudentUserId(code, id);
-
-            if(parentStudent.isPresent() && parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.PENDING) ){
-                return "Please check the notifications on your parent's page";
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        ParentStudent parentStudent = parentStudentRepository.findByVerificationCodeAndStudentEmail(code, email);
+            if(parentStudent != null) {
+                if( parentStudent.getParentCodeStatus().equals(ParentCodeStatus.PENDING) ){
+                    return "Please check the notifications on your parent's page";
+                }
+                else if(parentStudent.getParentCodeStatus().equals(ParentCodeStatus.REJECT)) {
+                    return "Code declined by your parent. Ask them to generate a new one";
+                }
+                else if(parentStudent.getParentCodeStatus().equals(ParentCodeStatus.CONFIRM)) {
+                    return "Code verified. Please wait...";
+                }
             }
-            else if(parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.REJECT)) {
-                return "Code declined by your parent. Ask them to generate a new one";
-        }
-            else if(parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.CONFIRM)) {
-                return "Code verified. Please wait...";
-            }
-            if(parentStudent1.getVerificationCode() != null ) {
+
+            if(parentStudent1.getParentCodeStatus() != null) {
             return "The code already exists. Please try a different one.";
              }
-            Optional<User> user = userRepository.findById(id);
+            Optional<User> user = userRepository.findByEmail(email);
             parentStudent1.setStudent(user.get());
             parentStudent1.setParentCodeStatus(ParentCodeStatus.PENDING);
 

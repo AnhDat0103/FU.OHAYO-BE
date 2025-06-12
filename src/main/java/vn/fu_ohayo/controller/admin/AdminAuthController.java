@@ -1,0 +1,88 @@
+package vn.fu_ohayo.controller.admin;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.config.AuthConfig;
+import vn.fu_ohayo.dto.request.AdminLoginRequest;
+import vn.fu_ohayo.dto.response.AdminDTO;
+import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.TokenResponse;
+import vn.fu_ohayo.entity.Admin;
+import vn.fu_ohayo.entity.Role;
+import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.RoleEnum;
+import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.UserMapper;
+import vn.fu_ohayo.repository.AdminRepository;
+import vn.fu_ohayo.repository.RoleRepository;
+import vn.fu_ohayo.service.AuthenticationService;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Slf4j(topic = "ADMIN_CONTROLLER")
+@RestController
+@RequestMapping("/admin")
+public class AdminAuthController {
+    final AuthConfig a;
+    final AdminRepository adminRepository;
+    final RoleRepository roleRepository;
+    final AuthenticationService authenticationService;
+    final UserMapper userMapper;
+
+    public AdminAuthController(AuthConfig a, AdminRepository adminRepository, RoleRepository roleRepository, AuthenticationService authenticationService, UserMapper userMapper) {
+        this.a = a;
+        this.adminRepository = adminRepository;
+        this.roleRepository = roleRepository;
+        this.authenticationService = authenticationService;
+        this.userMapper = userMapper;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginForAdmin(@RequestBody AdminLoginRequest adminLoginRequest) {
+        TokenResponse tokenResponse = authenticationService.getAccessTokenForAdmin(adminLoginRequest);
+log.info("INFOR" + adminLoginRequest.getEmail());
+log.info("INFOR" + adminLoginRequest.getEmail());
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+
+        log.info("User logged in successfully: {}", adminLoginRequest.getEmail());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<TokenResponse>builder()
+                        .code("200")
+                        .status("OK")
+                        .message("User logged in successfully")
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .build());
+
+}
+
+//@GetMapping
+//    public void login () {
+//    String username = "admin2";
+//    String password = a.passwordEncoder().encode("123123");
+//    Set<Role> role = new HashSet<>();
+//    role.add(roleRepository.findByName(RoleEnum.CONTENT_MANAGER));
+//    Admin b = Admin.builder().username(username).password(password).roles(role).build();
+//    adminRepository.save(b);
+//}
+
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<AdminDTO>> login () {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+       Admin a = adminRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        AdminDTO response = userMapper.toAdmin(a);
+       return ResponseEntity.ok().body(ApiResponse.<AdminDTO>builder().data(response).build());
+    }
+
+}

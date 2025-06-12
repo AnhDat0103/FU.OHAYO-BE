@@ -2,6 +2,7 @@ package vn.fu_ohayo.service.impl;
 
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,14 +20,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+import vn.fu_ohayo.dto.request.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
+import vn.fu_ohayo.entity.Admin;
 import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.repository.AdminRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.AuthenticationService;
 import vn.fu_ohayo.service.JwtService;
@@ -40,7 +44,8 @@ import java.util.Set;
 
 @Slf4j(topic = "AUTHENTICATION-SERVICE")
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE )
+
 
 public class AuthenticationServiceImp implements AuthenticationService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
@@ -61,25 +66,26 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Value("${spring.security.oauth2.client.registration.facebook.client-secret}")
     String facebookClientSecret;
 
-
-
     final UserRepository userRepository;
     final JwtService jwtService;
+    final  AdminRepository adminRepository;
+    final AuthenticationManager authenticationManager;
 
-    public AuthenticationServiceImp(AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository) {
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
+    public AuthenticationServiceImp(UserRepository userRepository, JwtService jwtService, AdminRepository adminRepository, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
+        this.adminRepository = adminRepository;
+        this.authenticationManager = authenticationManager;
     }
 
-    final AuthenticationManager authenticationManager;
 
     @Override
     public TokenResponse getAccessToken(SignInRequest request) {
         try {
+            log.info(request.getEmail());
+            log.info(request.getPassword());
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("User in contextHolder: ", SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (AuthenticationException e) {
             log.info("Authentication failed for user: {}", request.getEmail());
             throw new AccessDeniedException(e.getMessage());
@@ -91,6 +97,36 @@ public class AuthenticationServiceImp implements AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
         String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), roles);
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
+    }
+    @Override
+    public TokenResponse getAccessTokenForAdmin(AdminLoginRequest request) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }catch(AuthenticationException e) {
+            throw new AccessDeniedException(e.getMessage());
+        }
+        Admin admin = adminRepository.findByUsername(request.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        String accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
+        String refreshToken = jwtService.generateRefreshToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
+        return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
+
+    }
+
+    @Override
+    public TokenResponse getRefreshTokenForAdmin(String request) {
+        if(!StringUtils.hasLength(request)) {
+            throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
+        }
+        try {
+            ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
+
+            Admin admin = adminRepository.findByUsername(response.getEmail()).orElseThrow(() ->  new AppException(ErrorEnum.USER_NOT_FOUND));
+            String accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
+            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
+        } catch (Exception e){
+            throw new AppException(ErrorEnum.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -128,6 +164,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+
 
     public boolean extractToken(String token, TokenType type) {
         try {

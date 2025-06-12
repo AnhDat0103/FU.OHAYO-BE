@@ -3,6 +3,8 @@ package vn.fu_ohayo.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Parent;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.AuthConfig;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
@@ -11,19 +13,19 @@ import vn.fu_ohayo.dto.request.AddUserRequest;
 import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
 import vn.fu_ohayo.dto.request.SearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
+import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.UserProfileDTO;
-import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.enums.MembershipLevel;
-import vn.fu_ohayo.enums.Provider;
+import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
-import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
 import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
+import vn.fu_ohayo.repository.ParentStudentRepository;
 import vn.fu_ohayo.repository.SubjectRepository;
 import vn.fu_ohayo.repository.RoleRepository;
 import vn.fu_ohayo.repository.UserRepository;
@@ -46,8 +48,9 @@ public class UserServiceImp implements UserService {
     JwtService jwtService;
     AdminUpdateUserMapper adminUpdateUserMapper;
     RoleRepository roleRepository;
-    private final SearchUserMapper searchUserMapper;
+    SearchUserMapper searchUserMapper;
     SubjectRepository subjectRepository;
+    ParentStudentRepository parentStudentRepository;
 
 
     @Override
@@ -83,16 +86,44 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public boolean registerInitial(InitialRegisterRequest initialRegisterRequest) {
+    public ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if (userRepository.existsByEmailAndProvider(initialRegisterRequest.getEmail(), Provider.LOCAL)) {
-            return false;
+        if (userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
+            return ApiResponse.builder()
+                    .message(ErrorEnum.EMAIL_EXIST.getMessage())
+                    .code(ErrorEnum.EMAIL_EXIST.getCode())
+                    .status("FAIL")
+                    .build();
+        }
+
+        String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3 ) {
+            return ApiResponse.builder()
+                    .message("You can only create 3 Students")
+                    .code("1001")
+                    .status("FAIL")
+                    .build();
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
+        if(!emailParent.equals("anonymousUser")) {
+            User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            ParentStudent parentStudent = ParentStudent.builder()
+                    .verificationCode("")
+                    .parent(parent)
+                    .student(user)
+                    .parentCodeStatus(ParentCodeStatus.CONFIRM)
+                    .build();
+            parentStudentRepository.save(parentStudent);
+        }
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
         mailService.sendEmail(initialRegisterRequest.getEmail(),token);
-        return true;
+        return ApiResponse.<InitialRegisterRequest>builder()
+                .code("200")
+                .status("OK")
+                .message("User registered successfully")
+                .build();
+
     }
 
 

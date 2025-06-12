@@ -1,0 +1,30 @@
+package vn.fu_ohayo.controller.user;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ProgressLessonResponse;
+import vn.fu_ohayo.service.ProgressLessonService;
+
+@RestController
+@RequestMapping("/progress-lessons")
+public class ProgressLessonController {
+    private final ProgressLessonService progressLessonService;
+
+    public ProgressLessonController(ProgressLessonService progressLessonService) {
+        this.progressLessonService = progressLessonService;
+    }
+    @GetMapping
+    public ApiResponse<ProgressLessonResponse> getProgressLessons(
+            long userId,
+            int lessonId
+    ) {
+        return ApiResponse.<ProgressLessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Get progress lessons successfully")
+                .data(progressLessonService.getProgressLessons(userId, lessonId))
+                .build();
+    }
+}

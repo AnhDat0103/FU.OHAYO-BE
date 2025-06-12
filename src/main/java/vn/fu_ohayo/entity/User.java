@@ -151,6 +151,9 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProgressContent> progressContents;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProgressLesson> progressLessons;
+
     @Column(name = "created_at")
     private Date createdAt;
 

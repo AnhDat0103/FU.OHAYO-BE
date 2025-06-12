@@ -21,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailAndProvider(String email, Provider provider);
     boolean existsByPhone(String phone);
 
+
 //    @Query(
 //            "SELECT u FROM User u JOIN u.subjects s WHERE s.subjectId = :courseId  AND u.userId = :userId"
 //    )

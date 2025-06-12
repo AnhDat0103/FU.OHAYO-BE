@@ -62,16 +62,16 @@ public class ParentStudentServiceImp implements ParentStudentService {
     }
 
     @Override
-    public String extractCode(String code, String email) {
-        ParentStudent parentStudent1 = parentStudentRepository.findByVerificationCode(code);
+    public String extractCode(String code, Long id) {
+        var parentStudent1 = parentStudentRepository.findByVerificationCode(code);
 
-        if(parentStudent1.getVerificationCode().equals(ParentCodeStatus.CONFIRM)) {
-            return "The code already exists. Please try a different one.";
+        if(parentStudent1.getParent() == null) {
+            return "The code isn't existed.";
         }
 
-        Optional<ParentStudent> parentStudent = parentStudentRepository.findByVerificationCodeAndStudentEmail(code, email);
+        Optional<ParentStudent> parentStudent = parentStudentRepository.findByVerificationCodeAndStudentUserId(code, id);
 
-            if(parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.PENDING) ){
+            if(parentStudent.isPresent() && parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.PENDING) ){
                 return "Please check the notifications on your parent's page";
             }
             else if(parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.REJECT)) {
@@ -80,9 +80,13 @@ public class ParentStudentServiceImp implements ParentStudentService {
             else if(parentStudent.get().getParentCodeStatus().equals(ParentCodeStatus.CONFIRM)) {
                 return "Code verified. Please wait...";
             }
+            if(parentStudent1.getVerificationCode() != null ) {
+            return "The code already exists. Please try a different one.";
+             }
+            Optional<User> user = userRepository.findById(id);
+            parentStudent1.setStudent(user.get());
+            parentStudent1.setParentCodeStatus(ParentCodeStatus.PENDING);
 
-//            parentStudent1.setStudent();
-
-        return "false";
+        return "";
     }
 }

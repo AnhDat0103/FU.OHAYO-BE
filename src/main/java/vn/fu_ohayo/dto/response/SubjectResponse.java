@@ -34,12 +34,10 @@ public class SubjectResponse {
 
     private String thumbnailUrl;
 
-    private String videoUrl;
-
     public SubjectResponse(int subjectId, String subjectCode, String subjectName,
                            String description,SubjectStatus status, long countUsers,
                            Date updatedAt, int countLessons,
-                           String thumbnailUrl, String videoUrl) {
+                           String thumbnailUrl) {
         this.subjectId = subjectId;
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -49,7 +47,6 @@ public class SubjectResponse {
         this.updatedAt = updatedAt;
         this.countLessons = countLessons;
         this.thumbnailUrl = thumbnailUrl;
-        this.videoUrl = videoUrl;
     }
 
 }

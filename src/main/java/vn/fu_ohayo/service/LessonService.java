@@ -20,4 +20,6 @@ public interface LessonService {
     Page<LessonResponse> getAllLessons(int subjectId, int page, int size);
 
     LessonResponse getLessonById(int id);
+
+    List<LessonResponse> getLessonBySubjectId(int subjectId);
 }

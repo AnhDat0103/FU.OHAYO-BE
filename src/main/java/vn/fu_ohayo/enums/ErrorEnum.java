@@ -53,9 +53,7 @@ public enum ErrorEnum {
     GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
     EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." ),
     USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." ),
-    PROGRESS_NOT_FOUND("4021", "Progress not found for the user and subject." ),;
-
-
+    PROGRESS_NOT_FOUND("4021", "Progress not found for the user and subject." );
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 
@@ -90,6 +88,7 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
     public static final String NOT_EMPTY_SCRIPT = "script can not null";
     public static final String NOT_EMPTY_DATE = "Date can not null";
+    public static final String NOT_EMPTY_TIME = "Time can not null";
 
     public static final String NOT_EMPTY_KANA = "Kana must not be empty";
     public static final String MAX_LENGTH_50 = "input be less than 50 characters";

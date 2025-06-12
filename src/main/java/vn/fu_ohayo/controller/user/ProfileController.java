@@ -3,10 +3,7 @@ package vn.fu_ohayo.controller.user;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.LearningProgressOverviewResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
@@ -110,6 +107,18 @@ public class ProfileController {
                 .status("success")
                 .message("Fetched user information successfully")
                 .data(userResponse)
+                .build();
+    }
+
+    @PatchMapping("/updateAvatar")
+    public ApiResponse<String> updateAvatar(@RequestParam String avatar) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        String updatedAvatarUrl = userService.updateAvatar(email, avatar);
+        return ApiResponse.<String>builder()
+                .status("success")
+                .message("Avatar updated successfully")
+                .data(updatedAvatarUrl)
                 .build();
     }
 

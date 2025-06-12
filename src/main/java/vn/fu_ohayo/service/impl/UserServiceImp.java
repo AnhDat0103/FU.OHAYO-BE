@@ -194,4 +194,11 @@ public class UserServiceImp implements UserService {
         return userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
     }
 
+    @Override
+    public String updateAvatar(String email, String avatarUrl) {
+        User user = getUserByEmail(email);
+        user.setAvatar(avatarUrl);
+        return userRepository.save(user).getAvatar();
+    }
+
 }

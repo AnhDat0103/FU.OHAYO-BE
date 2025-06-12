@@ -29,5 +29,5 @@ public interface UserService {
     UserResponse addUser(AddUserRequest addUserRequest);
     User getUserByEmail(String email);
     User getUserById(Long userId);
-
+    String updateAvatar(String email, String avatarUrl);
 }

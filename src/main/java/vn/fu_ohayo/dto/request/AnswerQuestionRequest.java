@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class AnswerQuestionRequest {
 //    @NotNull(message = "Answer text cannot be null")
 //    @NotBlank(message = "Answer text cannot be blank")
+    private int answerId;
     private String answerText;
     @JsonProperty("correct")
     private Boolean isCorrect;

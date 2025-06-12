@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.NotificationEnum;
 
 import java.util.Date;
 
@@ -43,7 +44,20 @@ public class Notification {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne()
+    @JoinColumn(name = "user_send_id")
+    private User userSend;
+
     @Column(name = "status")
-    private String status;
+    private boolean status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private NotificationEnum type = NotificationEnum.NORMAL;
+
+    @Transient
+    public String getTitle() {
+        return type.getTitle();
+    }
 
 }

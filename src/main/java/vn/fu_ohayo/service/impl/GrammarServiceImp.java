@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,27 +12,27 @@ import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.GrammarMapper;
-import vn.fu_ohayo.mapper.LessonMapper;
 import vn.fu_ohayo.repository.GrammarRepository;
 import vn.fu_ohayo.repository.LessonRepository;
 import vn.fu_ohayo.service.GrammarService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GrammarServiceImp implements GrammarService {
 
     private final LessonRepository lessonRepository;
     private final GrammarRepository grammarRepository;
     private final GrammarMapper grammarMapper;
 
-    public GrammarServiceImp(
-            LessonRepository lessonRepository,
-            GrammarRepository grammarRepository,
-            GrammarMapper grammarMapper) {
-        this.lessonRepository = lessonRepository;
-        this.grammarRepository = grammarRepository;
-        this.grammarMapper = grammarMapper;
+    @Override
+    public List<GrammarResponse> getGrammarsByFavoriteGrammarId(int id) {
+        return grammarRepository.findAllByFavoriteGrammarId(id).stream()
+                .filter(grammar -> !grammar.isDeleted())
+                .map(grammarMapper::toGrammarResponse)
+                .toList();
     }
 
     @Override

@@ -1,15 +1,15 @@
 package vn.fu_ohayo.service.impl;
 
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.request.AnswerQuestionRequest;
 import vn.fu_ohayo.dto.request.UserQuestionResponseRequest;
 import vn.fu_ohayo.dto.request.UserResponseRequest;
-import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
-import vn.fu_ohayo.dto.response.ExerciseResultResponse;
-import vn.fu_ohayo.dto.response.QuestionResultResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
+import vn.fu_ohayo.mapper.LessonExerciseMapper;
 import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.ProgressExerciseService;
 
@@ -25,12 +25,14 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final LessonExerciseRepository lessonExerciseRepository;
     private final AnswerQuestionRepository answerQuestionRepository;
+    private final LessonExerciseMapper lessonExerciseMapper;
     public ProgressExerciseServiceImp(UserResponseQuestionRepository userResponseQuestionRepository,
                                       ExerciseQuestionRepository exerciseQuestionRepository,
                                       UserRepository userRepository,
                                       ExerciseQuestionMapper exerciseQuestionMapper,
                                       LessonExerciseRepository lessonExerciseRepository,
-                                      AnswerQuestionRepository answerQuestionRepository
+                                      AnswerQuestionRepository answerQuestionRepository,
+                                      LessonExerciseMapper lessonExerciseMapper
                                      )  {
         this.userResponseQuestionRepository = userResponseQuestionRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
@@ -38,7 +40,28 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
         this.exerciseQuestionMapper = exerciseQuestionMapper;
         this.lessonExerciseRepository = lessonExerciseRepository;
         this.answerQuestionRepository = answerQuestionRepository;
+        this.lessonExerciseMapper = lessonExerciseMapper;
     }
+
+
+    @Override
+    public LessonExerciseResponse getSource(int exerciseId, int lessonId) {
+        LessonExercise lessonExercise = lessonExerciseRepository.findByLesson_LessonId(lessonId).orElseThrow(
+                () -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND)
+        );
+
+        List<ExerciseQuestionResponse> questions = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise).stream()
+                .map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
+        return LessonExerciseResponse.builder()
+                .lessonId(lessonId)
+                .title(lessonExercise.getTitle())
+                .duration(lessonExercise.getDuration())
+                .content(questions)
+                .id(exerciseId)
+                .build();
+    }
+
+
     @Override
     public ExerciseResultResponse submitExercise(UserResponseRequest userResponseRequest) {
         User user = userRepository.findById(userResponseRequest.getUserId())
@@ -72,7 +95,8 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
          return  response;
     }
 
-   public List<QuestionResultResponse> getQuestionResultResponses(
+
+    public List<QuestionResultResponse> getQuestionResultResponses(
             List<ExerciseQuestionResponse> exerciseQuestionResponses,
             List<UserQuestionResponseRequest> userQuestionResponseRequests) {
         List<QuestionResultResponse> questionResultResponses = new ArrayList<>();

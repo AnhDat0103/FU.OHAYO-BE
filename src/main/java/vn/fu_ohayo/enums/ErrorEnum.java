@@ -53,7 +53,8 @@ public enum ErrorEnum {
     GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4023","Grammar is  existed in content reading " ),
     EXERCISE_QUESTION_NOT_FOUND("4024","No exercise questions found for this lesson exercise." ),
     USER_ALREADY_ENROLLED("4025", "User is already enrolled in subject." ),
-    PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." );
+    PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
+    ANSWER_NOT_FOUND("4027","Can not found the answer." );
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.dto.request.AnswerQuestionRequest;
+import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.entity.AnswerQuestion;
 import vn.fu_ohayo.entity.ExerciseQuestion;
 
@@ -19,4 +20,12 @@ public interface AnswerQuestionRepository extends JpaRepository<AnswerQuestion, 
                     "WHERE a.exerciseQuestion = :exerciseQuestion"
     )
     List<AnswerQuestionRequest> findAllByExerciseQuestion(ExerciseQuestion exerciseQuestion);
+
+    @Query(
+            "SELECT new vn.fu_ohayo.dto.request.AnswerQuestionRequest(a.answerId, a.answerText, a.isCorrect)"
+            + "FROM AnswerQuestion a "
+            + "WHERE a.exerciseQuestion = :id"
+    )
+    List<AnswerQuestionRequest> findAllByExerciseQuestion_ExerciseQuestionId(int id);
+
 }

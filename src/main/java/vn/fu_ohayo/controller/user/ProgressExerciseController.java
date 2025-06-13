@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.UserResponseRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseResultResponse;
+import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.service.ProgressExerciseService;
 
 @RestController
@@ -26,6 +27,19 @@ public class ProgressExerciseController {
                 .status("success")
                 .message("Exercise submitted successfully")
                 .data(result)
+                .build();
+    }
+
+    @GetMapping("/get-sources")
+    public ApiResponse<LessonExerciseResponse> getSource(
+            @RequestParam int exerciseId,
+            @RequestParam int lessonId
+
+    ) {
+        return ApiResponse.<LessonExerciseResponse>builder()
+                .status("success")
+                .message("Fetched source successfully")
+                .data(progressExerciseService.getSource(exerciseId, lessonId))
                 .build();
     }
 }

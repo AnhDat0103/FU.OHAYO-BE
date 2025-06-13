@@ -7,8 +7,12 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.LessonExercise;
 
+import java.util.Optional;
+
 @Repository
 public interface LessonExerciseRepository extends JpaRepository<LessonExercise, Integer> {
 
     Page<LessonExercise> findAllByLesson(Lesson lesson, Pageable pageable);
+
+    Optional<LessonExercise> findByLesson_LessonId(int lessonLessonId);
 }

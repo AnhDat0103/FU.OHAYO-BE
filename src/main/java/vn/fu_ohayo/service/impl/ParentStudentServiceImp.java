@@ -6,13 +6,17 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.NotificationEnum;
 import vn.fu_ohayo.enums.ParentCodeStatus;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.repository.NotificationRepository;
 import vn.fu_ohayo.repository.ParentStudentRepository;
 import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.service.NotificationService;
 import vn.fu_ohayo.service.ParentStudentService;
 import java.security.SecureRandom;
 import java.util.List;
@@ -28,6 +32,7 @@ public class ParentStudentServiceImp implements ParentStudentService {
     private int CODE_LENGTH = 6;
     UserRepository userRepository;
     ParentStudentRepository parentStudentRepository;
+    NotificationRepository notificationRepository;
     @Override
     public String generateCode() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -90,9 +95,21 @@ public class ParentStudentServiceImp implements ParentStudentService {
             if(parentStudent1.getParentCodeStatus() != null) {
             return "The code already exists. Please try a different one.";
              }
-            Optional<User> user = userRepository.findByEmail(email);
-            parentStudent1.setStudent(user.get());
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            parentStudent1.setStudent(user);
             parentStudent1.setParentCodeStatus(ParentCodeStatus.PENDING);
+            String content = "Is Student: " + user.getFullName() + " has email: " + email + " your child";
+        ParentStudent parent = parentStudentRepository.findByVerificationCode(code);
+
+        Notification notification = Notification.builder()
+                .type(NotificationEnum.ACCEPT_STUDENT)
+                .title(NotificationEnum.ACCEPT_STUDENT.getTitle())
+                .content(content)
+                .user(parent.getParent())
+                .userSend(user)
+                .status(false)
+                .build();
+        notificationRepository.save(notification);
 
         return "";
     }

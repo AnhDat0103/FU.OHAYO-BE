@@ -33,4 +33,9 @@ public class PaymentServiceImp implements PaymentService {
         }
         return ApiResponse.<String>builder().status("OK").message("Sucess").data(mess).code("200").build();
     }
+
+    @Override
+    public boolean createOrder() {
+        return false;
+    }
 }

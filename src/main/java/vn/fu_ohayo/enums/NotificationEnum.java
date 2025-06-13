@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum NotificationEnum {
 
     NORMAL("You have new notification"),
-    PAYMENT("A payment is requested for your child"),
-    ACCEPT_STUDENT("Your child's registration needs confirmation");
+    PAYMENT("A payment is requested"),
+    ACCEPT_STUDENT("Confirm your child's registration");
 
     private final String title;
 

@@ -4,4 +4,5 @@ import vn.fu_ohayo.dto.response.ApiResponse;
 
 public interface PaymentService {
     ApiResponse<String> paymentInfo();
+    boolean createOrder();
 }

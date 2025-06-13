@@ -82,8 +82,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Override
     public TokenResponse getAccessToken(SignInRequest request) {
         try {
-            log.info(request.getEmail());
-            log.info(request.getPassword());
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException e) {

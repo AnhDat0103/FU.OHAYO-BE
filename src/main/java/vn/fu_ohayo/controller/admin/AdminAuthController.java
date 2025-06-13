@@ -16,10 +16,12 @@ import vn.fu_ohayo.entity.Admin;
 import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.RoleEnum;
+import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.AdminRepository;
 import vn.fu_ohayo.repository.RoleRepository;
+import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.AuthenticationService;
 
 import java.util.HashSet;
@@ -34,20 +36,31 @@ public class AdminAuthController {
     final RoleRepository roleRepository;
     final AuthenticationService authenticationService;
     final UserMapper userMapper;
+    final UserRepository userRepository;
 
-    public AdminAuthController(AuthConfig a, AdminRepository adminRepository, RoleRepository roleRepository, AuthenticationService authenticationService, UserMapper userMapper) {
+    public AdminAuthController(AuthConfig a, AdminRepository adminRepository, RoleRepository roleRepository, AuthenticationService authenticationService, UserMapper userMapper, UserRepository userRepository) {
         this.a = a;
         this.adminRepository = adminRepository;
         this.roleRepository = roleRepository;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginForAdmin(@RequestBody AdminLoginRequest adminLoginRequest) {
+        if(userRepository.findByEmail(adminLoginRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getStatus().equals(UserStatus.INACTIVE)) {
+            return  ResponseEntity.ok()
+                    .body(ApiResponse.<TokenResponse>builder()
+                            .code("200")
+                            .status("FAILD")
+                            .message("User is not Confirm in Email")
+                            .data(null)
+                            .build());
+        }
         TokenResponse tokenResponse = authenticationService.getAccessTokenForAdmin(adminLoginRequest);
-log.info("INFOR" + adminLoginRequest.getEmail());
-log.info("INFOR" + adminLoginRequest.getEmail());
+        log.info("INFOR" + adminLoginRequest.getEmail());
+        log.info("INFOR" + adminLoginRequest.getEmail());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)

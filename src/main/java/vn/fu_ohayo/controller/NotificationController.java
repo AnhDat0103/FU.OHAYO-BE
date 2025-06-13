@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.response.NotificationDTO;
 import vn.fu_ohayo.service.NotificationService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -23,9 +26,16 @@ public class NotificationController {
         notificationService.denyPayment(notificationId);
     }
 
+
 //    @GetMapping("/{userId}/notificationUser")
 //    public ResponseEntity<?> getAllNotificationsOfUser (@PathVariable("notificationId") Long notificationId) {
 //
 //
 //    }
-}
+
+        @GetMapping("/{userId}/notificationUser")
+        public ResponseEntity<?> getAllNotificationsOfUser (@PathVariable("userId") Long userId) {
+            List<NotificationDTO> list = notificationService.getAllOfUser(userId);
+            return ResponseEntity.ok().body(list);
+        }
+    }

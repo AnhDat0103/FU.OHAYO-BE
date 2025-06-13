@@ -180,6 +180,9 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Notification> notifications;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<StudyReminder> studyReminders;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();

@@ -28,33 +28,32 @@ public enum ErrorEnum {
     INVALID_TOKEN("4003", "Invalid token"),
     REFRESH_TOKEN_NOT_FOUND ("4003", "Refresh token not found"),
     INTERNAL_SERVER_ERROR("5000", "Internal server error"),
-    INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" ),
-    FAVORITE_GRAMMAR_NOT_FOUND("404", "Favorite grammar folder not found"),
-    SUBJECT_NOT_FOUND("4004", "Subject not found"),
-    SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
-    EXERCISE_NOT_FOUND("4005", "Exercise not found"),
-    QUESTION_NOT_FOUND("4006","Question not found" ),
-    SUBJECT_NAME_EXISTS("4006",  "Subject name is existed"),
-    SUBJECT_IN_USE("4007", "Subject is in use, cannot be deleted"),
-    INVALID_PAGE("4008","Page is not exist" ),
+    INVALID_CONTENT_SPEAKING("4003", "ContentSpeaking not found" ),
+    FAVORITE_GRAMMAR_NOT_FOUND("4004", "Favorite grammar folder not found"),
+    STUDY_REMINDER_NOT_FOUND("4005", "Study reminder not found"),
+    SUBJECT_NOT_FOUND("4006", "Subject not found"),
+    SUBJECT_CODE_EXISTS("4007", "Subject code is existed" ),
+    EXERCISE_NOT_FOUND("4008", "Exercise not found"),
+    QUESTION_NOT_FOUND("4009","Question not found" ),
+    SUBJECT_NAME_EXISTS("4010",  "Subject name is existed"),
+    SUBJECT_IN_USE("4011", "Subject is in use, cannot be deleted"),
+    INVALID_PAGE("4012","Page is not exist" ),
 
-    LESSON_NOT_FOUND("4008",  "Lesson not found"),
-    LESSON_NAME_EXIST( "4009", "Lesson is exited with this name." ),
-    LESSON_HAS_VOCABULARY("4010", "Lesson has vocabularies, cannot be deleted"),
-    LESSON_HAS_GRAMMAR("4011","Lesson has grammars, cannot be deleted" ),
+    LESSON_NOT_FOUND("4013",  "Lesson not found"),
+    LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
+    LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
+    LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
 
-    VOCABULARY_EXISTS("4012", "Vocabulary already exists in the lesson"),
-    VOCABULARY_NOT_FOUND("4013", "Vocabulary not found with this kanji." ),
-    GRAMMAR_EXISTED("4014", "Grammar is  existed in this lesson." ),
-    GRAMMAR_NOT_FOUND("4015", "Grammar not found with this title." ),
-    CONTENT_READING_NOT_FOUND("4016", "Content reading not found"),
-    VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4017","Vocabulary is  existed in content reading " ),
-    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4018","Grammar is  existed in content reading " ),
-    EXERCISE_QUESTION_NOT_FOUND("4019","No exercise questions found for this lesson exercise." ),
-    USER_ALREADY_ENROLLED("4020", "User is already enrolled in subject." ),
-    PROGRESS_NOT_FOUND("4021", "Progress not found for the user and subject." ),;
-
-
+    VOCABULARY_EXISTS("4017", "Vocabulary already exists in the lesson"),
+    VOCABULARY_NOT_FOUND("4018", "Vocabulary not found with this kanji." ),
+    GRAMMAR_EXISTED("4019", "Grammar is  existed in this lesson." ),
+    GRAMMAR_NOT_FOUND("4020", "Grammar not found with this title." ),
+    CONTENT_READING_NOT_FOUND("4021", "Content reading not found"),
+    VOCABULARY_ALREADY_EXISTS_IN_CONTENT_READING("4022","Vocabulary is  existed in content reading " ),
+    GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4023","Grammar is  existed in content reading " ),
+    EXERCISE_QUESTION_NOT_FOUND("4024","No exercise questions found for this lesson exercise." ),
+    USER_ALREADY_ENROLLED("4025", "User is already enrolled in subject." ),
+    PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." );
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 
@@ -89,6 +88,7 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_ROMAJI = "Romaji must not be empty";
     public static final String NOT_EMPTY_SCRIPT = "script can not null";
     public static final String NOT_EMPTY_DATE = "Date can not null";
+    public static final String NOT_EMPTY_TIME = "Time can not null";
 
     public static final String NOT_EMPTY_KANA = "Kana must not be empty";
     public static final String MAX_LENGTH_50 = "input be less than 50 characters";

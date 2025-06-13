@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.dto.request.ParentStudentDTO;
+import vn.fu_ohayo.dto.request.StudentDTO;
 import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.enums.Gender;
 import vn.fu_ohayo.enums.MembershipLevel;
@@ -33,5 +35,7 @@ public class UserResponse {
     private MembershipLevel membershipLevel;
     private Provider provider;
     private String roleName;
+    private List<StudentDTO> children;
+    private List<ParentStudentDTO> parents;
 
 }

@@ -24,10 +24,11 @@ public class SubjectEnrollmentController {
 
     @PostMapping()
     public ApiResponse<String> enrollCourse(
-            @RequestParam() int subjectId,
-            @RequestParam() long userId
+            @RequestParam() int subjectId
     ) {
-        progressSubjectService.enrollCourse(subjectId, userId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        progressSubjectService.enrollCourse(subjectId, username);
         return ApiResponse.<String>builder()
                 .code("200")
                 .status("success")

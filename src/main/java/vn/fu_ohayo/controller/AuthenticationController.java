@@ -17,11 +17,9 @@ import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.request.OAuthRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.*;
+import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.User;
-import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.enums.Provider;
-import vn.fu_ohayo.enums.TokenType;
-import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.UserRepository;
@@ -31,8 +29,10 @@ import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Slf4j
+@Slf4j(topic = "AUTHCONTROLLER")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -47,27 +47,11 @@ public class AuthenticationController {
     UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<InitialRegisterRequest>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
-        if(userService.registerInitial(initialRegisterRequest)) {
+    public ResponseEntity<ApiResponse<?>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
             return ResponseEntity.ok(
-                    ApiResponse.<InitialRegisterRequest>builder()
-                            .code("200")
-                            .status("OK")
-                            .message("User registered successfully")
-                            .data(initialRegisterRequest)
-                            .build()
-            );
-        } else {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.<InitialRegisterRequest>builder()
-                            .code("400")
-                            .status("Failed")
-                            .message("User registration failed")
-                            .data(initialRegisterRequest)
-                            .build()
+                    userService.registerInitial(initialRegisterRequest)
             );
         }
-    }
 
     @GetMapping("/mailAgain")
     public ResponseEntity<String> sendMailAgain(@RequestParam("emailAgain") String email) {
@@ -185,15 +169,20 @@ public class AuthenticationController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserByToken(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-
-        var response = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN);
-        if (response == null) {
-            throw new AppException(ErrorEnum.INVALID_TOKEN);
-        }
-        User user = userRepository.findById(response.getId()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+    public ResponseEntity<ApiResponse<UserResponse>> getUserByToken() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+       user.getChildren().forEach(parentStudent -> log.info("OKE:" + parentStudent.getStudent().getFullName()));
         UserResponse userResponse  = userMapper.toUserResponse(user);
+        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() != ParentCodeStatus.REJECT && parentStudent.getParentCodeStatus() != ParentCodeStatus.PENDING).collect(Collectors.toList());
+        List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() != ParentCodeStatus.REJECT && parentStudent.getParentCodeStatus() != ParentCodeStatus.PENDING).collect(Collectors.toList());
+        if ("STUDENT".equalsIgnoreCase(userResponse.getRoleName())) {
+            userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
+            userResponse.setChildren(null);
+        } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
+            userResponse.setChildren(userMapper.toStudentOnlyDtoList(filteredChildren));
+            userResponse.setParents(null);
+        }
         return ResponseEntity.ok(
                 ApiResponse.<UserResponse>builder()
                         .code("200")

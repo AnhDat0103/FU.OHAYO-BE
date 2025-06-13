@@ -11,12 +11,11 @@ import vn.fu_ohayo.repository.ContentReadingRepository;
 import vn.fu_ohayo.repository.ProgressContentRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.ProgressContentService;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user/contents_listening")
 @AllArgsConstructor
-public class ProgressContentListeningControllerUser {
+public class ProgressContentControllerUser {
 
     private ProgressContentService progressContentService;
     private UserRepository userRepository;
@@ -28,13 +27,14 @@ public class ProgressContentListeningControllerUser {
     public ProgressContent saveListeningProgress(
             @RequestParam Long userId,
             @RequestParam Long contentListeningId,
-            @RequestParam int progress) {
+            @RequestParam int correct_answers
+    ,       @RequestParam int total_questions) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         ContentListening contentListening = contentListeningRepository.findById(contentListeningId).orElseThrow(()
                 -> new RuntimeException("ContentListening not found with id: " + contentListeningId));
-        return progressContentService.saveUserListeningProgress(user, contentListening, progress);
+        return progressContentService.saveUserListeningProgress(user, contentListening, correct_answers, total_questions);
     }
     @PostMapping("/progressReading")
     public ProgressContent saveReadingProgress(

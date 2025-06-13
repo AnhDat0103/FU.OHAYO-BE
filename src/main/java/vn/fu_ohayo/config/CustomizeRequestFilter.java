@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.UserServiceDetail;
+import vn.fu_ohayo.service.impl.AdminServiceDetail;
 
 import java.io.IOException;
 @Slf4j(topic = "CustomizeRequestFilter")
@@ -27,6 +29,7 @@ import java.io.IOException;
 public class CustomizeRequestFilter extends OncePerRequestFilter {
     JwtService jwtService;
     UserServiceDetail userServiceDetail;
+    AdminServiceDetail adminDetailService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -40,14 +43,25 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             log.info("Extracted token: {}", token);
-
             try {
                 String username = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN).getEmail();
                 log.info("Extracted username from token: {}", username);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails user = userServiceDetail.UserServiceDetail().loadUserByUsername(username);
+                UserDetails user = null;
 
+                try {
+                    user = userServiceDetail.UserServiceDetail().loadUserByUsername(username);
+                    log.info("Loaded as USER");
+                } catch (Exception e1) {
+                    try {
+                        user = adminDetailService.UserServiceDetail().loadUserByUsername(username);
+                        log.info("Loaded as ADMIN");
+                    } catch (Exception e2) {
+                        log.warn("User not found in both USER and ADMIN services");
+                    }
+                }
+
+                if (user != null) {
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

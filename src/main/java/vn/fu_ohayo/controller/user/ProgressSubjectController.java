@@ -1,5 +1,8 @@
 package vn.fu_ohayo.controller.user;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,14 +23,15 @@ public class ProgressSubjectController {
 
     @GetMapping()
     public ApiResponse<ProgressSubjectResponse> getProgressSubject(
-            @RequestParam int subjectId,
-            @RequestParam long userId
+            @RequestParam int subjectId
     ){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
         return ApiResponse.<ProgressSubjectResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Get progress subject successfully")
-                .data(progressSubjectService.getProgressSubject(userId, subjectId))
+                .data(progressSubjectService.getProgressSubject(username, subjectId))
                 .build();
 
     }

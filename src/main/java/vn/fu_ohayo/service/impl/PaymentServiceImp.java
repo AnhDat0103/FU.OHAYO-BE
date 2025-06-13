@@ -5,10 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.PaymentInfoResponse;
 import vn.fu_ohayo.entity.MembershipLevelOfUser;
+import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.MemberShipLevelOfUserRepository;
 import vn.fu_ohayo.repository.PaymentRepository;
+import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.PaymentService;
 @Controller
 @RequiredArgsConstructor
@@ -16,12 +21,16 @@ import vn.fu_ohayo.service.PaymentService;
 public class PaymentServiceImp implements PaymentService {
     PaymentRepository paymentRepository;
     MemberShipLevelOfUserRepository memberShipLevelOfUserRepository;
+    UserRepository userRepository ;
     @Override
-    public PaymentInfoResponse paymentInfo() {
+    public ApiResponse<String> paymentInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        MembershipLevelOfUser membershipLevelOfUser = memberShipLevelOfUserRepository.fin
-//        PaymentInfoResponse paymentResponse = PaymentInfoResponse.builder()
-//                .endDate().membershipLevel().build();
-        return null;
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        MembershipLevelOfUser membershipLevelOfUser = memberShipLevelOfUserRepository.findByUserUserId(user.getUserId());
+        String mess = "";
+        if(membershipLevelOfUser != null) {
+            mess += "Your monthly subscription is valid until " + membershipLevelOfUser.getEndDate();
+        }
+        return ApiResponse.<String>builder().status("OK").message("Sucess").data(mess).code("200").build();
     }
 }

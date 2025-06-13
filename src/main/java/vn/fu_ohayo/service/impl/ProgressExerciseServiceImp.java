@@ -45,15 +45,14 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
 
 
     @Override
-    public LessonExerciseResponse getSource(int exerciseId, int lessonId) {
-        LessonExercise lessonExercise = lessonExerciseRepository.findByLesson_LessonId(lessonId).orElseThrow(
+    public LessonExerciseResponse getSource(int exerciseId) {
+        LessonExercise lessonExercise = lessonExerciseRepository.findById(exerciseId).orElseThrow(
                 () -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND)
         );
 
         List<ExerciseQuestionResponse> questions = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise).stream()
                 .map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
         return LessonExerciseResponse.builder()
-                .lessonId(lessonId)
                 .title(lessonExercise.getTitle())
                 .duration(lessonExercise.getDuration())
                 .content(questions)

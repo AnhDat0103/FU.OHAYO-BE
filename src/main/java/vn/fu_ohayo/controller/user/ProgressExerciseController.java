@@ -32,14 +32,13 @@ public class ProgressExerciseController {
 
     @GetMapping("/get-sources")
     public ApiResponse<LessonExerciseResponse> getSource(
-            @RequestParam int exerciseId,
-            @RequestParam int lessonId
+            @RequestParam int exerciseId
 
     ) {
         return ApiResponse.<LessonExerciseResponse>builder()
                 .status("success")
                 .message("Fetched source successfully")
-                .data(progressExerciseService.getSource(exerciseId, lessonId))
+                .data(progressExerciseService.getSource(exerciseId))
                 .build();
     }
 }

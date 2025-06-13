@@ -8,5 +8,5 @@ public interface ProgressExerciseService {
 
     ExerciseResultResponse submitExercise(UserResponseRequest userResponseRequest);
 
-    LessonExerciseResponse getSource(int exerciseId, int lessonId);
+    LessonExerciseResponse getSource(int exerciseId);
 }

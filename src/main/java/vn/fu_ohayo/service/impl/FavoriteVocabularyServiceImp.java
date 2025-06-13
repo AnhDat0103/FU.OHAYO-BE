@@ -99,9 +99,12 @@ public class FavoriteVocabularyServiceImp implements FavoriteVocabularyService {
     @Override
     public void deleteFolder(Integer id) {
         FavoriteVocabulary folder = favoriteVocabularyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Folder not found"));
-        favoriteVocabularyRepository.delete(folder);
+                .orElseThrow(() -> new RuntimeException("Folder not found with id: " + id));
+
+        folder.setDeleted(true);
+        favoriteVocabularyRepository.save(folder);
     }
+
 
 
     @Override

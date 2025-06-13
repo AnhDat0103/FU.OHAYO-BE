@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 @Table(name = "Favorite_Grammars")
 public class FavoriteGrammar {
     @Id
@@ -44,6 +46,9 @@ public class FavoriteGrammar {
 
     @Column(name = "added_at")
     private Date addedAt;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @PrePersist
     protected void onAdd() {

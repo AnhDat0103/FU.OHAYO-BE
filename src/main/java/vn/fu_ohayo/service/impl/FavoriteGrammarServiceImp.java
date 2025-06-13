@@ -91,8 +91,10 @@ public class FavoriteGrammarServiceImp implements FavoriteGrammarService {
     @Override
     public void deleteFolder(Integer id) {
         FavoriteGrammar folder = favoriteGrammarRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Folder not found"));
-        favoriteGrammarRepository.delete(folder);
+                .orElseThrow(() -> new RuntimeException("Grammar folder not found with id: " + id));
+
+        folder.setDeleted(true);
+        favoriteGrammarRepository.save(folder);
     }
 
 

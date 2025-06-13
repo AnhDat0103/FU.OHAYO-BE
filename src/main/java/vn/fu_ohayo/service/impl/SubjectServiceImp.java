@@ -50,8 +50,8 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public Page<SubjectResponse> getAllActiveSubjects(int page, int size, long userId) {
-        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.ACTIVE,userId, PageRequest.of(page, size))
+    public Page<SubjectResponse> getAllActiveSubjects(int page, int size, String email) {
+        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.ACTIVE,email, PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
                     s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
@@ -73,8 +73,8 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public Page<ProgressSubjectResponse> getAllByUserId(int page, int size, long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+    public Page<ProgressSubjectResponse> getAllByUserId(int page, int size, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         Page<ProgressSubject> progressSubjects = progressSubjectRepository.findAllByUserAndSubject_Status(user, SubjectStatus.ACTIVE, PageRequest.of(page, size));
 
         if (progressSubjects.hasContent()) {
@@ -91,6 +91,17 @@ public class SubjectServiceImp implements SubjectService {
             });
         }
         return Page.empty();
+    }
+
+    @Override
+    public Page<SubjectResponse> getAllActiveSubjects(int page, int size) {
+        return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE, PageRequest.of(page, size))
+                .map(subjectMapper::toSubjectResponse)
+                .map(s -> {
+                    s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
+                    s.setCountLessons(Math.max(lessonRepository.countAllBySubject_SubjectIdAndStatus(s.getSubjectId(), LessonStatus.PUBLIC), 0));
+                    return s;
+                });
     }
 
 

@@ -2,6 +2,9 @@ package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.dto.request.SubjectRequest;
@@ -40,25 +43,41 @@ public class SubjectController {
     @GetMapping("/all-courses")
     public ApiResponse<Page<SubjectResponse>> getAllSubjects(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size,
-            @RequestParam() long userId
+            @RequestParam(defaultValue = "6") int size
     ) {
-
+        Authentication  auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
         return ApiResponse.<Page<SubjectResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllActiveSubjects(page, size, userId))
+                .data(subjectService.getAllActiveSubjects(page, size, email))
                 .build();
     }
+
+    @GetMapping("/client-all-courses")
+    public ApiResponse<Page<SubjectResponse>> getAllPublicSubjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
+    ) {
+        return ApiResponse.<Page<SubjectResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Get all subjects successfully")
+                .data(subjectService.getAllActiveSubjects(page, size))
+                .build();
+    }
+
+
 
     @GetMapping("/students")
     public  ApiResponse<Page<ProgressSubjectResponse>> getAllByUserId(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size,
-            @RequestParam() long userId
+            @RequestParam(defaultValue = "6") int size
     ){
-        Page<ProgressSubjectResponse> subjectResponses = subjectService.getAllByUserId(page, size, userId);
+        Authentication  auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        Page<ProgressSubjectResponse> subjectResponses = subjectService.getAllByUserId(page, size, email);
         return ApiResponse.<Page<ProgressSubjectResponse>>builder()
                 .code("200")
                 .status("success")

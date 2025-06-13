@@ -22,6 +22,18 @@ public class FavoriteGrammar {
     )
     private int id;
 
+    @Column(name = "is_public")
+    private boolean isPublic = false;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "ownerName")
+    private String ownerName;
+
+    @ManyToMany(mappedBy = "favoriteGrammars")
+    private Set<User> users;
+
     @ManyToMany
     @JoinTable(
             name = "grammar_favorite_grammar",

@@ -23,7 +23,20 @@ public class FavoriteVocabulary {
     )
     private int id;
 
-    @ManyToMany
+    @Column(name = "is_public")
+    private boolean isPublic = false;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "ownerName")
+    private String ownerName;
+
+ @ManyToMany(mappedBy = "favoriteVocabularies")
+ private Set<User> users;
+
+
+ @ManyToMany
     @JoinTable(
             name = "vocabulary_favorite_vocabulary",
             joinColumns = @JoinColumn(name = "id"),

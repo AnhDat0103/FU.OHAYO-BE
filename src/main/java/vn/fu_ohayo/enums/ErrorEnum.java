@@ -29,7 +29,7 @@ public enum ErrorEnum {
     REFRESH_TOKEN_NOT_FOUND ("4003", "Refresh token not found"),
     INTERNAL_SERVER_ERROR("5000", "Internal server error"),
     INVALID_CONTENT_SPEAKING("403", "ContentSpeaking not found" ),
-
+    FAVORITE_GRAMMAR_NOT_FOUND("404", "Favorite grammar folder not found"),
     SUBJECT_NOT_FOUND("4004", "Subject not found"),
     SUBJECT_CODE_EXISTS("4004", "Subject code is existed" ),
     EXERCISE_NOT_FOUND("4005", "Exercise not found"),

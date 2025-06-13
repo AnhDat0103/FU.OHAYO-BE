@@ -63,7 +63,7 @@ public class StudyReminderController {
         return ApiResponse.<StudyReminderResponse>builder()
                 .code("201")
                 .status("success")
-                .message("Study reminder created successfully")
+                .message("Study reminder update successfully")
                 .data(response)
                 .build();
     }
@@ -74,8 +74,8 @@ public class StudyReminderController {
         return ApiResponse.<String>builder()
                 .code("201")
                 .status("success")
-                .message("Study reminder created successfully")
-                .data("Study reminder created successfully")
+                .message("Study reminder deleted successfully")
+                .data("Study reminder deleted successfully")
                 .build();
     }
 }

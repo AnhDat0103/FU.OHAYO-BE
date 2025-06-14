@@ -4,14 +4,19 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.response.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
-import vn.fu_ohayo.enums.NotificationType;
+import vn.fu_ohayo.entity.ParentStudent;
+import vn.fu_ohayo.enums.NotificationEnum;
+import vn.fu_ohayo.enums.ParentCodeStatus;
+import vn.fu_ohayo.mapper.NotificationMapper;
 import vn.fu_ohayo.repository.NotificationRepository;
+import vn.fu_ohayo.repository.ParentStudentRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.NotificationService;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
     private  final UserRepository userRepository;
     private  final NotificationMapper notificationMapper;
+    private final ParentStudentRepository parentStudentRepository;
     @Override
     public void confirmNotification(Long notificationId) {
         logger.info("Confirm notification with ID: {}", notificationId);
@@ -57,12 +63,10 @@ public class NotificationServiceImpl implements NotificationService {
     public Notification notifyUser(Notification notification) {
         logger.info("Sending notification to user: {}", notification.getUser().getUserId());
         Notification savedNotification = notificationRepository.save(notification);
-        if (notification.getType() == NotificationType.CONFIRMATION) {
+        if (notification.getType() == NotificationEnum.ACCEPT_STUDENT) {
             logger.info("Notification type: CONFIRMATION");
-            messagingTemplate.convertAndSend("/topic/confirmation-user-" + notification.getUser().getUserId(), notification);
-        } else if (notification.getType() == NotificationType.PAYMENT) {
+        } else if (notification.getType() == NotificationEnum.PAYMENT) {
             logger.info("Notification type: PAYMENT");
-            messagingTemplate.convertAndSend("/topic/payment-user-" + notification.getUser().getUserId(), notification);
         } else {
             logger.warn("Unknown notification type: {}", notification.getType());
         }
@@ -75,22 +79,41 @@ public class NotificationServiceImpl implements NotificationService {
         Optional<Notification> optional = notificationRepository.findById(notificationId);
         if (optional.isPresent()) {
             Notification notification = optional.get();
-            if (notification.getType() == NotificationType.CONFIRMATION) {
-                // Confirmation logic
-                notification.setStatus(isConfirmed ? "confirmed" : "denied");
+            notification.setStatusSend(true);
+            if (notification.getType() == NotificationEnum.ACCEPT_STUDENT) {
+                ParentStudent parentStudent = parentStudentRepository.findByParentEmailAndStudentEmailAndParentCodeStatus(notification.getUser().getEmail(), notification.getUserSend().getEmail(), ParentCodeStatus.PENDING);
+                if (isConfirmed) {
+                    parentStudent.setParentCodeStatus(ParentCodeStatus.CONFIRM);
+                    notification.setStatus(true);
+                } else {
+                    parentStudent.setParentCodeStatus(ParentCodeStatus.REJECT);
+                    notification.setStatus(false);
+                }
+                parentStudentRepository.save(parentStudent);
                 notificationRepository.save(notification);
-                messagingTemplate.convertAndSend("/topic/confirmation-user-" + notification.getUser().getUserId(), notification);
-            } else if (notification.getType() == NotificationType.PAYMENT) {
-                // Payment logic
-                notification.setStatus(isConfirmed ? "paid" : "denied");
-                notificationRepository.save(notification);
-                messagingTemplate.convertAndSend("/topic/payment-user-" + notification.getUser().getUserId(), notification);
+
             } else {
-                logger.warn("Unknown notification type: {}", notification.getType());
+                if (isConfirmed) {
+                    // Payment logic
+                    notification.setStatus(true);
+                    notificationRepository.save(notification);
+                } else {
+                    // Payment logic
+                    notification.setStatus(false);
+                    notificationRepository.save(notification);
+                }
             }
+
+
         } else {
             logger.error("Notification with ID {} not found", notificationId);
             throw new RuntimeException("Notification not found");
         }
+    }
+
+    @Override
+    public List<NotificationDTO> getNotificationList(Long userId) {
+        List<Notification> notifications = notificationRepository.findByUser_UserId(userId);
+        return notifications.stream().map(notificationMapper::notificationDTO).toList();
     }
 }

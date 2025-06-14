@@ -2,14 +2,17 @@ package vn.fu_ohayo.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.request.NotificationReq;
 import vn.fu_ohayo.dto.response.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.service.NotificationService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
@@ -44,7 +47,14 @@ public class NotificationController {
 
         @GetMapping("/{userId}/notificationUser")
         public ResponseEntity<?> getAllNotificationsOfUser (@PathVariable("userId") Long userId) {
-            List<NotificationDTO> list = notificationService.getAllOfUser(userId);
+            List<NotificationDTO> list = notificationService.getNotificationList(userId);
             return ResponseEntity.ok().body(list);
         }
+
+    @GetMapping("/{notificationId}/{status}/sendNotification")
+    public ResponseEntity<?> updateNotificationStatus(@PathVariable("notificationId") Long id, @PathVariable("status") boolean status ) {
+        log.info("DA Vao");
+        notificationService.handleNotificationAction(id, status);
+        return ResponseEntity.ok("Cập nhật trạng thái thành công");
+    }
     }

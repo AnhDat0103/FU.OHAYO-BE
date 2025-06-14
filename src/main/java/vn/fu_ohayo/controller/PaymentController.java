@@ -71,10 +71,10 @@ public class PaymentController {
         return ResponseEntity.ok().body(paymentService.paymentInfo());
     }
 
-//    @PostMapping("/sendToParent")
-//    public ResponseEntity<PaymentResponse> getInfor(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
-//
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/sendToParent")
+    public ResponseEntity<String> sendRequestToParent(@RequestBody PaymentRequest paymentRequest) {
+        
+        return ResponseEntity.ok("oke");
+    }
 
 }

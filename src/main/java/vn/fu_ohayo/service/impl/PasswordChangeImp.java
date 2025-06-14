@@ -19,8 +19,7 @@ public class PasswordChangeImp implements PasswordChangeService {
     //doi mat khau cho nguoi dung trong profile
     public boolean changePassword(User user, String currentPassword, String newPassword, String confirmPassword) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String currentHashed = passwordEncoder.encode(currentPassword);
-        if (!currentHashed.equals(user.getPassword())) {
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new IllegalArgumentException("Current password is incorrect.");
         }
         if (!newPassword.equals(confirmPassword)) {

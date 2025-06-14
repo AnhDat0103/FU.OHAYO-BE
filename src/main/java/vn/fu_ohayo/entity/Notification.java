@@ -2,10 +2,7 @@ package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.NotificationEnum;
 
@@ -14,7 +11,8 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Table(name = "Notifications")
 public class Notification {
@@ -48,6 +46,10 @@ public class Notification {
     @JoinColumn(name = "user_send_id")
     private User userSend;
 
+    @Column(name = "status_send")
+    private boolean statusSend;
+
+
     @Column(name = "status")
     private boolean status;
 
@@ -55,9 +57,5 @@ public class Notification {
     @Column(name = "type")
     private NotificationEnum type = NotificationEnum.NORMAL;
 
-    @Transient
-    public String getTitle() {
-        return type.getTitle();
-    }
 
 }

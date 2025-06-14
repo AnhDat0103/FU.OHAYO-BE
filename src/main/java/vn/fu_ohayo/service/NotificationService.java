@@ -10,4 +10,5 @@ public interface NotificationService {
     void denyPayment(Long notificationId);
     Notification notifyUser(Notification notification);
     void handleNotificationAction(Long notificationId, boolean isConfirmed);
+    List<NotificationDTO> getNotificationList (Long userId);
 }

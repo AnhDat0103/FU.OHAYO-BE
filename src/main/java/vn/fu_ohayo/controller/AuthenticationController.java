@@ -172,16 +172,15 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<UserResponse>> getUserByToken() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-       user.getChildren().forEach(parentStudent -> log.info("OKE:" + parentStudent.getStudent().getFullName()));
         UserResponse userResponse  = userMapper.toUserResponse(user);
-        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() != ParentCodeStatus.REJECT && parentStudent.getParentCodeStatus() != ParentCodeStatus.PENDING).collect(Collectors.toList());
-        List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() != ParentCodeStatus.REJECT && parentStudent.getParentCodeStatus() != ParentCodeStatus.PENDING).collect(Collectors.toList());
-        if ("STUDENT".equalsIgnoreCase(userResponse.getRoleName())) {
+        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent ->parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+        List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+        if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
             userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
-            userResponse.setChildren(null);
+
         } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
             userResponse.setChildren(userMapper.toStudentOnlyDtoList(filteredChildren));
-            userResponse.setParents(null);
+
         }
         return ResponseEntity.ok(
                 ApiResponse.<UserResponse>builder()

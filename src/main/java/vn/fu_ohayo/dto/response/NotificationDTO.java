@@ -17,6 +17,8 @@ public class NotificationDTO {
 
     private Long userId;
 
+    private boolean statusSend;
+
     private boolean status;
 
     private NotificationEnum type;

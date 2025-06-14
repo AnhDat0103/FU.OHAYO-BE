@@ -19,7 +19,7 @@ public class ParentStudent {
     @Id @GeneratedValue(
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
-    private int id;
+    private Integer id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,5 +36,14 @@ public class ParentStudent {
 
     @Column(name = "verification_code")
     private String verificationCode;
+
+    @Column(name = "created_at", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new java.util.Date();
+    }
 
 }

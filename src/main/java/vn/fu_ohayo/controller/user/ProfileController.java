@@ -122,4 +122,15 @@ public class ProfileController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<UserResponse> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        UserResponse userResponse = userMapper.toUserResponse(user);
+        return ApiResponse.<UserResponse>builder()
+                .status("success")
+                .message("Fetched user successfully")
+                .data(userResponse)
+                .build();
+    }
+
 }

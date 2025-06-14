@@ -14,9 +14,7 @@ import java.util.List;
 
 @Repository
 public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuestion, Integer> {
-    List<ExerciseQuestion> findByContentListening(ContentListening contentListening);
     Page<ExerciseQuestion> findAllByContentListening(ContentListening contentListening, Pageable page);
     List<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise);
-
     Page<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise, Pageable pageable);
 }

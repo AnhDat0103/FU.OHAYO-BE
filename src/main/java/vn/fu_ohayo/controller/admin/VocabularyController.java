@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.VocabularyRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
@@ -101,6 +102,17 @@ public class VocabularyController {
                 .code("200")
                 .status("success")
                 .message("Fetched all vocabularies successfully")
+                .data(vocabularyResponses)
+                .build();
+    }
+
+    @GetMapping("/favorite/{id}")
+    public ApiResponse<List<VocabularyResponse>> getVocabularyByFavoriteVocabularyId(@PathVariable int id) {
+        List<VocabularyResponse> vocabularyResponses = vocabularyService.getVocabularysByFavoriteVocabularyId(id);
+        return ApiResponse.<List<VocabularyResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched vocabularies by favorite folder successfully")
                 .data(vocabularyResponses)
                 .build();
     }

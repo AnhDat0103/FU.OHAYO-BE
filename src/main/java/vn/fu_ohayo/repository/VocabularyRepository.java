@@ -3,14 +3,24 @@ package vn.fu_ohayo.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Vocabulary;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
+
+    @Query("SELECT v FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
+    List<Vocabulary> findAllByFavoriteVocabularyId(@Param("folderId") int folderId);
+
+    @Query("SELECT COUNT(v) FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
+    int countByFavoriteVocabularyId(@Param("folderId") int folderId);
 
     int countAllByLesson(Lesson lesson);
 

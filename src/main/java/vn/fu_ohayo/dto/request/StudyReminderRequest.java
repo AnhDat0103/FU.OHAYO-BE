@@ -25,6 +25,7 @@ public class StudyReminderRequest {
     @NotBlank(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String note;
 
+    @NotNull(message = ErrorEnum.NOT_EMPTY_TIME)
     private LocalTime time;
     private Boolean isActive;
 
@@ -32,6 +33,4 @@ public class StudyReminderRequest {
     @Enumerated(EnumType.STRING)
     private List<DayOfWeek> daysOfWeek;
 
-    @NotNull(message = ErrorEnum.NOT_EMPTY_USER)
-    private Long userId;
 }

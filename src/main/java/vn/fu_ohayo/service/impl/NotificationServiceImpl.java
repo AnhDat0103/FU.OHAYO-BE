@@ -67,6 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
             logger.info("Notification type: CONFIRMATION");
         } else if (notification.getType() == NotificationEnum.PAYMENT) {
             logger.info("Notification type: PAYMENT");
+            messagingTemplate.convertAndSend("/topic/payment-user-" + notification.getUser().getUserId(), notification);
         } else {
             logger.warn("Unknown notification type: {}", notification.getType());
         }

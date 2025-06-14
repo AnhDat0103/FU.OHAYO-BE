@@ -41,10 +41,17 @@ public class GrammarServiceImp implements GrammarService {
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
         Optional<Grammar> grammarOptional = grammarRepository.findByTitleJpAndLesson(grammarRequest.getTitleJp(), lesson);
+
         if (grammarOptional.isPresent()) {
-            grammarOptional.get().setDeleted(false);
+            if(grammarOptional.get().isDeleted()) {
+                grammarOptional.get().setDeleted(false);
+
+            } else {
+                throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
+            }
             return grammarMapper.toGrammarResponse(grammarRepository.save(grammarOptional.get()));
         }
+
         Grammar grammar = Grammar.builder()
                 .titleJp(grammarRequest.getTitleJp())
                 .jlptLevel(grammarRequest.getJlptLevel())

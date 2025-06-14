@@ -28,4 +28,6 @@ public class LessonRequest {
         @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
         private int subjectId;
 
+        private String videoUrl;
+
 }

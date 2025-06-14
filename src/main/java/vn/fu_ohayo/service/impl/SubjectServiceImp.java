@@ -51,7 +51,7 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public Page<SubjectResponse> getAllActiveSubjects(int page, int size, String email) {
-        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.ACTIVE,email, PageRequest.of(page, size))
+        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.INACTIVE,email, PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
                     s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);

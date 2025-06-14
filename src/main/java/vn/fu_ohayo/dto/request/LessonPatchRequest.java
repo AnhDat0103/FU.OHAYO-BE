@@ -22,4 +22,6 @@ public class LessonPatchRequest {
     private LessonStatus status;
 
     private int subjectId;
+
+    private String videoUrl;
 }

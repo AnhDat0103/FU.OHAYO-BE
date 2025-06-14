@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface FavoriteGrammarRepository extends JpaRepository<FavoriteGrammar, Integer> {
+    List<FavoriteGrammar> findByIsPublicTrueAndUsers_UserIdNotAndNameContainingIgnoreCase(
+            Long userId, String keyword);
     Page<FavoriteGrammar> findByIsPublicTrueAndUsers_UserIdNot(Long userId, Pageable pageable);
     List<FavoriteGrammar> findByUsers_UserId(Long userId);
     List<FavoriteGrammar> findByUsers_UserIdAndNameContainingIgnoreCase(Long userId, String name);

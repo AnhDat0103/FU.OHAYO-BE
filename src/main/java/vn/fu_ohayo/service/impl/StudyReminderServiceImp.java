@@ -1,6 +1,7 @@
 package vn.fu_ohayo.service.impl;
 
-import lombok.AllArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.StudyReminderRequest;
 import vn.fu_ohayo.dto.response.StudyReminderResponse;
@@ -10,10 +11,14 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.StudyReminderMapper;
 import vn.fu_ohayo.repository.StudyReminderRepository;
+import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.StudyReminderService;
 import vn.fu_ohayo.service.UserService;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +29,15 @@ public class StudyReminderServiceImp implements StudyReminderService {
     private final StudyReminderRepository studyReminderRepository;
     private final UserService userService;
     private final StudyReminderMapper studyReminderMapper;
+    private final MailService mailService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public StudyReminderServiceImp(StudyReminderRepository studyReminderRepository, UserService userService, StudyReminderMapper studyReminderMapper) {
+    public StudyReminderServiceImp(StudyReminderRepository studyReminderRepository, UserService userService, StudyReminderMapper studyReminderMapper, MailService mailService, SimpMessagingTemplate messagingTemplate) {
         this.studyReminderRepository = studyReminderRepository;
         this.userService = userService;
         this.studyReminderMapper = studyReminderMapper;
+        this.mailService = mailService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -75,5 +84,41 @@ public class StudyReminderServiceImp implements StudyReminderService {
     @Override
     public StudyReminder getStudyReminderById(int studyReminderId) {
         return studyReminderRepository.findById(studyReminderId).orElseThrow(() -> new AppException(ErrorEnum.STUDY_REMINDER_NOT_FOUND));
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    private void sendMailReminder(){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime tenMinutesLater = now.plusMinutes(10);
+
+        List<StudyReminder> upComingReminders = studyReminderRepository.findAll().stream()
+                .filter(r -> r.getIsActive().equals(true)
+                        && isReminderToday(r.getDaysOfWeek())
+                        && matchesTime(r.getTime(), tenMinutesLater)
+                ).toList();
+        for (StudyReminder studyReminder : upComingReminders) {
+            mailService.sendReminderEmail(studyReminder);
+        }
+    }
+    @Scheduled(cron = "0 * * * * *")
+    private void sendRealTimeReminder() {
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        List<StudyReminder> upComingReminders = studyReminderRepository.findAll().stream()
+                .filter(r -> r.getIsActive().equals(true)
+                        && matchesTime(r.getTime(), now)
+                        && isReminderToday(r.getDaysOfWeek())
+                ).toList();
+        for(StudyReminder studyReminder : upComingReminders) {
+            messagingTemplate.convertAndSend("/topic/reminders/" + studyReminder.getUser().getUserId(), studyReminder);
+        }
+    }
+
+    private boolean matchesTime(LocalTime reminderTime, LocalDateTime time) {
+        return reminderTime.getHour() == time.getHour() &&
+                reminderTime.getMinute() == time.getMinute();
+    }
+
+    private boolean isReminderToday(List<DayOfWeek> reminderDays) {
+        return reminderDays.contains(LocalDate.now().getDayOfWeek());
     }
 }

@@ -16,24 +16,22 @@ import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.SearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
-import vn.fu_ohayo.entity.ParentStudent;
-import vn.fu_ohayo.entity.Subject;
-import vn.fu_ohayo.entity.User;
-import vn.fu_ohayo.entity.UserProfileDTO;
+import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.*;
+import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
 import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
-import vn.fu_ohayo.repository.ParentStudentRepository;
-import vn.fu_ohayo.repository.SubjectRepository;
-import vn.fu_ohayo.repository.RoleRepository;
-import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.UserService;
+
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -51,6 +49,8 @@ public class UserServiceImp implements UserService {
     SearchUserMapper searchUserMapper;
     SubjectRepository subjectRepository;
     ParentStudentRepository parentStudentRepository;
+    MemberShipLevelOfUserRepository memberShipLevelOfUserRepository;
+    MemberShipLevelRepository memberShipLevelRepository;
 
 
     @Override
@@ -97,7 +97,7 @@ public class UserServiceImp implements UserService {
         }
 
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3 ) {
+        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
             return ApiResponse.builder()
                     .message("You can only create 3 Students")
                     .code("1001")
@@ -106,7 +106,7 @@ public class UserServiceImp implements UserService {
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
-        if(!emailParent.equals("anonymousUser")) {
+        if (!emailParent.equals("anonymousUser")) {
             User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
             ParentStudent parentStudent = ParentStudent.builder()
                     .verificationCode("")
@@ -117,7 +117,7 @@ public class UserServiceImp implements UserService {
             parentStudentRepository.save(parentStudent);
         }
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
-        mailService.sendEmail(initialRegisterRequest.getEmail(),token);
+        mailService.sendEmail(initialRegisterRequest.getEmail(), token);
         return ApiResponse.<InitialRegisterRequest>builder()
                 .code("200")
                 .status("OK")
@@ -127,10 +127,9 @@ public class UserServiceImp implements UserService {
     }
 
 
-
     @Override
-    public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
+    public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         log.info(String.valueOf(completeProfileRequest.getRole()));
 
@@ -144,7 +143,6 @@ public class UserServiceImp implements UserService {
 
         userRepository.save(user);
         return userMapper.toUserResponse(user);
-
 
 
     }
@@ -230,6 +228,50 @@ public class UserServiceImp implements UserService {
         User user = getUserByEmail(email);
         user.setAvatar(avatarUrl);
         return userRepository.save(user).getAvatar();
+    }
+
+    @Override
+    public UserResponse getUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        MembershipLevelOfUser membershipLevelOfUser = memberShipLevelOfUserRepository.findByUserUserId(user.getUserId());
+
+        if (membershipLevelOfUser != null && membershipLevelOfUser.getEndDate().isAfter(LocalDate.now())) {
+            user.setMembershipLevel(MembershipLevel.ONE_MONTH);
+        }
+        else if(membershipLevelOfUser != null && !membershipLevelOfUser.getEndDate().isAfter(LocalDate.now())) {
+            user.setMembershipLevel(MembershipLevel.NORMAL);
+        }
+        userRepository.save(user);
+            UserResponse userResponse = userMapper.toUserResponse(user);
+            List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+            List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+            filteredChildren.forEach(parentStudent -> {
+                MembershipLevelOfUser membershipLevelOfUser1 = memberShipLevelOfUserRepository.findByUserUserId(parentStudent.getStudent().getUserId());
+                 if(membershipLevelOfUser1 != null && !membershipLevelOfUser1.getEndDate().isAfter(LocalDate.now())) {
+                     User user1 = userRepository.findByEmail(parentStudent.getStudent().getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                     user1.setMembershipLevel(MembershipLevel.NORMAL);
+                     userRepository.save(user1);
+                }
+
+            });
+        filterParent.forEach(parentStudent -> {
+            MembershipLevelOfUser membershipLevelOfUser1 = memberShipLevelOfUserRepository.findByUserUserId(parentStudent.getParent().getUserId());
+            if(membershipLevelOfUser1 != null && !membershipLevelOfUser1.getEndDate().isAfter(LocalDate.now())) {
+                User user1 = userRepository.findByEmail(parentStudent.getParent().getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                user1.setMembershipLevel(MembershipLevel.NORMAL);
+                userRepository.save(user1);
+            }
+
+        });
+            if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
+                userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
+
+            } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
+                userResponse.setChildren(userMapper.toStudentOnlyDtoList(filteredChildren));
+
+            }        return userResponse;
+
     }
 
 }

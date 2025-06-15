@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import vn.fu_ohayo.service.impl.AdminDetailService;
 import vn.fu_ohayo.service.impl.AdminServiceDetail;
 
 
@@ -24,7 +25,7 @@ import vn.fu_ohayo.service.impl.AdminServiceDetail;
 public class AuthConfig {
     private final CustomizeRequestFilter customizeRequestFilter;
     private final UserServiceDetail userServiceDetail;
-    private final AdminServiceDetail adminServiceDetail;
+    private final AdminDetailService adminServiceDetail;
 
     @Bean
     @Order(1)
@@ -69,7 +70,7 @@ public class AuthConfig {
     public AuthenticationProvider adminAuthenticationProvider( ) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(passwordEncoder());
-        authProvider.setUserDetailsService(adminServiceDetail.UserServiceDetail());
+        authProvider.setUserDetailsService(adminServiceDetail);
         return authProvider;
     }
 

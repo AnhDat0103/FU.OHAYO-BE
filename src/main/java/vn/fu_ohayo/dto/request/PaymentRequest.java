@@ -12,4 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class PaymentRequest {
     Long amount;
     Long userId;
+    Long notificationId;
 }

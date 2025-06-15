@@ -49,17 +49,7 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginForAdmin(@RequestBody AdminLoginRequest adminLoginRequest) {
-        if(userRepository.findByEmail(adminLoginRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getStatus().equals(UserStatus.INACTIVE)) {
-            return  ResponseEntity.ok()
-                    .body(ApiResponse.<TokenResponse>builder()
-                            .code("200")
-                            .status("FAILD")
-                            .message("User is not Confirm in Email")
-                            .data(null)
-                            .build());
-        }
         TokenResponse tokenResponse = authenticationService.getAccessTokenForAdmin(adminLoginRequest);
-        log.info("INFOR" + adminLoginRequest.getEmail());
         log.info("INFOR" + adminLoginRequest.getEmail());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
                 .httpOnly(true)

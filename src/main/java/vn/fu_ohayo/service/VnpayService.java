@@ -12,10 +12,7 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.PaymentStatus;
 import vn.fu_ohayo.exception.AppException;
-import vn.fu_ohayo.repository.MemberShipLevelOfUserRepository;
-import vn.fu_ohayo.repository.MemberShipLevelRepository;
-import vn.fu_ohayo.repository.PaymentRepository;
-import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.repository.*;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -36,6 +33,8 @@ public class VnpayService {
     PaymentRepository paymentRepository;
     MemberShipLevelRepository memberShipLevelRepository;
     MemberShipLevelOfUserRepository memberShipLevelOfUserRepository;
+    NotificationRepository notificationRepository;
+    NotificationService notificationService;
 
     public String createPaymentUrl(HttpServletRequest request, long amount, Long orderInfo) {
         // Build các tham số
@@ -112,8 +111,12 @@ public class VnpayService {
 
         if (myCheckSum.equals(vnp_SecureHash)) {
             if ("00".equals(responseCode)) {
-                Long userId = Long.parseLong(request.getParameter("vnp_OrderInfo"));
+                Long notificationId = Long.parseLong(request.getParameter("vnp_OrderInfo"));
+                Long userId = notificationRepository.findById(notificationId).orElseThrow(() -> new RuntimeException()).getUserSend().getUserId();
                 long amount = Long.parseLong(request.getParameter("vnp_Amount")) / 100;
+
+                notificationService.handleNotificationAction(notificationId, true);
+
                 int endDays = (int) (amount / 1000);
                 MembershipLevelOfUser membershipLevelOfUser;
                 if(memberShipLevelOfUserRepository.existsByUserUserId(userId)) {
@@ -132,19 +135,20 @@ public class VnpayService {
                             .membershipLevel(memberShipLevelRepository.findByPrice(amount))
                             .user(userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)))
                             .endDate(LocalDate.now().plusDays(endDays))
+                            .membershipLevel(memberShipLevelRepository.findByPrice(amount))
                             .build();
                 }
                memberShipLevelOfUserRepository.save(membershipLevelOfUser);
 
                  payment.setStatus(PaymentStatus.SUCCESS);
                  payment.setBankCode(request.getParameter("vnp_BankCode"));
+                paymentRepository.save(payment);
 
                 return "Thanh toán thành công cho đơn hàng " + orderId + ", số tiền: " + amount + " VND";
             } else if("02".equals(responseCode)) {
                 return "Thanh toán thất bại. Mã lỗi: " + responseCode;
             }
             else {
-                payment.setStatus(PaymentStatus.FAILED);
                 String message = switch (responseCode) {
                     case "24" -> "Bạn đã hủy giao dịch.";
                     case "51" -> "Tài khoản không đủ tiền.";
@@ -152,6 +156,8 @@ public class VnpayService {
                     case "05" -> "Chữ ký không hợp lệ.";
                     default -> "Giao dịch không thành công. Mã lỗi: " + responseCode;
                 };
+                payment.setStatus(PaymentStatus.FAILED);
+                paymentRepository.save(payment);
                 return message;
             }
         } else {

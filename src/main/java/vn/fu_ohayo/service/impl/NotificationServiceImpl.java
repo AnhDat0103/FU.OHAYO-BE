@@ -16,6 +16,7 @@ import vn.fu_ohayo.repository.ParentStudentRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.NotificationService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,20 +92,36 @@ public class NotificationServiceImpl implements NotificationService {
                     notification.setStatus(false);
                 }
                 parentStudentRepository.save(parentStudent);
-                notificationRepository.save(notification);
-
             } else {
                 if (isConfirmed) {
-                    // Payment logic
                     notification.setStatus(true);
-                    notificationRepository.save(notification);
+                    String content = "Your parent :" + notification.getUser().getFullName() + " payment for your order!";
+                    Notification notification1 = Notification.builder()
+                            .type(NotificationEnum.NORMAL)
+                            .title(NotificationEnum.NORMAL.getTitle())
+                            .content(content)
+                            .status(true)
+                            .statusSend(false)
+                            .user(notification.getUserSend())
+                            .userSend(notification.getUser())
+                            .build();
+                    notificationRepository.save(notification1);
                 } else {
-                    // Payment logic
                     notification.setStatus(false);
-                    notificationRepository.save(notification);
+                    String content = "Your parent :" + notification.getUser().getFullName() + " reject your request payment!";
+                    Notification notification1 = Notification.builder()
+                            .type(NotificationEnum.NORMAL)
+                            .title(NotificationEnum.NORMAL.getTitle())
+                            .content(content)
+                            .status(false)
+                            .statusSend(false)
+                            .user(notification.getUserSend())
+                            .userSend(notification.getUser())
+                            .build();
+                    notificationRepository.save(notification1);
                 }
             }
-
+            notificationRepository.save(notification);
 
         } else {
             logger.error("Notification with ID {} not found", notificationId);
@@ -115,6 +132,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationDTO> getNotificationList(Long userId) {
         List<Notification> notifications = notificationRepository.findByUser_UserId(userId);
-        return notifications.stream().map(notificationMapper::notificationDTO).toList();
-    }
+        return notifications.stream()
+                .sorted(Comparator
+                        .comparing(Notification::isStatusSend)
+                        .thenComparing(Notification::getCreatedAt, Comparator.reverseOrder())) // mới nhất trước
+                .map(notificationMapper::notificationDTO)
+                .toList();    }
 }

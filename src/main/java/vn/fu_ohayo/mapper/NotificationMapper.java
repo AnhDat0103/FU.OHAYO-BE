@@ -15,6 +15,7 @@ public interface NotificationMapper {
             @Mapping(source = "content", target = "content"),
             @Mapping(source = "createdAt", target = "createdAt"),
             @Mapping(source = "user.userId", target = "userId"),
+            @Mapping(source = "userSend.userId", target = "userSendId"),
             @Mapping(source = "statusSend", target = "statusSend"),
             @Mapping(source = "status", target = "status"),
             @Mapping(source = "type", target = "type")

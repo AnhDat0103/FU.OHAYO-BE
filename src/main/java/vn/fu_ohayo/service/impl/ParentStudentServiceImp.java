@@ -38,7 +38,6 @@ public class ParentStudentServiceImp implements ParentStudentService {
     public String generateCode() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Email lafa" ,email);
-        Date now = new Date();
         parentStudentRepository.deleteAllExpiredUnlinkedCodes();
         long count = parentStudentRepository.countTodayCodesByParent(email);
         if(count == 5) {

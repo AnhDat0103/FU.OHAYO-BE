@@ -17,6 +17,8 @@ public class NotificationDTO {
 
     private Long userId;
 
+    private Long userSendId;
+
     private boolean statusSend;
 
     private boolean status;

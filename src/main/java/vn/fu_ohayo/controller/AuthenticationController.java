@@ -126,6 +126,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
+        if(!userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getStatus().equals(UserStatus.ACTIVE)) {
+            throw new AppException(ErrorEnum.ACCOUNT_INACTIVE);
+        }
         TokenResponse tokenResponse = authenticationService.getAccessToken(signInRequest);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
@@ -170,18 +173,7 @@ public class AuthenticationController {
 
     @GetMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> getUserByToken() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        UserResponse userResponse  = userMapper.toUserResponse(user);
-        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent ->parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
-        List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
-        if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
-            userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
-
-        } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
-            userResponse.setChildren(userMapper.toStudentOnlyDtoList(filteredChildren));
-
-        }
+        UserResponse userResponse = userService.getUser();
         return ResponseEntity.ok(
                 ApiResponse.<UserResponse>builder()
                         .code("200")

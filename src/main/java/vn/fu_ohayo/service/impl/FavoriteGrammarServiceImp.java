@@ -25,6 +25,25 @@ public class FavoriteGrammarServiceImp implements FavoriteGrammarService {
 
 
     @Override
+    public List<FolderFavoriteResponse> searchPublicGrammarFolders(String keyword) {
+        Long currentUserId = 1L;
+
+        List<FavoriteGrammar> grammars = favoriteGrammarRepository
+                .findByIsPublicTrueAndUsers_UserIdNotAndNameContainingIgnoreCase(currentUserId, keyword);
+
+        return grammars.stream().map(fg -> FolderFavoriteResponse.builder()
+                .id(fg.getId())
+                .name(fg.getName())
+                .isPublic(fg.isPublic())
+                .ownerName(fg.getOwnerName())
+                .addedAt(fg.getAddedAt())
+                .numberOfFavorites(grammarRepository.countByFavoriteGrammarId(fg.getId()))
+                .build()
+        ).toList();
+    }
+
+
+    @Override
     public Page<FolderFavoriteResponse> getPublicGrammarFolders(int page, int size) {
         Long currentUserId = 1L;
 

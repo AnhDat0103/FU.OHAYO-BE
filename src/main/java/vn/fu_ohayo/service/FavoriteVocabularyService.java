@@ -8,6 +8,7 @@ import vn.fu_ohayo.dto.response.FolderFavoriteResponse;
 import java.util.List;
 
 public interface FavoriteVocabularyService {
+    List<FolderFavoriteResponse> searchPublicVocabularyFolders(String keyword);
     Page<FolderFavoriteResponse> getPublicVocabularyFolders(int page, int size);
     void deleteFolder(Integer id);
     FolderFavoriteResponse updateFolder(Integer id, UpdateFolderFavoriteRequest request);

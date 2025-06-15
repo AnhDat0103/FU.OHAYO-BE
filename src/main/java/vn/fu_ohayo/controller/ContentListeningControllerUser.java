@@ -1,26 +1,32 @@
 //package vn.fu_ohayo.controller;
 //
-//import lombok.AllArgsConstructor;
-//import org.springframework.http.ResponseEntity;
+//import lombok.RequiredArgsConstructor;
 //import org.springframework.web.bind.annotation.*;
-//import vn.fu_ohayo.entity.ContentListening;
+//import vn.fu_ohayo.dto.response.ContentListeningResponse;
+//import vn.fu_ohayo.entity.ExerciseQuestion;
 //import vn.fu_ohayo.service.ContentListeningService;
+//import vn.fu_ohayo.service.ContentListeningServiceUser;
+//import vn.fu_ohayo.service.ExerciseQuestionService;
 //
 //import java.util.List;
 //
 //@RestController
-//@RequestMapping("/api/user/contents_listening")
-//@AllArgsConstructor
+//@RequestMapping("/api/listening")
+//@RequiredArgsConstructor
 //public class ContentListeningControllerUser {
 //
-//    private final ContentListeningService contentListeningService;
+//    private final ContentListeningServiceUser contentListeningServiceUser;
+//    private final ExerciseQuestionService exerciseQuestionService;
 //
-//    @PostMapping("/{user-id}")
-//    public ResponseEntity<?> getContentListeningByUserId(@PathVariable("user-id") Long userId) {
-//        List<ContentListening> contentListenings = contentListeningService.getContentListeningByUserId(userId);
-//        if (contentListenings.isEmpty()) {
-//            return ResponseEntity.status(404).body("No content listening found for this user");
-//        }
-//        return ResponseEntity.ok(contentListenings);
+//    @GetMapping("/lessons")
+//    public List<ContentListeningResponse> getAllLessons() {
+//        return contentListeningService.getAllContentListening();
+//    }
+//
+//    @GetMapping("/lesson/{id}")
+//    public LessonDetailResponse getLessonDetail(@PathVariable Long id) {
+//        ContentListeningResponse lesson = contentListeningService.getContentListeningByIdResponse(id);
+//        List<ExerciseQuestion> questions = exerciseQuestionService.getQuestionsByContentListeningId(id);
+//        return new LessonDetailResponse(lesson, questions);
 //    }
 //}

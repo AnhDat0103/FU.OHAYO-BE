@@ -6,15 +6,20 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.NotificationEnum;
 import vn.fu_ohayo.enums.ParentCodeStatus;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.repository.NotificationRepository;
 import vn.fu_ohayo.repository.ParentStudentRepository;
 import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.service.NotificationService;
 import vn.fu_ohayo.service.ParentStudentService;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,13 +33,20 @@ public class ParentStudentServiceImp implements ParentStudentService {
     private int CODE_LENGTH = 6;
     UserRepository userRepository;
     ParentStudentRepository parentStudentRepository;
+    NotificationRepository notificationRepository;
     @Override
     public String generateCode() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Email lafa" ,email);
-        List<ParentStudent> list = parentStudentRepository.findByParentEmail(email);
+        Date now = new Date();
+        parentStudentRepository.deleteAllExpiredUnlinkedCodes();
+        long count = parentStudentRepository.countTodayCodesByParent(email);
+        if(count == 5) {
+            throw new AppException(ErrorEnum.EXCEED_DAILY_CODE_LIMIT);
+        }
+        List<ParentStudent> list = parentStudentRepository.findByParentEmail(email).stream().filter(parentStudent ->parentStudent.getParentCodeStatus() != null && parentStudent.getParentCodeStatus().equals(ParentCodeStatus.CONFIRM)).toList();
         if(list.size() == 3) {
-            return "";
+            throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
         }
         SecureRandom random = new SecureRandom();
         StringBuilder sb ;
@@ -51,12 +63,10 @@ public class ParentStudentServiceImp implements ParentStudentService {
 
         } while (isDuplicate);
 
-        ParentStudent parentStudent = ParentStudent.builder()
-                .parent(userRepository.findByEmail(email)
-                        .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)))
-                .verificationCode(sb.toString())
-                .build();
-        parentStudentRepository.save(parentStudent);
+        User parent = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+
+        parentStudentRepository.insertParentStudent(parent.getUserId(), sb.toString());
         return sb.toString();
 
 }
@@ -67,7 +77,6 @@ public class ParentStudentServiceImp implements ParentStudentService {
 
     @Override
     public String extractCode(String code) {
-
         ParentStudent parentStudent1 = parentStudentRepository.findByVerificationCode(code);
         log.info("CODE LA" + code);
         if(parentStudent1 == null) {
@@ -90,9 +99,26 @@ public class ParentStudentServiceImp implements ParentStudentService {
             if(parentStudent1.getParentCodeStatus() != null) {
             return "The code already exists. Please try a different one.";
              }
-            Optional<User> user = userRepository.findByEmail(email);
-            parentStudent1.setStudent(user.get());
+
+        if (parentStudentRepository.findByStudentEmail(email).stream()
+                .anyMatch(p -> p.getParentCodeStatus() == ParentCodeStatus.PENDING)) {
+            return "You’ve just submitted a code. Please wait for the parent’s verification.";
+        }
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            parentStudent1.setStudent(user);
             parentStudent1.setParentCodeStatus(ParentCodeStatus.PENDING);
+            String content = "Is Student: " + user.getFullName() + " has email: " + email + " your child";
+        ParentStudent parent = parentStudentRepository.findByVerificationCode(code);
+
+        Notification notification = Notification.builder()
+                .type(NotificationEnum.ACCEPT_STUDENT)
+                .title(NotificationEnum.ACCEPT_STUDENT.getTitle())
+                .content(content)
+                .statusSend(false)
+                .user(parent.getParent())
+                .userSend(user)
+                .build();
+        notificationRepository.save(notification);
 
         return "";
     }

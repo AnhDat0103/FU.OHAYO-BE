@@ -139,6 +139,9 @@ public class SubjectServiceImp implements SubjectService {
         if(subjectRequest.getStatus() != null){
             subject.setStatus(subjectRequest.getStatus());
         }
+        if(subjectRequest.getThumbnailUrl() != null){
+            subject.setThumbnailUrl(subjectRequest.getThumbnailUrl());
+        }
         Subject updatedSubject = subjectRepository.save(subject);
         return subjectMapper.toSubjectResponse(updatedSubject);
     }

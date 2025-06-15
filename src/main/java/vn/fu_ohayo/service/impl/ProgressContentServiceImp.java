@@ -22,7 +22,7 @@ public class ProgressContentServiceImp implements ProgressContentService {
         progressContent.setUser(user);
         progressContent.setContent(contentListening.getContent());
         progressContent.setCorrectAnswers(correct_answers);
-        progressContent.setTotalQuestions(total_questions); 
+        progressContent.setTotalQuestions(total_questions);
         return progressContentRepository.save(progressContent);
     }
 

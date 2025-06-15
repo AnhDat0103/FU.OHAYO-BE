@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import vn.fu_ohayo.enums.TokenType;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.UserServiceDetail;
+import vn.fu_ohayo.service.impl.AdminDetailService;
 import vn.fu_ohayo.service.impl.AdminServiceDetail;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.io.IOException;
 public class CustomizeRequestFilter extends OncePerRequestFilter {
     JwtService jwtService;
     UserServiceDetail userServiceDetail;
-    AdminServiceDetail adminDetailService;
+    AdminDetailService adminDetailService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -54,7 +55,7 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
                     log.info("Loaded as USER");
                 } catch (Exception e1) {
                     try {
-                        user = adminDetailService.UserServiceDetail().loadUserByUsername(username);
+                        user = adminDetailService.loadUserByUsername(username);
                         log.info("Loaded as ADMIN");
                     } catch (Exception e2) {
                         log.warn("User not found in both USER and ADMIN services");

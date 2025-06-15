@@ -101,6 +101,30 @@ public class FavoriteController {
                 .build();
     }
 
+    @GetMapping("/publicfolders/search")
+    public ApiResponse<List<FolderFavoriteResponse>> searchPublicFolders(
+            @RequestParam String type,
+            @RequestParam(required = false) String keyword
+    ) {
+        List<FolderFavoriteResponse> result;
+
+        if ("vocabulary".equalsIgnoreCase(type)) {
+            result = favoriteVocabularyService.searchPublicVocabularyFolders(keyword);
+        } else if ("grammar".equalsIgnoreCase(type)) {
+            result = favoriteGrammarService.searchPublicGrammarFolders(keyword);
+        } else {
+            throw new IllegalArgumentException("Invalid folder type: must be 'vocabulary' or 'grammar'");
+        }
+
+        return ApiResponse.<List<FolderFavoriteResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Search public folders successfully")
+                .data(result)
+                .build();
+    }
+
+
 
     @GetMapping("/folders")
     public ApiResponse<List<FolderFavoriteResponse>> searchFolders(
@@ -158,5 +182,7 @@ public class FavoriteController {
                 .data(result)
                 .build();
     }
+
+
 
 }

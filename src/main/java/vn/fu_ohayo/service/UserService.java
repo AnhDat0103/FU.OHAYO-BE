@@ -31,4 +31,5 @@ public interface UserService {
     User getUserByEmail(String email);
     User getUserById(Long userId);
     String updateAvatar(String email, String avatarUrl);
+    UserResponse getUser();
 }

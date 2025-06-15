@@ -12,8 +12,8 @@ import vn.fu_ohayo.repository.UserRepository;
 public class AdminServiceDetail {
     private final AdminRepository userRepository;
 
-    public UserDetailsService UserServiceDetail()  {
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
-    }
+//    public AdminServiceDetail adminServiceDetail()  {
+//        return username -> userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+//    }
 }

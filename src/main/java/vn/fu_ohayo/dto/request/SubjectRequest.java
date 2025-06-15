@@ -29,7 +29,4 @@ public class SubjectRequest {
     @Size(max = 255, message = ErrorEnum.INVALID_THUMBNAIL_URL)
     private String thumbnailUrl;
 
-    @Size(max = 255, message = ErrorEnum.INVALID_VIDEO_URL)
-    private String videoUrl;
-
 }

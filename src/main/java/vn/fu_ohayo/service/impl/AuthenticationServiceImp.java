@@ -82,13 +82,11 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Override
     public TokenResponse getAccessToken(SignInRequest request) {
         try {
-            log.info(request.getEmail());
-            log.info(request.getPassword());
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException e) {
             log.info("Authentication failed for user: {}", request.getEmail());
-            throw new AccessDeniedException(e.getMessage());
+            throw new AppException(ErrorEnum.AUTH_FAILED);
         }
         User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
@@ -106,6 +104,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }catch(AuthenticationException e) {
             throw new AccessDeniedException(e.getMessage());
         }
+        log.info(request.getEmail());
         Admin admin = adminRepository.findByUsername(request.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         String accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
         String refreshToken = jwtService.generateRefreshToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());

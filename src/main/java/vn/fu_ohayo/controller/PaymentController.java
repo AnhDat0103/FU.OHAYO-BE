@@ -22,6 +22,7 @@ import vn.fu_ohayo.mapper.MembershipMapper;
 import vn.fu_ohayo.repository.MemberShipLevelOfUserRepository;
 import vn.fu_ohayo.repository.MemberShipLevelRepository;
 import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.service.NotificationService;
 import vn.fu_ohayo.service.PaymentService;
 import vn.fu_ohayo.service.VnpayService;
 
@@ -45,10 +46,11 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
         log.info(String.valueOf(paymentRequest.getAmount()));
         log.info(String.valueOf(paymentRequest.getUserId()));
-        String url = vnPayService.createPaymentUrl(request, paymentRequest.getAmount(), paymentRequest.getUserId());
+        String url = vnPayService.createPaymentUrl(request, paymentRequest.getAmount(), paymentRequest.getNotificationId());
         PaymentResponse response = PaymentResponse.builder()
                 .url(url)
                 .build();
+        log.info(response.getUrl());
         return ResponseEntity.ok(response);
     }
 
@@ -69,6 +71,12 @@ public class PaymentController {
     @GetMapping("/getMembershipOfUser")
     public ResponseEntity<?> getAllMembershipOfUser() {
         return ResponseEntity.ok().body(paymentService.paymentInfo());
+    }
+
+    @PostMapping("/sendToParent")
+    public ResponseEntity<String> sendRequestToParent(@RequestBody PaymentRequest paymentRequest) {
+        paymentService.sendRequestToParent(paymentRequest);
+        return ResponseEntity.ok("oke");
     }
 
 }

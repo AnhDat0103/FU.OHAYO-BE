@@ -29,6 +29,24 @@ public class FavoriteVocabularyServiceImp implements FavoriteVocabularyService {
     private final VocabularyRepository vocabularyRepository;
 
 
+    @Override
+    public List<FolderFavoriteResponse> searchPublicVocabularyFolders(String keyword) {
+        Long currentUserId = 1L;
+
+        List<FavoriteVocabulary> publicFolders = favoriteVocabularyRepository
+                .findByIsPublicTrueAndUsers_UserIdNotAndNameContainingIgnoreCase(currentUserId, keyword);
+
+        return publicFolders.stream().map(fv -> FolderFavoriteResponse.builder()
+                .id(fv.getId())
+                .name(fv.getName())
+                .isPublic(fv.isPublic())
+                .ownerName(fv.getOwnerName())
+                .addedAt(fv.getAddedAt())
+                .numberOfFavorites(vocabularyRepository.countByFavoriteVocabularyId(fv.getId()))
+                .build()
+        ).toList();
+    }
+
 
     @Override
     public Page<FolderFavoriteResponse> getPublicVocabularyFolders(int page, int size) {

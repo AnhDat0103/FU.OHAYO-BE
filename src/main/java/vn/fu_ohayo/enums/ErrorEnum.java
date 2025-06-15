@@ -21,6 +21,9 @@ public enum ErrorEnum {
 
     // 3xxx - authorization
     ORDER_ID_NOT_FOUND("3001", "Order ID not found"),
+    AUTH_FAILED ("3002", "Email or password is not exactly"),
+    EXCEED_DAILY_CODE_LIMIT("3003", "You have already created 5 codes today. Please try again tomorrow."),
+    MAX_STUDENT_LIMIT("3004", "You can manage up to 3 students only."),
 
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
@@ -38,6 +41,7 @@ public enum ErrorEnum {
     SUBJECT_NAME_EXISTS("4010",  "Subject name is existed"),
     SUBJECT_IN_USE("4011", "Subject is in use, cannot be deleted"),
     INVALID_PAGE("4012","Page is not exist" ),
+    ACCOUNT_INACTIVE("4001","YOUR ACCOUNT IS IN ACTIVE"),
 
     LESSON_NOT_FOUND("4013",  "Lesson not found"),
     LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
@@ -53,9 +57,13 @@ public enum ErrorEnum {
     GRAMMAR_ALREADY_EXISTS_IN_CONTENT_READING("4023","Grammar is  existed in content reading " ),
     EXERCISE_QUESTION_NOT_FOUND("4024","No exercise questions found for this lesson exercise." ),
     USER_ALREADY_ENROLLED("4025", "User is already enrolled in subject." ),
-    PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." );
+    PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
+    ANSWER_NOT_FOUND("4027","Can not found the answer." ),
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
+
+    REQUEST_PAYMENT("6001","You send request for payment over 3 times / a day" );
+
 
 
 

@@ -30,11 +30,12 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     boolean existsBySubjectNameAndSubjectIdNot(String subjectName, int subjectId);
 
-    @Query(
-            "SELECT s FROM Subject s LEFT JOIN ProgressSubject ps ON s.subjectId = ps.subject.subjectId\n" +
-                    "    AND ps.user.email = :email AND s.status = :status\n" +
-                    "WHERE ps.subject.subjectId IS NULL "
-    )
+    @Query("""
+    SELECT s FROM Subject s
+    LEFT JOIN ProgressSubject ps ON s = ps.subject AND ps.user.email = :email
+    WHERE ps IS NULL
+    AND s.status = :status
+""")
     Page<Subject> findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus status,String email ,Pageable pageable);
 
 

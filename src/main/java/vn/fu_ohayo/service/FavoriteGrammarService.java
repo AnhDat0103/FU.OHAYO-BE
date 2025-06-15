@@ -9,6 +9,7 @@ import java.util.List;
 
 
 public interface FavoriteGrammarService {
+    List<FolderFavoriteResponse> searchPublicGrammarFolders(String keyword);
     Page<FolderFavoriteResponse> getPublicGrammarFolders(int page, int size);
     void deleteFolder(Integer id);
     FolderFavoriteResponse updateFolder(Integer id, UpdateFolderFavoriteRequest request);

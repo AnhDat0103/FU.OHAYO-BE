@@ -145,7 +145,7 @@ public class AuthenticationController {
                         .code("200")
                         .status("OK")
                         .message("User logged in successfully")
-                        .data(new TokenResponse(tokenResponse.getAccessToken(), null)) // KHÔNG gửi refreshToken trong body
+                        .data(new TokenResponse(tokenResponse.getAccessToken(), null))
                         .build());
     }
 

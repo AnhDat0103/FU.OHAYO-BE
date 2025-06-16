@@ -135,10 +135,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         if (!StringUtils.hasLength(request)) {
             throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
         }
-
         try {
             ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
-
             User user = userRepository.findById(response.getId())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
             Set<GrantedAuthority> roles = new HashSet<>();
@@ -153,10 +151,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     public TokenResponse getAccessTokenForSocialLogin(String email, Provider provider) {
-        User user = userRepository.findByEmailAndProvider(email, provider)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
-        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
+        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), user.getAuthorities());
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), user.getAuthorities());
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -282,8 +280,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
         user.setEmail(email);
         user.setProvider(providerEnum);
+        user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
-        return UserFromProvider.builder().email(email).isExist(true).build();
+        return UserFromProvider.builder().email(email).isExist(false).build();
     }
 
 }

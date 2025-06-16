@@ -255,15 +255,6 @@ public class UserServiceImp implements UserService {
                 }
 
             });
-        filterParent.forEach(parentStudent -> {
-            MembershipLevelOfUser membershipLevelOfUser1 = memberShipLevelOfUserRepository.findByUserUserId(parentStudent.getParent().getUserId());
-            if(membershipLevelOfUser1 != null && !membershipLevelOfUser1.getEndDate().isAfter(LocalDate.now())) {
-                User user1 = userRepository.findByEmail(parentStudent.getParent().getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-                user1.setMembershipLevel(MembershipLevel.NORMAL);
-                userRepository.save(user1);
-            }
-
-        });
             if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
                 userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
 

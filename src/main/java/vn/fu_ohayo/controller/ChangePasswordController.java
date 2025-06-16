@@ -12,10 +12,12 @@ import vn.fu_ohayo.service.impl.PasswordChangeImp;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+
 public class ChangePasswordController {
 
     private final UserRepository userRepository;
     private final PasswordChangeImp passwordChangeImp;
+
 
     @PostMapping("/change-password")
     //ham principal de lay thong tin nguoi dung dang dang nhap

@@ -28,6 +28,9 @@ public class PasswordChangeImp implements PasswordChangeService {
         if (newPassword.length() < 8) {
             throw new IllegalArgumentException("New password must be at least 8 characters.");
         }
+        if (newPassword.equals(currentPassword)) {
+            throw new IllegalArgumentException("New password must be different from the current password.");
+        }
         String newHashed = passwordEncoder.encode(newPassword);
         user.setPassword(newHashed);
         userRepository.save(user);

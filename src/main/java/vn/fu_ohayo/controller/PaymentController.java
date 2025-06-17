@@ -46,7 +46,7 @@ public class PaymentController {
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
         log.info(String.valueOf(paymentRequest.getAmount()));
         log.info(String.valueOf(paymentRequest.getUserId()));
-        String url = vnPayService.createPaymentUrl(request, paymentRequest.getAmount(), paymentRequest.getNotificationId());
+        String url = vnPayService.createPaymentUrl(request, paymentRequest.getAmount(), paymentRequest.getUserId());
         PaymentResponse response = PaymentResponse.builder()
                 .url(url)
                 .build();

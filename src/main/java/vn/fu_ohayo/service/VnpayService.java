@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.VnPayProperties;
 import vn.fu_ohayo.entity.MembershipLevelOfUser;
@@ -27,6 +28,7 @@ import java.util.*;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
+@Slf4j
 public class VnpayService {
     VnPayProperties vnPayProperties;
     UserRepository userRepository;
@@ -38,6 +40,7 @@ public class VnpayService {
 
     public String createPaymentUrl(HttpServletRequest request, long amount, Long orderInfo) {
         // Build các tham số
+        log.info("1: " + String.valueOf(orderInfo));
         String id = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
@@ -46,12 +49,14 @@ public class VnpayService {
         params.put("vnp_Amount", String.valueOf(amount * 100)); // nhân 100 theo yêu cầu VNPAY
         params.put("vnp_CurrCode", "VND");
         params.put("vnp_TxnRef", id);
+        log.info( "1.5"+ String.valueOf(orderInfo));
         params.put("vnp_OrderInfo", Long.toString(orderInfo));
         params.put("vnp_OrderType", "other");
         params.put("vnp_Locale", "vn");
         params.put("vnp_ReturnUrl", vnPayProperties.getReturnUrl());
         params.put("vnp_IpAddr", request.getRemoteAddr());
         params.put("vnp_CreateDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+        log.info("2:" + String.valueOf(orderInfo));
         User user = userRepository.findById(orderInfo)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         Payment payment = Payment.builder()
@@ -101,6 +106,7 @@ public class VnpayService {
                 fields.put(entry.getKey(), entry.getValue()[0]);
             }
         }
+
         String vnp_SecureHash = request.getParameter("vnp_SecureHash");
         String responseCode = request.getParameter("vnp_ResponseCode");
 
@@ -114,7 +120,6 @@ public class VnpayService {
                 Long notificationId = Long.parseLong(request.getParameter("vnp_OrderInfo"));
                 Long userId = notificationRepository.findById(notificationId).orElseThrow(() -> new RuntimeException()).getUserSend().getUserId();
                 long amount = Long.parseLong(request.getParameter("vnp_Amount")) / 100;
-
                 notificationService.handleNotificationAction(notificationId, true);
 
                 int endDays = (int) (amount / 1000);
@@ -128,7 +133,11 @@ public class VnpayService {
                     }
                     membershipLevelOfUser.setEndDate(LocalDate.now().plusDays(endDays));
                     membershipLevelOfUser.setStartDate(LocalDate.now());
+                    log.info("AAA" +memberShipLevelRepository.findByPrice(amount));
                     membershipLevelOfUser.setMembershipLevel(memberShipLevelRepository.findByPrice(amount));
+                    User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                    user.setMembershipLevel(memberShipLevelRepository.findByPrice(amount).getName());
+                    userRepository.save(user);
                 }
                 else {
                     membershipLevelOfUser = MembershipLevelOfUser.builder()

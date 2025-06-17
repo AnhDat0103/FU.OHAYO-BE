@@ -6,9 +6,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.entity.StudyReminder;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.Provider;
@@ -50,8 +52,19 @@ public class MailService {
         sendEmail(email,token);
     }
 
-        private String loadHtmlTemplate() throws IOException {
-            ClassPathResource resource = new ClassPathResource("templates/verification-email.html");
-            return new String(Files.readAllBytes(resource.getFile().toPath()));
-        }
+    private String loadHtmlTemplate() throws IOException {
+        ClassPathResource resource = new ClassPathResource("templates/verification-email.html");
+        return new String(Files.readAllBytes(resource.getFile().toPath()));
     }
+
+    public void sendReminderEmail(StudyReminder studyReminder) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(studyReminder.getUser().getEmail());
+        message.setSubject("⏰ Nhắc học bài!");
+        message.setText("Bạn có lười nhắc học vào lúc " + studyReminder.getTime() +"\nGhi chú: " + studyReminder.getNote());
+        mailSender.send(message);
+    }
+
+}
+
+

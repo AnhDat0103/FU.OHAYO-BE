@@ -161,7 +161,7 @@ public class ContentReadingServiceImp implements ContentReadingService {
         Grammar grammar = grammarRepository.findById(grammarId)
                 .orElseThrow(() -> new RuntimeException("Grammar not found"));
 
-        // Tải đầy đủ vocabularies để tránh ConcurrentModificationException
+        // Tải đầy đủ grammar để tránh ConcurrentModificationException
         Hibernate.initialize(contentReading.getVocabularies());
         contentReading.getGrammars().remove(grammar);
         contentReadingRepository.save(contentReading);

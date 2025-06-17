@@ -2,7 +2,6 @@ package vn.fu_ohayo.service.impl;
 
 
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +21,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import vn.fu_ohayo.dto.request.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
+import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
 import vn.fu_ohayo.entity.Admin;
-import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
@@ -129,6 +128,18 @@ public class AuthenticationServiceImp implements AuthenticationService {
     }
 
     @Override
+    public GoogleTokenResponse handleGoogleAuthCallback(String code, String state) {
+        log.info("Handling Google auth callback with code: {}", code);
+        if (!StringUtils.hasLength(code)) {
+            throw new AppException(ErrorEnum.AUTH_CODE_NOT_FOUND);
+        }
+        //logic get access token from google
+
+        //logic get refresh token from google
+        return null;
+    }
+
+    @Override
     public TokenResponse getRefreshToken(String request) {
         log.info("Get refresh token");
 
@@ -192,7 +203,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
                 clientId = googleClientId;
                 redirectUri = "http://localhost:8080/auth/code/google";
-                scope = "email profile";
+                scope = "email profile https://www.googleapis.com/auth/youtube.upload";
                 break;
             case "facebook":
                 baseUrl = "https://www.facebook.com/v11.0/dialog/oauth";
@@ -210,7 +221,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 "client_id=" + clientId +
                 "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
                 "&response_type=" + responseType +
-                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8);
+                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
+                "&access_type=offline&prompt=consent";
+
     }
 
     public String getAccessTokenFromProvider(String provider, String code) {

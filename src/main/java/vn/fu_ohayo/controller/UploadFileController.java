@@ -37,19 +37,15 @@ public class UploadFileController {
 
         @PostMapping("/youtube")
         public ApiResponse<String> uploadFileYoutube(@RequestParam("file") MultipartFile file,
-                                                     @RequestParam("subject-name") String subjectName,
-                                                     @RequestParam("accessToken") OAuth2AuthenticationToken token) throws GeneralSecurityException, IOException {
-            OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
-                    token.getAuthorizedClientRegistrationId(), token.getName());
+                                                     @RequestParam("lessonName") String lessonName) throws GeneralSecurityException, IOException {
 
-            String  accessToken = authorizedClient.getAccessToken().getTokenValue();
 
-            String videoId = uploadService.handleUploadFileToYoutube(file, subjectName, accessToken);
-            return ApiResponse.<String>builder()
+            String videoUrl = uploadService.handleUploadFileToYoutube(file, lessonName);
+                return ApiResponse.<String>builder()
                     .code("200")
                     .status("success")
                     .message("File youtube uploaded successfully")
-                    .data(videoId)
+                    .data(videoUrl)
                     .build();
         }
 }

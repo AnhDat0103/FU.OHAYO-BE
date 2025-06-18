@@ -20,9 +20,9 @@ public class ContentListeningController {
 
     @GetMapping()
     public ApiResponse<Page<ContentListeningResponse>> getContentListeningPage(
-            @RequestParam(defaultValue="1" ) int page,
-            @RequestParam(defaultValue = "5") int size                                                                             ) {
-        return ApiResponse .    <Page<ContentListeningResponse>>builder()
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ApiResponse.<Page<ContentListeningResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("success")
@@ -32,7 +32,7 @@ public class ContentListeningController {
 
     @GetMapping("/{id}")
     public ApiResponse<ContentListening> getContentListening(@PathVariable long id) {
-        return  ApiResponse.<ContentListening>builder()
+        return ApiResponse.<ContentListening>builder()
                 .code("200")
                 .status("success")
                 .message("Get contentListening by id")
@@ -42,7 +42,7 @@ public class ContentListeningController {
 
     @PostMapping
     public ApiResponse<ContentListening> createContentListening(@Valid @RequestBody ContentListeningRequest request) {
-        ContentListening newContentListening =contentListeningService.handleCreateContentListening(request);
+        ContentListening newContentListening = contentListeningService.handleCreateContentListening(request);
         return ApiResponse.<ContentListening>builder()
                 .code("201")
                 .status("success")
@@ -63,15 +63,28 @@ public class ContentListeningController {
     }
 
     @PatchMapping("/{id}")
-    public  ApiResponse<ContentListeningResponse> patchContentListening(
+    public ApiResponse<ContentListeningResponse> patchContentListening(
             @PathVariable Long id,
-            @Valid @RequestBody ContentListeningRequest request){
-        ContentListeningResponse contentListeningResponse = contentListeningService.updatePatchContentListening(id,request );
+            @Valid @RequestBody ContentListeningRequest request) {
+        ContentListeningResponse contentListeningResponse = contentListeningService.updatePatchContentListening(id, request);
         return ApiResponse.<ContentListeningResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Updated some fields of content listening")
                 .data(contentListeningResponse)
+                .build();
+    }
+
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<ContentListeningResponse> acceptContentListening(
+            @PathVariable Long id
+    ) {
+        ContentListeningResponse response = contentListeningService.acceptContentListening(id);
+        return ApiResponse.<ContentListeningResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
                 .build();
     }
 }

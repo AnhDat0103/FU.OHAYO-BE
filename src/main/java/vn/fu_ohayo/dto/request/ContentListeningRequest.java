@@ -1,5 +1,8 @@
 package vn.fu_ohayo.dto.request;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,7 +11,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryListeningEnum;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.JlptLevel;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +37,10 @@ public class ContentListeningRequest {
 
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AUDIO)
     private String audioFile;
+
+    @Enumerated(EnumType.STRING)
+    private JlptLevel jlptLevel;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status;
 }

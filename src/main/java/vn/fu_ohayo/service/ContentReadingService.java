@@ -16,6 +16,7 @@ public interface ContentReadingService {
     ContentReading getContentReadingById(Long id);
     ContentReading handleCreateContentReading(ContentReadingRequest contentReadingRequest);
     void deleteContentReadingById(Long id);
+    void deleteContentReadingByIdLastly(long id);
     ContentReadingResponse updatePatchContentReading(long id, ContentReadingRequest request);
     Page<ContentReadingResponse> getContentReadingPage(int page, int size);
     ContentReadingVocabularyResponse addVocabularyToContentReading(Long contentReadingId, int vocabularyId );
@@ -24,5 +25,5 @@ public interface ContentReadingService {
     void removeGrammarFromContentReading(Long contentReadingId, int grammarId);
     List<VocabularyResponse> getVocabulariesByContentReadingId(long contentReadingId);
     List<GrammarResponse> getGrammarsByContentReadingId(long contentReadingId);
-
+    ContentReadingResponse acceptContentReading(long id);
 }

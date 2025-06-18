@@ -62,7 +62,8 @@ public enum ErrorEnum {
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 
-    REQUEST_PAYMENT("6001","You send request for payment over 3 times / a day" );
+    REQUEST_PAYMENT("6001","You send request for payment over 3 times / a day" ),
+    AUTH_CODE_NOT_FOUND("6002", "Auth code not found." );
 
 
 

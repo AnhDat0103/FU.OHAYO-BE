@@ -7,17 +7,17 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.request.OAuthRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.*;
-import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
@@ -27,10 +27,9 @@ import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j(topic = "AUTHCONTROLLER")
 @RestController

@@ -52,6 +52,8 @@ public class JwtServiceImp implements JwtService {
         roles.add(YouTubeScopes.YOUTUBE_UPLOAD
         );
         claims.put("id", userId);
+        roles.add(YouTubeScopes.YOUTUBE_UPLOAD
+        );
         claims.put("scope", roles);
         return generateAccessToken(claims, email);
     }
@@ -66,6 +68,8 @@ public class JwtServiceImp implements JwtService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         claims.put("id", userId);
+        roles.add(YouTubeScopes.YOUTUBE_UPLOAD
+        );
         claims.put("scope", roles);
         return generateRefreshToken(claims, email);
     }

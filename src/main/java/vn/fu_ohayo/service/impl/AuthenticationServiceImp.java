@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import vn.fu_ohayo.dto.request.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
+import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
 import vn.fu_ohayo.entity.Admin;
@@ -110,6 +111,16 @@ public class AuthenticationServiceImp implements AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(accessToken).build();
 
+    }
+
+    @Override
+    public TokenResponse getRefreshTokenForAdmin(String request) {
+        return null;
+    }
+
+    @Override
+    public GoogleTokenResponse handleGoogleAuthCallback(String code, String state) {
+        return null;
     }
 
 

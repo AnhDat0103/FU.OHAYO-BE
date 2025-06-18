@@ -3,10 +3,8 @@ package vn.fu_ohayo.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.atn.LexerTypeAction;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
@@ -22,15 +20,20 @@ import java.util.*;
 @Getter
 public class PasswordForgotImp implements PasswordForgotService {
     private final Map<String, TokenInfo> tokenStore = new HashMap<>();
+    //    SLF4J (Simple Logging Facade for Java) – A facade (abstraction layer)
+//    that allows switching between different logging implementations
+    //logger co gui thong tin ra console, file, database, ...
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PasswordForgotImp.class);
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
-    private Random random = new Random();
+    private static final Random random = new Random();
 
     @AllArgsConstructor
+    @Getter
     public static class TokenInfo {
-        public String email;
-        public LocalDateTime expiryTime;
+        private final String email;
+        private LocalDateTime expiryTime;
     }
 
     @Override
@@ -38,11 +41,11 @@ public class PasswordForgotImp implements PasswordForgotService {
     public void createAndSendToken(String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
-            System.out.println("Email not found.");
+            logger.warn("Email not found.");
             return;
         }
         String token = generateToken(email);
-        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
+        LocalDateTime expiryTime = LocalDateTime.now().plusSeconds(29);
         tokenStore.put(token, new TokenInfo(email, expiryTime));
 
         SimpleMailMessage message = new SimpleMailMessage();
@@ -53,26 +56,22 @@ public class PasswordForgotImp implements PasswordForgotService {
         mailSender.send(message);
     }
 
-    //    @Override
-    public void userInputPassword() {
-
-    }
     @Override
     // doi mat khau cho nguoi dung khi nhap token
     public boolean resetPassword(String token, String newPassword) {
         TokenInfo tokenInfo = tokenStore.get(token);
         // kiem tra token co hop le va chua het han hay khong
         if (tokenInfo == null || PasswordResetValidate.isTokenValid(token, tokenStore)) {
-            System.out.println("Invalid or expired token.");
+            logger.warn("Invalid or expired token.");
             return false;
         }
         // neu hop le thi cho phep nguoi dung nhap mat khau moi
         if (!PasswordResetValidate.isPasswordNotEmpty(newPassword)) {
-            System.out.println("New password cannot be empty.");
+            logger.warn("New password cannot be empty.");
             return false;
         }
         if (!PasswordResetValidate.isPasswordLengthValid(newPassword, 8)) {
-            System.out.println("New password must be at least 8 characters long.");
+            logger.warn("New password must be at least 8 characters long.");
             return false;
         }
         Optional<User> userOpt = userRepository.findByEmail(tokenInfo.email);
@@ -83,41 +82,13 @@ public class PasswordForgotImp implements PasswordForgotService {
         user.setPassword(newHashed);
         userRepository.save(user);
         tokenStore.remove(token);
-        System.out.println("Password reset successfully for " + tokenInfo.email);
         return true;
     }
-
-    private static User getUser(String newPassword, Optional<User> userOpt) {
-        User user = userOpt.get();
-//        String newHashed = hashPassword(newPassword);
-//        if (!PasswordResetValidate.isNewPasswordDifferent(newHashed, user.getPassword())) {
-//            System.out.println("New password cannot be the same as the old password.");
-//            return false;
-//        }
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String newHashed = passwordEncoder.encode(newPassword);
-        //luu mat khau moi vao db va xoa token
-        user.setPassword(newHashed);
-        return user;
-    }
-
-//    @Override
-//    public String hashPassword(String plainPassword) {
-//        try {
-//            MessageDigest md = MessageDigest.getInstance("SHA-256");
-//            byte[] hashedBytes = md.digest(plainPassword.getBytes());
-//            return Base64.getEncoder().encodeToString(hashedBytes);
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException("Error hashing password", e);
-//        }
-//    }
 
     @Override
     // tao ma xac nhan ngau nhien 6 so de gui den email
     public String generateToken(String email) {
-        Random random = new Random();
         int number = random.nextInt(900000) + 100000;
         return String.valueOf(number);
     }
 }
-

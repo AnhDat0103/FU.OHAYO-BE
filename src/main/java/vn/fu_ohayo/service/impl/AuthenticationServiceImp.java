@@ -2,6 +2,7 @@ package vn.fu_ohayo.service.impl;
 
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +22,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import vn.fu_ohayo.dto.request.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
-import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
+import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
 import vn.fu_ohayo.entity.Admin;
+import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
@@ -113,34 +115,17 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     public TokenResponse getRefreshTokenForAdmin(String request) {
-        if(!StringUtils.hasLength(request)) {
-            throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
-        }
-        try {
-            ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
-
-            Admin admin = adminRepository.findByUsername(response.getEmail()).orElseThrow(() ->  new AppException(ErrorEnum.USER_NOT_FOUND));
-            String accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
-            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
-        } catch (Exception e){
-            throw new AppException(ErrorEnum.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public GoogleTokenResponse handleGoogleAuthCallback(String code, String state) {
-        log.info("Handling Google auth callback with code: {}", code);
-        if (!StringUtils.hasLength(code)) {
-            throw new AppException(ErrorEnum.AUTH_CODE_NOT_FOUND);
-        }
-        //logic get access token from google
-
-        //logic get refresh token from google
         return null;
     }
 
     @Override
-    public TokenResponse getRefreshToken(String request) {
+    public GoogleTokenResponse handleGoogleAuthCallback(String code, String state) {
+        return null;
+    }
+
+
+    @Override
+    public TokenResponse getRefreshToken(String request, String typeLogin) {
         log.info("Get refresh token");
 
         if (!StringUtils.hasLength(request)) {
@@ -148,17 +133,26 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
         try {
             ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
-            User user = userRepository.findById(response.getId())
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
             Set<GrantedAuthority> roles = new HashSet<>();
-            roles.add(user.getRole());
-            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
+            String accessToken = "";
+            if(typeLogin.equals("user")) {
+                User user = userRepository.findById(response.getId())
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
+                roles.add(user.getRole());
+                accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
+            }
+            else {
+                Admin admin = adminRepository.findByUsername(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                 accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
+            }
             return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
         } catch (Exception e) {
             log.error("Error generating refresh token: {}", e.getMessage());
             throw new AppException(ErrorEnum.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
     @Override
     public TokenResponse getAccessTokenForSocialLogin(String email, Provider provider) {
@@ -203,7 +197,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
                 clientId = googleClientId;
                 redirectUri = "http://localhost:8080/auth/code/google";
-                scope = "email profile https://www.googleapis.com/auth/youtube.upload";
+                scope = "email profile ";
                 break;
             case "facebook":
                 baseUrl = "https://www.facebook.com/v11.0/dialog/oauth";
@@ -221,9 +215,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 "client_id=" + clientId +
                 "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
                 "&response_type=" + responseType +
-                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
-                "&access_type=offline&prompt=consent";
-
+                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8);
     }
 
     public String getAccessTokenFromProvider(String provider, String code) {

@@ -27,6 +27,11 @@ public class AuthConfig {
     private final UserServiceDetail userServiceDetail;
     private final AdminDetailService adminServiceDetail;
 
+    private final String[] PUBLIC_ENDPOINTS = {
+//            "/", "/subjects/all-courses"
+            "/**"
+    };
+
     @Bean
     @Order(1)
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -44,7 +49,7 @@ public class AuthConfig {
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer :: disable)
-                .authorizeHttpRequests(requet -> requet.requestMatchers("/**").permitAll()
+                .authorizeHttpRequests(requet -> requet.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(customizeRequestFilter, UsernamePasswordAuthenticationFilter.class);

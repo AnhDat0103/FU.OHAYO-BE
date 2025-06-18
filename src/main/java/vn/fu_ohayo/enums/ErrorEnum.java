@@ -110,6 +110,7 @@ public enum ErrorEnum {
     public static final String MIN_TIME_1 = "Time must be greater than 1 minute";
     public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
     public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
+    public static final String NOT_EMPTY_STATUS = "Status can not null";
 
     private final String code;
     private final String message;

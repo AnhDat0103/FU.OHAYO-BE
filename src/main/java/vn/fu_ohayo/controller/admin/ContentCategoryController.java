@@ -8,24 +8,26 @@ import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.enums.CategoryListeningEnum;
 import vn.fu_ohayo.enums.CategoryReadingEnum;
 import vn.fu_ohayo.enums.CategorySpeakingEnum;
+import vn.fu_ohayo.enums.ContentStatus;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/content_category")
+@RequestMapping("/content")
 public class ContentCategoryController {
-    @GetMapping("/{category}")
+    @GetMapping("/category/{category}")
     public ApiResponse<List<String>> getContentCategory(@PathVariable String category) {
-        List<String> categories ;
+        List<String> categories;
         String message = "Fetched content categories successfully";
         String code = "200";
         String status = "success";
-        if(category.equalsIgnoreCase("speaking")) {
+        if (category.equalsIgnoreCase("speaking")) {
             categories = Arrays.stream(CategorySpeakingEnum.values()).map(Enum::name).collect(Collectors.toList());
-        } else if(category.equalsIgnoreCase("listening")) {
+        } else if (category.equalsIgnoreCase("listening")) {
             categories = Arrays.stream(CategoryListeningEnum.values()).map(Enum::name).collect(Collectors.toList());
-        } else if(category.equalsIgnoreCase("reading")) {
+        } else if (category.equalsIgnoreCase("reading")) {
             categories = Arrays.stream(CategoryReadingEnum.values()).map(Enum::name).collect(Collectors.toList());
         } else {
             categories = Arrays.asList("Unknown category");
@@ -40,4 +42,16 @@ public class ContentCategoryController {
                 .data(categories)
                 .build();
     }
+
+    @GetMapping("/status")
+    public ApiResponse<List<String>> getContentStatus() {
+        List<String> status = Arrays.stream(ContentStatus.values()).map(Enum::name).toList();
+        return ApiResponse.<List<String>>builder()
+                .code("200")
+                .status("success")
+                .message("get all status success")
+                .data(status)
+                .build();
+    }
 }
+

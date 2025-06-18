@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.enums.CategoryReadingEnum;
-import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
 import java.util.List;
@@ -79,6 +78,17 @@ public class ContentReading {
             inverseJoinColumns = @JoinColumn(name = "grammar_id")
     )
     private List<Grammar> grammars;
+
+    @NotNull(message = ErrorEnum.NOT_EMPTY_JLPT_LEVEL)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "jlpt_level")
+    private JlptLevel jlptLevel;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status = ContentStatus.DRAFT;
 
     @PrePersist
     protected void onCreate() {

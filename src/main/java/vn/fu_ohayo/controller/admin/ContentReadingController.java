@@ -145,4 +145,17 @@ public class ContentReadingController {
                 .data(grammars)
                 .build();
     }
+
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<ContentReadingResponse> acceptContentReading(
+            @PathVariable Long id
+    ) {
+        ContentReadingResponse response = contentReadingService.acceptContentReading(id);
+        return ApiResponse.<ContentReadingResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
 }

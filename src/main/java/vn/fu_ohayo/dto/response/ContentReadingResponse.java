@@ -1,11 +1,15 @@
 package vn.fu_ohayo.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryReadingEnum;
+import vn.fu_ohayo.enums.ContentStatus;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
 
@@ -25,5 +29,7 @@ public class ContentReadingResponse {
     private String scriptJp;
     private String scriptVn;
     private String audioFile;
+    private JlptLevel jlptLevel;
+    private ContentStatus status;
 
 }

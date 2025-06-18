@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import vn.fu_ohayo.enums.CategoryListeningEnum;
-import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
 import java.util.Set;
@@ -63,6 +62,17 @@ public class ContentListening {
     @OneToMany(mappedBy = "contentListening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ExerciseQuestion> exerciseQuestions;
 
+    @NotNull(message = ErrorEnum.NOT_EMPTY_JLPT_LEVEL)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "jlpt_level")
+    private JlptLevel jlptLevel;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status = ContentStatus.DRAFT;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
@@ -79,4 +89,5 @@ public class ContentListening {
                 ", title='" + title + '\'' +
                 '}';
     }
+
 }

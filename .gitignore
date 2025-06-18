@@ -34,3 +34,6 @@ build/
 
 ### environment ###
 .env
+
+### client_serest file ###
+client_serest.json

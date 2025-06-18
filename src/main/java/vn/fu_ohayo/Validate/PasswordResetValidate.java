@@ -9,7 +9,7 @@ public class PasswordResetValidate {
 
     public static boolean isTokenValid(String token, Map<String, TokenInfo> tokenStore) {
         TokenInfo tokenInfo = tokenStore.get(token);
-        return tokenInfo == null || !tokenInfo.expiryTime.isAfter(LocalDateTime.now());
+        return tokenInfo == null || !tokenInfo.getExpiryTime().isAfter(LocalDateTime.now());
     }
 
 //    public static boolean isAttemptLimitExceeded(int attempts, int maxAttempts) {

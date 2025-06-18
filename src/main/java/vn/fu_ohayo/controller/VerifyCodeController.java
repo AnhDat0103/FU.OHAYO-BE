@@ -24,10 +24,10 @@ public class VerifyCodeController {
         if (PasswordResetValidate.isTokenValid(request.getCode(), passwordForgotImp.getTokenStore())) {
             return ResponseEntity.status(404).body("Invalid code");
         }
-        if (!tokenInfo.email.equals(request.getEmail())) {
+        if (!tokenInfo.getEmail().equals(request.getEmail())) {
             return ResponseEntity.status(404).body("Code does not match email");
         }
-        if (tokenInfo.expiryTime.isBefore(LocalDateTime.now())) {
+        if (tokenInfo.getExpiryTime().isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(404).body("Code expired");
         }
         return ResponseEntity.ok("Code verified");

@@ -1,20 +1,10 @@
 package vn.fu_ohayo.service.impl;
-
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.google.common.collect.Lists;
 import jakarta.servlet.ServletContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.fu_ohayo.service.UploadService;
@@ -29,20 +19,12 @@ public class UploadServiceImp implements UploadService {
 
     private final ServletContext servletContext;
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private static String CLIENT_KEY;
+    private final YouTube  youtubeService;
 
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
-    private static String SECRET_KEY;
 
-    List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
-
-    private static final String APPLICATION_NAME = "FU-ohayo";
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String CHANEL_ID = "UChF07wZ-PnXnYsxJyRHd5dg";
-
-    public UploadServiceImp(ServletContext servletContext) {
+    public UploadServiceImp(ServletContext servletContext, YouTube youtubeService) {
         this.servletContext = servletContext;
+        this.youtubeService = youtubeService;
     }
 
     @Override
@@ -76,17 +58,11 @@ public class UploadServiceImp implements UploadService {
     }
 
     @Override
-    public String handleUploadFileToYoutube(MultipartFile file, String subjectName, String accessToken) throws GeneralSecurityException, IOException {
-        //Khởi tạo YouTube service với accessToken
-        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-
-        YouTube youtubeService = new YouTube.Builder(
-                HTTP_TRANSPORT,
-                JSON_FACTORY,
-                credential
-        ).setApplicationName(APPLICATION_NAME).build();
+    public String handleUploadFileToYoutube(MultipartFile file, String subjectName) throws GeneralSecurityException, IOException {
+        // Convert MultipartFile to File
+        String originalExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        File tempFile = File.createTempFile("video", originalExtension);
+        file.transferTo(tempFile);
 
         Video video = new Video();
 
@@ -94,7 +70,6 @@ public class UploadServiceImp implements UploadService {
         Calendar cal = Calendar.getInstance();
         VideoSnippet snippet = new VideoSnippet();
         snippet.setTitle(subjectName);
-        snippet.setChannelId(CHANEL_ID);
         snippet.setDescription("""
         This video is about the subject: %s
         Uploaded on: %s
@@ -109,19 +84,19 @@ public class UploadServiceImp implements UploadService {
 
         // set the video file content
 
-        InputStream inputStream = file.getInputStream();
-        var mediaContent = new InputStreamContent(
-                "video/*", inputStream
-        );
-        mediaContent.setLength(file.getSize());
+        InputStreamContent mediaContent = new InputStreamContent(
+                "video/*", new BufferedInputStream(new FileInputStream(tempFile)));
+        mediaContent.setLength(tempFile.length());
 
-        // upload the video
+        // Create YouTube service
 
         YouTube.Videos.Insert request = youtubeService.videos().insert(List.of("snippet,status"), video, mediaContent);
 
         Video response = request.execute();
 
-        return response.getId();
+        tempFile.delete();
+
+        return "https://www.youtube.com/watch?v=" + response.getId();
     }
 
 

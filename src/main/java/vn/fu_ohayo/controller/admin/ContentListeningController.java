@@ -30,7 +30,7 @@ public class ContentListeningController {
                 .build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public ApiResponse<ContentListening> getContentListening(@PathVariable long id) {
         return ApiResponse.<ContentListening>builder()
                 .code("200")

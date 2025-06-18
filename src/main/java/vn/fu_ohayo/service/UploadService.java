@@ -9,5 +9,5 @@ import java.security.GeneralSecurityException;
 public interface UploadService {
     String handleUploadFile(MultipartFile file, String targetFolder);
 
-    String handleUploadFileToYoutube(MultipartFile file, String subjectName, String accessToken) throws GeneralSecurityException, IOException;
+    String handleUploadFileToYoutube(MultipartFile file, String subjectName) throws GeneralSecurityException, IOException;
 }

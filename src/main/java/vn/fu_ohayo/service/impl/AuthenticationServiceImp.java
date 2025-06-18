@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import vn.fu_ohayo.dto.request.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
+import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.dto.response.UserFromProvider;
 import vn.fu_ohayo.entity.Admin;
@@ -114,36 +115,36 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     public TokenResponse getRefreshTokenForAdmin(String request) {
-        if(!StringUtils.hasLength(request)) {
-            throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
-        }
-        try {
-            ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
-
-            Admin admin = adminRepository.findByUsername(response.getEmail()).orElseThrow(() ->  new AppException(ErrorEnum.USER_NOT_FOUND));
-            String accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
-            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
-        } catch (Exception e){
-            throw new AppException(ErrorEnum.INTERNAL_SERVER_ERROR);
-        }
+        return null;
     }
 
     @Override
-    public TokenResponse getRefreshToken(String request) {
+    public GoogleTokenResponse handleGoogleAuthCallback(String code, String state) {
+        return null;
+    }
+
+
+    @Override
+    public TokenResponse getRefreshToken(String request, String typeLogin) {
         log.info("Get refresh token");
 
         if (!StringUtils.hasLength(request)) {
             throw new AppException(ErrorEnum.REFRESH_TOKEN_NOT_FOUND);
         }
-
         try {
             ExtractTokenResponse response = jwtService.extractUserInformation(request, TokenType.REFRESH_TOKEN);
-
-            User user = userRepository.findById(response.getId())
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
             Set<GrantedAuthority> roles = new HashSet<>();
-            roles.add(user.getRole());
-            String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
+            String accessToken = "";
+            if(typeLogin.equals("user")) {
+                User user = userRepository.findById(response.getId())
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + response.getEmail()));
+                roles.add(user.getRole());
+                accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), roles);
+            }
+            else {
+                Admin admin = adminRepository.findByUsername(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                 accessToken = jwtService.generateAccessToken(admin.getAdminId(), admin.getUsername(), admin.getAuthorities());
+            }
             return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
         } catch (Exception e) {
             log.error("Error generating refresh token: {}", e.getMessage());
@@ -151,12 +152,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
     }
 
+
+
     @Override
     public TokenResponse getAccessTokenForSocialLogin(String email, Provider provider) {
-        User user = userRepository.findByEmailAndProvider(email, provider)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), null);
-        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), null);
+        String accessToken = jwtService.generateAccessToken(user.getUserId(), user.getEmail(), user.getAuthorities());
+        String refreshToken = jwtService.generateRefreshToken(user.getUserId(), user.getEmail(), user.getAuthorities());
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -194,7 +197,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
                 clientId = googleClientId;
                 redirectUri = "http://localhost:8080/auth/code/google";
-                scope = "email profile";
+                scope = "email profile ";
                 break;
             case "facebook":
                 baseUrl = "https://www.facebook.com/v11.0/dialog/oauth";
@@ -282,8 +285,9 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
         user.setEmail(email);
         user.setProvider(providerEnum);
+        user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
-        return UserFromProvider.builder().email(email).isExist(true).build();
+        return UserFromProvider.builder().email(email).isExist(false).build();
     }
 
 }

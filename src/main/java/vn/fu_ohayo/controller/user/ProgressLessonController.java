@@ -29,4 +29,34 @@ public class ProgressLessonController {
                 .data(progressLessonService.getProgressLessons(username, lessonId))
                 .build();
     }
+
+    @PostMapping()
+    public ApiResponse<ProgressLessonResponse> postProgressLesson(
+            @RequestParam int lessonId
+    ){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        return ApiResponse.<ProgressLessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Post progress lesson successfully")
+                .data(progressLessonService.createProgressLesson(username, lessonId))
+                .build();
+    }
+
+    @PatchMapping()
+    public ApiResponse<ProgressLessonResponse> patchProgressLesson(
+            @RequestParam int lessonId,
+            @RequestParam boolean isCompleted
+    ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        return ApiResponse.<ProgressLessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Patch progress lesson successfully")
+                .data(progressLessonService.updateProgressLesson(username, lessonId, isCompleted))
+                .build();
+    }
+
 }

@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import com.google.api.services.youtube.YouTubeScopes;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -48,6 +49,8 @@ public class JwtServiceImp implements JwtService {
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+        roles.add(YouTubeScopes.YOUTUBE_UPLOAD
+        );
         claims.put("id", userId);
         claims.put("scope", roles);
         return generateAccessToken(claims, email);

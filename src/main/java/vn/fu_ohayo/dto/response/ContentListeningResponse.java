@@ -24,4 +24,5 @@ public class ContentListeningResponse {
     private String scriptJp;
     private String scriptVn;
     private String audioFile;
+
 }

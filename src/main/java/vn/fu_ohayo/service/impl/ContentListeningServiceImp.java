@@ -29,7 +29,8 @@ public class ContentListeningServiceImp implements ContentListeningService {
 
     @Override
     public ContentListening getContentListeningById(Long id) {
-        return contentListeningRepository.findBycontentListeningId(id);
+        ContentListening l = contentListeningRepository.findBycontentListeningId(id);
+        return l;
     }
 
     @Override

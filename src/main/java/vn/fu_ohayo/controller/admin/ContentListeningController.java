@@ -1,22 +1,23 @@
 package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.mapper.ContentMapper;
+import vn.fu_ohayo.mapper.LessonMapper;
 import vn.fu_ohayo.service.ContentListeningService;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/content_listening")
 public class ContentListeningController {
     private final ContentListeningService contentListeningService;
-
-    public ContentListeningController(ContentListeningService contentListeningService) {
-        this.contentListeningService = contentListeningService;
-    }
+    private final ContentMapper contentMapper;
 
     @GetMapping()
     public ApiResponse<Page<ContentListeningResponse>> getContentListeningPage(
@@ -31,12 +32,13 @@ public class ContentListeningController {
     }
 
     @GetMapping("/details/{id}")
-    public ApiResponse<ContentListening> getContentListening(@PathVariable long id) {
-        return  ApiResponse.<ContentListening>builder()
+    public ApiResponse<ContentListeningResponse> getContentListening(@PathVariable long id) {
+        ContentListeningResponse contentListeningResponse = contentMapper.toContentListeningResponse(contentListeningService.getContentListeningById(id));
+        return  ApiResponse.<ContentListeningResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Get contentListening by id")
-                .data(contentListeningService.getContentListeningById(id))
+                .data(contentListeningResponse)
                 .build();
     }
 

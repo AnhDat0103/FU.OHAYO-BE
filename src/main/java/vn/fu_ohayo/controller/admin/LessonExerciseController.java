@@ -1,10 +1,7 @@
 package vn.fu_ohayo.controller.admin;
 
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
@@ -52,6 +49,15 @@ public class LessonExerciseController {
                 .status(HTTP_SUCCESS_RESPONSE)
                 .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .data(response)
+                .build();
+    }
+    @DeleteMapping("/{id}")
+    public ApiResponse<LessonExerciseResponse> deleteExerciseLesson(@PathVariable int id) {
+        lessonExerciseService.deleteExerciseLesson(id);
+        return ApiResponse.<LessonExerciseResponse>builder()
+                .message("Deleted exercise lesson successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .build();
     }
 }

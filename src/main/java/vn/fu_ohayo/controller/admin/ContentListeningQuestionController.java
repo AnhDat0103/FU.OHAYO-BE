@@ -25,7 +25,7 @@ private final ExerciseQuestionService exerciseQuestionService;
             @RequestParam(defaultValue="1" ) int page,
             @RequestParam(defaultValue = "5") int size,
             @PathVariable long contentListeningId) {
-        return ApiResponse .    <Page<ExerciseQuestionResponse>>builder()
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("get page of exercise questions by content listening id")

@@ -8,6 +8,7 @@ import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentSpeaking;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
@@ -49,6 +50,8 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
                 .image(contentSpeakingRequest.getImage())
                 .title(contentSpeakingRequest.getTitle())
                 .category(contentSpeakingRequest.getCategory())
+                .status(contentSpeakingRequest.getStatus())
+                .jlptLevel(contentSpeakingRequest.getJlptLevel())
                 .content(newContent)
                 .build();
         return contentSpeakingRepository.save(contentSpeaking);
@@ -56,8 +59,15 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
 
     @Override
     public void deleteContentSpeakingById(long id) {
+      ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+      contentSpeaking.setDeleted(true);
+      contentSpeakingRepository.save(contentSpeaking);
+    }
+
+    @Override
+    public void deleteContentSpeakingByIdLastly(long id) {
         dialogueService.deleteDialogueByContenSpeaking(getContentSpeakingById(id));
-       contentSpeakingRepository.deleteById(id);
+        contentSpeakingRepository.deleteById(id);
     }
 
     @Override
@@ -94,10 +104,17 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     @Override
     public Page<ContentSpeakingResponse> getContentSpeakingPage(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-         Page<ContentSpeaking> prs = contentSpeakingRepository.findAll(pageable);
+         Page<ContentSpeaking> prs = contentSpeakingRepository.findAllByDeleted(pageable, false);
         Page<ContentSpeakingResponse> responsePage = prs.map(contentMapper::toContentSpeakingResponse);
         return responsePage;
     }
 
+    @Override
+    public ContentSpeakingResponse acceptContentSpeaking(long id) {
+        ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        contentSpeaking.setStatus(ContentStatus.PUBLIC);
+        contentSpeakingRepository.save(contentSpeaking);
+        return contentMapper.toContentSpeakingResponse(contentSpeaking);
+    }
 
 }

@@ -49,6 +49,8 @@ public class JwtServiceImp implements JwtService {
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+        roles.add(YouTubeScopes.YOUTUBE_UPLOAD
+        );
         claims.put("id", userId);
         roles.add(YouTubeScopes.YOUTUBE_UPLOAD
         );

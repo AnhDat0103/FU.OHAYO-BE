@@ -211,7 +211,7 @@ public class AuthenticationController {
         if (response.getEmail() == null) {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
-        TokenResponse tokenResponse = authenticationService.getRefreshToken(refreshToken);
+        TokenResponse tokenResponse = authenticationService.getRefreshToken(refreshToken, "user");
         return ResponseEntity.ok(
                 ApiResponse.<TokenResponse>builder()
                         .code("200")

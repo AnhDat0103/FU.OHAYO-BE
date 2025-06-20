@@ -100,4 +100,17 @@ public class ContentSpeakingController {
                 .data(contentSpeakingResponse)
                 .build();
     }
+
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<ContentSpeakingResponse> acceptContentSpeaking(
+            @PathVariable Long id
+    ) {
+        ContentSpeakingResponse response = contentSpeakingService.acceptContentSpeaking(id);
+        return ApiResponse.<ContentSpeakingResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
 }

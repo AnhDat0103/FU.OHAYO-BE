@@ -7,10 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.StudyReminderRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.LearningProgressOverviewResponse;
-import vn.fu_ohayo.dto.response.ProgressLessonResponse;
 import vn.fu_ohayo.dto.response.StudyReminderResponse;
-import vn.fu_ohayo.entity.StudyReminder;
 import vn.fu_ohayo.service.StudyReminderService;
 import vn.fu_ohayo.service.UserService;
 

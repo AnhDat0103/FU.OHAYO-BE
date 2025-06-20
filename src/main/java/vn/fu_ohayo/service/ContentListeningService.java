@@ -11,7 +11,9 @@ public interface ContentListeningService {
     ContentListening getContentListeningById(Long id);
     ContentListening handleCreateContentListening(ContentListeningRequest contentListeningRequest);
     void deleteContentListeningById(Long id);
+    void deleteContentListeningLastlyById(Long id);
     ContentListeningResponse updatePatchContentListening(long id, ContentListeningRequest request);
     Page<ContentListeningResponse> getContentListeningPage(int page, int size);
+    ContentListeningResponse acceptContentListening(long id);
 
 }

@@ -10,12 +10,22 @@ import java.util.List;
 
 public interface ContentSpeakingService {
     List<ContentSpeaking> getAllContentSpeakings();
-    ContentSpeaking getContentSpeakingById(long id);
-    ContentSpeaking handleCreateContentSpeaking(ContentSpeakingRequest contentSpeakingRequest);
-    void deleteContentSpeakingById(long id);
-    ContentSpeaking getContentSpeakingByContent(Content content);
-    ContentSpeakingResponse updatePutContentSpeaking(long id, ContentSpeakingRequest contentSpeakingRequest);
-    ContentSpeakingResponse updatePatchContentSpeaking(long id, ContentSpeakingRequest contentSpeakingRequest);
-    Page<ContentSpeakingResponse> getContentSpeakingPage(int page, int size );
 
+    ContentSpeaking getContentSpeakingById(long id);
+
+    ContentSpeaking handleCreateContentSpeaking(ContentSpeakingRequest contentSpeakingRequest);
+
+    void deleteContentSpeakingById(long id);
+
+    void deleteContentSpeakingByIdLastly(long id);
+
+    ContentSpeaking getContentSpeakingByContent(Content content);
+
+    ContentSpeakingResponse updatePutContentSpeaking(long id, ContentSpeakingRequest contentSpeakingRequest);
+
+    ContentSpeakingResponse updatePatchContentSpeaking(long id, ContentSpeakingRequest contentSpeakingRequest);
+
+    Page<ContentSpeakingResponse> getContentSpeakingPage(int page, int size);
+
+    ContentSpeakingResponse acceptContentSpeaking(long id);
 }

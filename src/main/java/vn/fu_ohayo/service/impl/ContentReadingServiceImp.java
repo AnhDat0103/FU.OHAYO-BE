@@ -7,10 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ContentReadingRequest;
 import vn.fu_ohayo.dto.response.*;
-import vn.fu_ohayo.entity.Content;
-import vn.fu_ohayo.entity.ContentReading;
-import vn.fu_ohayo.entity.Grammar;
-import vn.fu_ohayo.entity.Vocabulary;
+import vn.fu_ohayo.entity.*;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
@@ -21,10 +19,6 @@ import vn.fu_ohayo.repository.ContentReadingRepository;
 import vn.fu_ohayo.repository.GrammarRepository;
 import vn.fu_ohayo.repository.VocabularyRepository;
 import vn.fu_ohayo.service.ContentReadingService;
-import vn.fu_ohayo.service.GrammarService;
-import vn.fu_ohayo.service.VocabularyService;
-
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -70,13 +64,22 @@ public class ContentReadingServiceImp implements ContentReadingService {
                 .timeNew(contentReadingRequest.getTimeNew())
                 .scriptJp(contentReadingRequest.getScriptJp())
                 .scriptVn(contentReadingRequest.getScriptVn())
+                .status(contentReadingRequest.getStatus())
+                .jlptLevel(contentReadingRequest.getJlptLevel())
                 .build();
         return contentReadingRepository.save(contentReading);
     }
 
     @Override
     public void deleteContentReadingById(Long id) {
-      contentReadingRepository.deleteById(id);
+        ContentReading contentReading = getContentReadingById(id);
+        contentReading.setDeleted(true);
+        contentReadingRepository.save(contentReading);
+    }
+
+    @Override
+    public void deleteContentReadingByIdLastly(long id) {
+        contentReadingRepository.deleteById(id);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class ContentReadingServiceImp implements ContentReadingService {
     @Override
     public Page<ContentReadingResponse> getContentReadingPage(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<ContentReading> prs = contentReadingRepository.findAll(pageable);
+        Page<ContentReading> prs = contentReadingRepository.findAllByDeleted(pageable, false);
         Page<ContentReadingResponse> responsePage = prs.map(contentMapper::toContentReadingResponse);
         return responsePage;    }
 
@@ -179,5 +182,13 @@ public class ContentReadingServiceImp implements ContentReadingService {
         return this.getContentReadingById(contentReadingId).getGrammars().stream()
                 .map(grammarMapper::toGrammarResponse)
                 .toList();
+    }
+
+    @Override
+    public ContentReadingResponse acceptContentReading(long id) {
+        ContentReading contentReading = getContentReadingById(id);
+        contentReading.setStatus(ContentStatus.PUBLIC);
+        contentReadingRepository.save(contentReading);
+        return contentMapper.toContentReadingResponse(contentReading);
     }
 }

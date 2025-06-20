@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import vn.fu_ohayo.enums.CategorySpeakingEnum;
-import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
 import java.util.List;
@@ -55,6 +54,16 @@ public class ContentSpeaking {
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String image;
 
+    @NotNull(message = ErrorEnum.NOT_EMPTY_JLPT_LEVEL)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "jlpt_level")
+    private JlptLevel jlptLevel;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status = ContentStatus.DRAFT;
 
     @PrePersist
     protected void onCreate() {
@@ -65,6 +74,5 @@ public class ContentSpeaking {
     protected void onUpdate() {
         this.updatedAt = new Date();
     }
-
 
 }

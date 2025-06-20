@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategorySpeakingEnum;
+import vn.fu_ohayo.enums.ContentStatus;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
 
@@ -22,5 +24,7 @@ public class ContentSpeakingResponse {
     private CategorySpeakingEnum category;
     private Date createdAt;
     private Date updatedAt;
+    private JlptLevel jlptLevel;
+    private ContentStatus status;
 
 }

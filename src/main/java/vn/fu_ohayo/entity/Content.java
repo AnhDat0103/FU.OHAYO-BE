@@ -3,10 +3,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
 
@@ -16,8 +13,10 @@ import java.util.Set;
 @Table(name = "Contents")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
+@Getter
+@Setter
+@ToString(exclude = "contents")
 public class Content {
     @Id @GeneratedValue(
             strategy = GenerationType.IDENTITY
@@ -33,13 +32,13 @@ public class Content {
     @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProgressContent> contents;
 
-//    @OneToOne(mappedBy = "content")
-//    private ContentListening contentListening;
-//
-//    @OneToOne(mappedBy = "content")
-//    private ContentReading ContentReading;
-//
-//    @OneToOne(mappedBy = "content")
-//    private ContentSpeaking contentSpeaking;
+    @OneToOne(mappedBy = "content")
+    private ContentListening contentListening;
+
+    @OneToOne(mappedBy = "content")
+    private ContentReading ContentReading;
+
+    @OneToOne(mappedBy = "content")
+    private ContentSpeaking contentSpeaking;
 
 }

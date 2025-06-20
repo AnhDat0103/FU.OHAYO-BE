@@ -8,13 +8,11 @@ import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentListening;
-import vn.fu_ohayo.entity.ProgressContent;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentListeningRepository;
 import vn.fu_ohayo.service.ContentListeningService;
-
-import java.util.List;
 
 @Service
 public class ContentListeningServiceImp implements ContentListeningService {
@@ -45,12 +43,21 @@ public class ContentListeningServiceImp implements ContentListeningService {
                 .audioFile(contentListeningRequest.getAudioFile())
                 .scriptJp(contentListeningRequest.getScriptJp())
                 .scriptVn(contentListeningRequest.getScriptVn())
+                .status(contentListeningRequest.getStatus())
+                .jlptLevel(contentListeningRequest.getJlptLevel())
                 .build();
         return contentListeningRepository.save(contentListening);
     }
 
     @Override
     public void deleteContentListeningById(Long id) {
+        ContentListening contentListening = getContentListeningById(id);
+        contentListening.setDeleted(true);
+        contentListeningRepository.save(contentListening);
+    }
+
+    @Override
+    public void deleteContentListeningLastlyById(Long id) {
         contentListeningRepository.deleteById(id);
     }
 
@@ -84,10 +91,16 @@ public class ContentListeningServiceImp implements ContentListeningService {
     @Override
     public Page<ContentListeningResponse> getContentListeningPage(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<ContentListening> prs = contentListeningRepository.findAll(pageable);
+        Page<ContentListening> prs = contentListeningRepository.findAllByDeleted(pageable, false);
         Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
         return responsePage;    }
 
-
+    @Override
+    public ContentListeningResponse acceptContentListening(long id) {
+        ContentListening contentListening = getContentListeningById(id);
+        contentListening.setStatus(ContentStatus.PUBLIC);
+        contentListeningRepository.save(contentListening);
+        return contentMapper.toContentListeningResponse(contentListening);
+    }
 
 }

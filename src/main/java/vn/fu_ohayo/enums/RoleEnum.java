@@ -5,7 +5,8 @@ public enum RoleEnum {
     PARENT,
     CONTENT_MANAGER,
     USER_MANAGER,
-    SUPER_ADMIN;
+    SUPER_ADMIN,
+    STAFF;
 
     public static RoleEnum fromString(String role) {
         for (RoleEnum r : RoleEnum.values()) {

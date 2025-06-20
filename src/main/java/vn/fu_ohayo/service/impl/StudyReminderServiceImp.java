@@ -87,7 +87,7 @@ public class StudyReminderServiceImp implements StudyReminderService {
     }
 
     @Scheduled(cron = "0 * * * * *")
-    private void sendMailReminder(){
+    public void sendMailReminder(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime tenMinutesLater = now.plusMinutes(10);
 
@@ -101,7 +101,7 @@ public class StudyReminderServiceImp implements StudyReminderService {
         }
     }
     @Scheduled(cron = "0 * * * * *")
-    private void sendRealTimeReminder() {
+    public void sendRealTimeReminder() {
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         List<StudyReminder> upComingReminders = studyReminderRepository.findAll().stream()
                 .filter(r -> r.getIsActive().equals(true)

@@ -1,6 +1,8 @@
 package vn.fu_ohayo.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -10,7 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.CategoryReadingEnum;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
 
@@ -41,5 +45,11 @@ public class ContentReadingRequest {
     @PastOrPresent(message = "Time can not over today")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date timeNew;
+
+    @Enumerated(EnumType.STRING)
+    private JlptLevel jlptLevel;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status;
 
 }

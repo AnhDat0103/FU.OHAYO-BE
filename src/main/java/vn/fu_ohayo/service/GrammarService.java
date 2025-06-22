@@ -8,7 +8,6 @@ import vn.fu_ohayo.dto.response.GrammarResponse;
 import java.util.List;
 
 public interface GrammarService {
-    List<GrammarResponse> getGrammarsByFavoriteGrammarId(int id);
     GrammarResponse saveGrammar(GrammarRequest grammarRequest);
     GrammarResponse updateGrammar(int id, GrammarRequest grammarRequest);
     GrammarResponse patchGrammar(int id, PatchGrammarRequest patchGrammarRequest);

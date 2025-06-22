@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -15,7 +19,11 @@ import java.util.Date;
 @Data
 @Builder
 @Table(name = "Favorite_List")
+@Where(clause = "is_deleted = false")
 public class FavoriteList {
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
@@ -34,6 +42,23 @@ public class FavoriteList {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_list_vocabulary",
+            joinColumns = @JoinColumn(name = "favorite_list_id"),
+            inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
+    )
+    private Set<Vocabulary> vocabularies = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_list_grammar",
+            joinColumns = @JoinColumn(name = "favorite_list_id"),
+            inverseJoinColumns = @JoinColumn(name = "grammar_id")
+    )
+    private Set<Grammar> grammars = new HashSet<>();
+
 
     @PrePersist
     protected void onCreate() {

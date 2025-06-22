@@ -12,6 +12,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -74,11 +75,11 @@ public class Grammar {
     @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
     private Set<ContentReading> contentReadings;
 
-    @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
-    private Set<FavoriteGrammar> favoriteGrammars;
+    @ManyToMany(mappedBy = "grammars")
+    private Set<FavoriteList> favoriteLists = new HashSet<>();
 
     @Column(name = "is_deleted")
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
     @PrePersist
     protected void onCreate() {

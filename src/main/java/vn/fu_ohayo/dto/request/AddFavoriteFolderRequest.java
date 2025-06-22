@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AddFolderFavoriteRequest {
+public class AddFavoriteFolderRequest {
 
     @NotBlank(message = "Folder name cannot be empty")
     @Size(max = 100, message = "Folder name must be at most 100 characters")
@@ -24,10 +24,4 @@ public class AddFolderFavoriteRequest {
     @NotNull(message = "Visibility (isPublic) must be specified")
     Boolean isPublic;
 
-    @NotBlank(message = "Type must be specified")
-    @Pattern(
-            regexp = "^(vocabulary|grammar)$",
-            message = "Type must be either 'vocabulary' or 'grammar'"
-    )
-    String type;
 }

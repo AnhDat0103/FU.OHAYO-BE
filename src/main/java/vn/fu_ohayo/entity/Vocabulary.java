@@ -12,7 +12,9 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Vocabularies",
@@ -73,6 +75,10 @@ public class Vocabulary {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
+    @ManyToMany(mappedBy = "vocabularies")
+    private Set<FavoriteList> favoriteLists = new HashSet<>();
+
+
     @Column(name = "created_at")
     private java.util.Date createdAt;
 
@@ -82,8 +88,8 @@ public class Vocabulary {
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private List<ContentReading> contentReadings;
 
-    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
-    private List<FavoriteVocabulary> favoriteVocabularies ;
+    @Column(name = "is_deleted")
+    private Boolean deleted = false;
 
     @PrePersist
     protected void onCreate() {

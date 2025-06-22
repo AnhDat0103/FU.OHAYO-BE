@@ -14,12 +14,6 @@ import java.util.Optional;
 @Repository
 public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
 
-    @Query("SELECT g FROM Grammar g JOIN g.favoriteGrammars fg WHERE fg.id = :folderId AND g.deleted = false")
-    List<Grammar> findAllByFavoriteGrammarId(@Param("folderId") int folderId);
-
-    @Query("SELECT COUNT(g) FROM Grammar g JOIN g.favoriteGrammars fg WHERE fg.id = :folderId")
-    int countByFavoriteGrammarId(@Param("folderId") int folderId);
-
     int countAllByLessonAndDeletedIsFalse(Lesson lesson);
 
     Page<Grammar> findAllByLessonAndDeletedIsFalse(Lesson lesson, Pageable pageable);

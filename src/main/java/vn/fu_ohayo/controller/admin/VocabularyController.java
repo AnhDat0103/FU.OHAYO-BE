@@ -106,15 +106,4 @@ public class VocabularyController {
                 .build();
     }
 
-    @GetMapping("/favorite/{id}")
-    public ApiResponse<List<VocabularyResponse>> getVocabularyByFavoriteVocabularyId(@PathVariable int id) {
-        List<VocabularyResponse> vocabularyResponses = vocabularyService.getVocabularysByFavoriteVocabularyId(id);
-        return ApiResponse.<List<VocabularyResponse>>builder()
-                .code("200")
-                .status("success")
-                .message("Fetched vocabularies by favorite folder successfully")
-                .data(vocabularyResponses)
-                .build();
-    }
-
 }

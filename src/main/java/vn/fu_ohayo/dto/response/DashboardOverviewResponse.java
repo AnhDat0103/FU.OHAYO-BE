@@ -19,8 +19,8 @@ public class DashboardOverviewResponse {
     int totalSubjectLastMonth;
     int totalLessonNow;
     int totalLessonLastMonth;
-    double averageCompletionSubjectNow;
-    double averageCompletionSubjectLastMonth;
+    double completionRateSubjectNow;
+    double completionRateSubjectLastMonth;
     int totalUserNormal;
     int totalUserOneYear;
     int totalUserOneMonth;

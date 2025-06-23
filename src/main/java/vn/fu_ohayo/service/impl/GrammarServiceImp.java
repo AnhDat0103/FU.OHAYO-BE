@@ -28,14 +28,6 @@ public class GrammarServiceImp implements GrammarService {
     private final GrammarMapper grammarMapper;
 
     @Override
-    public List<GrammarResponse> getGrammarsByFavoriteGrammarId(int id) {
-        return grammarRepository.findAllByFavoriteGrammarId(id).stream()
-                .filter(grammar -> !grammar.isDeleted())
-                .map(grammarMapper::toGrammarResponse)
-                .toList();
-    }
-
-    @Override
     public GrammarResponse saveGrammar(GrammarRequest grammarRequest) {
         Lesson lesson = lessonRepository.findById(grammarRequest.getLessonId()).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
@@ -43,7 +35,7 @@ public class GrammarServiceImp implements GrammarService {
         Optional<Grammar> grammarOptional = grammarRepository.findByTitleJpAndLesson(grammarRequest.getTitleJp(), lesson);
 
         if (grammarOptional.isPresent()) {
-            if(grammarOptional.get().isDeleted()) {
+            if(grammarOptional.get().getDeleted()) {
                 grammarOptional.get().setDeleted(false);
 
             } else {

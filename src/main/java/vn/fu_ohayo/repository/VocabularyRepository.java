@@ -16,12 +16,6 @@ import java.util.List;
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
 
-    @Query("SELECT v FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
-    List<Vocabulary> findAllByFavoriteVocabularyId(@Param("folderId") int folderId);
-
-    @Query("SELECT COUNT(v) FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
-    int countByFavoriteVocabularyId(@Param("folderId") int folderId);
-
     int countAllByLesson(Lesson lesson);
 
     Collection<Vocabulary> findAllByLesson(Lesson lesson);

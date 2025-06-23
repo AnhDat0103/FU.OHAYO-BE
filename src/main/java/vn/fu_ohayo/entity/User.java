@@ -155,23 +155,6 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProgressLesson> progressLessons;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_favorite_vocabulary",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "favorite_vocabulary_id")
-    )
-    private Set<FavoriteVocabulary> favoriteVocabularies;
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_favorite_grammar",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "favorite_grammar_id")
-    )
-    private Set<FavoriteGrammar> favoriteGrammars;
-
-
     @Column(name = "created_at")
     private Date createdAt;
 

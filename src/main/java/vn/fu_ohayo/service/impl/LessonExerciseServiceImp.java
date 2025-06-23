@@ -159,8 +159,8 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
         LessonExercise lessonExercise = LessonExercise.builder()
                 .title(lessonExerciseRequest.getTitle())
                 .duration(lessonExerciseRequest.getDuration())
-                .lesson(lesson).
-                build();
+                .lesson(lesson)
+                .build();
         lessonExercise = lessonExerciseRepository.save(lessonExercise);
         List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
         if (lessonExerciseRequest.getContent() != null) {
@@ -188,14 +188,13 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                         .build());
             }
         }
-//        return LessonExerciseResponse.builder()
-//                .id(lessonExercise.getExerciseId());
-//                .title(lessonExercise.getTitle())
-//                .duration(lessonExercise.getDuration())
-//                .lessonId(lesson.getLessonId())
-//                .content(exerciseQuestionResponses)
-//                .build();
-        return null;
+        return LessonExerciseResponse.builder()
+                .id(lessonExercise.getExerciseId())
+                .title(lessonExercise.getTitle())
+                .duration(lessonExercise.getDuration())
+                .lessonId(lesson.getLessonId())
+                .content(exerciseQuestionResponses)
+                .build();
     }
 
     @Override

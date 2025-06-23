@@ -10,6 +10,7 @@ import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.enums.LessonStatus;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,8 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     int countAllBySubject_SubjectId(int subjectSubjectId);
 
     List<Lesson> findAllBySubjectAndStatus(Subject subject, LessonStatus status);
+
+    int countAllByStatus(LessonStatus status);
+
+    int countAllByStatusAndCreatedAtBefore(LessonStatus status, Date createdAt);
 }

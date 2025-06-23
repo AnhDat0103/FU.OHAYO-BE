@@ -14,8 +14,10 @@ import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.SubjectStatus;
+import vn.fu_ohayo.enums.UserStatus;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     boolean existsBySubjectCodeAndSubjectIdNot(String subjectCode, int subjectId);
 
     boolean existsBySubjectNameAndSubjectIdNot(String subjectName, int subjectId);
+
+    int countAllByStatusAndCreatedAtBefore(SubjectStatus status, Date createdAt);
+
+    int countAllByStatus(SubjectStatus status);
 
     @Query("""
     SELECT s FROM Subject s

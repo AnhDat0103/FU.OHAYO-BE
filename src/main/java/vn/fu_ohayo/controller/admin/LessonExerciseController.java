@@ -1,7 +1,9 @@
 package vn.fu_ohayo.controller.admin;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;

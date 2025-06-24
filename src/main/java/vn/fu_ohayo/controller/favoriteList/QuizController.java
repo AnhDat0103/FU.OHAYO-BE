@@ -1,4 +1,4 @@
-package vn.fu_ohayo.controller.favorite;
+package vn.fu_ohayo.controller.favoriteList;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

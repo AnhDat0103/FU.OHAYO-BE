@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class CouseraRateResponse {
+public class DashboardCouseraRateResponse {
     int subjectId;
     String subjectName;
     double couseraCompleteRate;

@@ -34,11 +34,11 @@ public class FavoriteVocabulary {
     @Column(name = "ownerName")
     private String ownerName;
 
- @ManyToMany(mappedBy = "favoriteVocabularies")
- private Set<User> users;
+    @ManyToMany(mappedBy = "favoriteVocabularies")
+    private Set<User> users;
 
 
- @ManyToMany
+    @ManyToMany
     @JoinTable(
             name = "vocabulary_favorite_vocabulary",
             joinColumns = @JoinColumn(name = "id"),

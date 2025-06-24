@@ -80,6 +80,7 @@ public class Grammar {
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();

@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
@@ -24,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 public class Vocabulary {
 
     @Id @GeneratedValue(
@@ -84,6 +82,10 @@ public class Vocabulary {
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private List<FavoriteVocabulary> favoriteVocabularies ;
+
+
+    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+    private QuizQuestion quizQuestion;
 
     @PrePersist
     protected void onCreate() {

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
@@ -29,6 +30,9 @@ public class GrammarResponse {
     private String example;
 
     private JlptLevel jlptLevel;
+
+    private Grammar grammar;
+
 
 //    @JsonIgnore
 //    private LessonResponse lesson;

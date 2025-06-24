@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AddFolderFavoriteRequest {
+public class AddFavoriteFolderRequest {
 
     @NotBlank(message = "Folder name cannot be empty")
     @Size(max = 100, message = "Folder name must be at most 100 characters")

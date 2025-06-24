@@ -87,15 +87,4 @@ public class GrammarController {
                 .build();
     }
 
-    @GetMapping("/favorite/{id}")
-    public ApiResponse<List<GrammarResponse>> getGrammarsByFavoriteGrammarId(@PathVariable int id) {
-        List<GrammarResponse> grammarResponses = grammarService.getGrammarsByFavoriteGrammarId(id);
-        return ApiResponse.<List<GrammarResponse>>builder()
-                .code("200")
-                .status("success")
-                .message("Fetched grammars by favorite folder successfully")
-                .data(grammarResponses)
-                .build();
-    }
-
 }

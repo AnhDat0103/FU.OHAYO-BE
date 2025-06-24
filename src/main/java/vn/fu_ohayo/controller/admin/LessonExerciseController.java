@@ -60,4 +60,27 @@ public class LessonExerciseController {
                 .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .build();
     }
+
+    @PostMapping
+    public ApiResponse<LessonExerciseResponse> createExerciseQuestionLesson(@Valid @RequestBody LessonExerciseRequest request) {
+        LessonExerciseResponse createdLessonExercise = lessonExerciseService.createExerciseLesson(request);
+        return ApiResponse.<LessonExerciseResponse>builder()
+                .message("Created new exercise lesson successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(createdLessonExercise)
+                .build();
+    }
+
+    @PatchMapping("/{id}")
+    public ApiResponse<LessonExerciseResponse> updateExerciseQuestionLesson(
+            @PathVariable int id, @RequestBody LessonExerciseRequest request) {
+        LessonExerciseResponse updatedLessonExercise = lessonExerciseService.updateExerciseLesson(id, request);
+        return ApiResponse.<LessonExerciseResponse>builder()
+                .message("Updated exercise lesson successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(updatedLessonExercise)
+                .build();
+    }
 }

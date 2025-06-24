@@ -9,6 +9,7 @@ import vn.fu_ohayo.enums.CategoryListeningEnum;
 import vn.fu_ohayo.enums.CategoryReadingEnum;
 import vn.fu_ohayo.enums.CategorySpeakingEnum;
 import vn.fu_ohayo.enums.ContentStatus;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +52,16 @@ public class ContentCategoryController {
                 .status("success")
                 .message("get all status success")
                 .data(status)
+                .build();
+    }
+    @GetMapping("/jlpt-levels")
+    public ApiResponse<List<String>> getJlptLevels() {
+        List<String> jlptLevels = Arrays.stream(JlptLevel.values()).map(Enum::name).toList();
+        return ApiResponse.<List<String>>builder()
+                .code("200")
+                .status("success")
+                .message("Retrieved JLPT levels successfully")
+                .data(jlptLevels)
                 .build();
     }
 }

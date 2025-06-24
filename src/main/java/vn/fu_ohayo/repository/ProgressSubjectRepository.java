@@ -37,7 +37,7 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
     Page<ProgressSubject> findAllByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
 
     int countAllByProgressStatus(ProgressStatus progressStatus);
-
+    @Query("SELECT COUNT(p) FROM ProgressSubject p")
     int countAll();
 
     int countAllByProgressStatusAndEndDateBefore(ProgressStatus progressStatus, Date endDate);

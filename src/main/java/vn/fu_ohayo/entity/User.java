@@ -16,6 +16,7 @@ import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.enums.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -186,4 +187,7 @@ public class User implements UserDetails, Serializable {
     protected void onUpdate() {
         updatedAt = new Date();
     }
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 }

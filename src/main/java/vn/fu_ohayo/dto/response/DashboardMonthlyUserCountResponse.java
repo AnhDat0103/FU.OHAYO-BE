@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class CouseraRateResponse {
-    int subjectId;
-    String subjectName;
-    double couseraCompleteRate;
-    int totalUserJoin;
+public class DashboardMonthlyUserCountResponse {
+    private int month;
+    private long activeCount;
 }

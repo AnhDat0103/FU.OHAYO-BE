@@ -11,6 +11,7 @@ import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ProgressStatus;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import vn.fu_ohayo.enums.SubjectStatus;
 @Repository
 public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject, Integer> {
     boolean existsBySubjectAndUser(Subject subject, User user);
+
     List<ProgressSubject> findAllByUserAndProgressStatus(User user, ProgressStatus progressStatus);
 
     ProgressSubject findProgressSubjectBySubjectAndUser(Subject subject, User user);
@@ -34,4 +36,14 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
 
     Page<ProgressSubject> findAllByUserAndSubject_Status(User user, SubjectStatus subjectStatus, Pageable pageable);
 
+    int countAllByProgressStatus(ProgressStatus progressStatus);
+    @Query("SELECT COUNT(p) FROM ProgressSubject p")
+    int countAll();
+
+    int countAllByProgressStatusAndEndDateBefore(ProgressStatus progressStatus, Date endDate);
+
+    int countAllByStartDateAfter(Date startDate);
+
+    int countAllByProgressStatusAndSubject(ProgressStatus progressStatus, Subject subject);
+    int countAllBySubject(Subject subject);
 }

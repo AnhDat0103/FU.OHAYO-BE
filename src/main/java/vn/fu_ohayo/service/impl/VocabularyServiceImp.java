@@ -15,6 +15,7 @@ import vn.fu_ohayo.repository.VocabularyRepository;
 import vn.fu_ohayo.service.VocabularyService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VocabularyServiceImp implements VocabularyService {
@@ -33,20 +34,20 @@ public class VocabularyServiceImp implements VocabularyService {
         Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
-        return vocabularyRepository.findAllByLesson(lesson)
-                .stream().map(vocabularyMapper::toVocabularyResponse).toList();
+        List<Vocabulary> vocabularies = lesson.getVocabularies();
+        return vocabularies.stream().map(vocabularyMapper::toVocabularyResponse).collect(Collectors.toList());
     }
 
     @Override
-    public VocabularyResponse handleSaveVocabulary(int lessonId, VocabularyRequest vocabularyRequest) {
+    public VocabularyResponse handleSaveVocabulary(int lessonId,VocabularyRequest vocabularyRequest) {
         Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
 
-        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLesson(vocabularyRequest.getKanji(),
+        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLessonId(vocabularyRequest.getKanji(),
                 vocabularyRequest.getKana(),
-                vocabularyRequest.getMeaning(),
-                lesson)){
+                vocabularyRequest.getMeaning(), lessonId
+           )){
             throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         Vocabulary vocabulary = Vocabulary.builder()
@@ -58,7 +59,6 @@ public class VocabularyServiceImp implements VocabularyService {
                 .jlptLevel(vocabularyRequest.getJlptLevel())
                 .example(vocabularyRequest.getExample())
                 .description(vocabularyRequest.getDescription())
-                .lesson(lesson)
                 .build();
         vocabularyRepository.save(vocabulary);
         return vocabularyMapper.toVocabularyResponse(vocabulary);
@@ -73,10 +73,10 @@ public class VocabularyServiceImp implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
         );
-        if(vocabularyRepository.existsByKanjiAndKanaAndMeaningAndLessonAndVocabularyIdNot(vocabularyRequest.getKanji(),
+        if(vocabularyRepository.existsDuplicateVocabularyInLessonExceptId(vocabularyRequest.getKanji(),
                     vocabularyRequest.getKana(),
                     vocabularyRequest.getMeaning(),
-                    lesson, vocabularyId)){
+                    lesson.getLessonId(), vocabularyId)){
                 throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         if(vocabularyRequest.getKanji() != null) {
@@ -107,11 +107,6 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
-    public VocabularyResponse updatePatchVocabulary(int vocabularyId, VocabularyRequest vocabularyRequest) {
-        return null;
-    }
-
-    @Override
     public void deleteVocabularyById(int vocabularyId) {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
@@ -126,13 +121,32 @@ public class VocabularyServiceImp implements VocabularyService {
         Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
-        return vocabularyRepository.findAllByLesson(PageRequest.of(page, size), lesson)
+        return vocabularyRepository.findAllByLessonId( lesson.getLessonId(), PageRequest.of(page, size))
                 .map(vocabularyMapper::toVocabularyResponse);
     }
 
     @Override
-    public Page<VocabularyResponse> getAllVocabularíesPage(int page, int size) {
+    public Page<VocabularyResponse> getAllVocabulariesPage(int page, int size) {
         return vocabularyRepository.findAll(PageRequest.of(page, size))
                 .map(vocabularyMapper::toVocabularyResponse);
+    }
+
+    @Override
+    public VocabularyResponse handleSaveVocabulary(VocabularyRequest vocabularyRequest) {
+        Vocabulary existingVocabulary = vocabularyRepository.findAllByKanjiAndKanaAndMeaning(
+                vocabularyRequest.getKanji(),
+                vocabularyRequest.getKana(),
+                vocabularyRequest.getMeaning()
+        );
+        if(existingVocabulary != null) {
+            if(existingVocabulary.getDeleted() == false) {
+                throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
+            } else{
+                existingVocabulary.setDeleted(false);
+                return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(existingVocabulary));
+            }
+        }
+        Vocabulary vocabulary = vocabularyMapper.toVocabulary(vocabularyRequest);
+        return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(vocabulary));
     }
 }

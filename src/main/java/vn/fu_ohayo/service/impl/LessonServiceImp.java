@@ -31,22 +31,16 @@ public class LessonServiceImp implements LessonService {
     private final LessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
     private final SubjectRepository subjectRepository;
-    private final VocabularyRepository vocabularyRepository;
-    private final GrammarRepository grammarRepository;
     private final VocabularyMapper vocabularyMapper;
     private final GrammarMapper grammarMapper;
 
     public LessonServiceImp(LessonRepository lessonRepository, LessonMapper lessonMapper,
                             SubjectRepository subjectRepository,
-                            VocabularyRepository vocabularyRepository,
-                            GrammarRepository grammarRepository,
                             VocabularyMapper vocabularyMapper,
                             GrammarMapper grammarMapper) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
         this.subjectRepository = subjectRepository;
-        this.vocabularyRepository = vocabularyRepository;
-        this.grammarRepository = grammarRepository;
         this.vocabularyMapper = vocabularyMapper;
         this.grammarMapper = grammarMapper;
     }
@@ -69,13 +63,7 @@ public class LessonServiceImp implements LessonService {
         return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
     }
 
-    @Override
-    public List<LessonResponse> getAllLessons() {
-        return lessonRepository.findAll()
-                .stream()
-                .map(lessonMapper::toLessonResponse)
-                .toList();
-    }
+
 
     @Override
     public Page<LessonResponse> getAllLessons(int subjectId, int page, int pageSize) {
@@ -102,11 +90,11 @@ public class LessonServiceImp implements LessonService {
         return lessonRepository.findAllBySubjectAndStatus(subject, LessonStatus.PUBLIC).stream().map(
                 lesson -> {
                     LessonResponse lessonResponse = lessonMapper.toLessonResponse(lesson);
-                    List<VocabularyResponse> vocabularyResponses = vocabularyRepository.findAllByLesson(lesson)
+                    List<VocabularyResponse> vocabularyResponses = lesson.getVocabularies()
                             .stream()
                             .map(vocabularyMapper::toVocabularyResponse)
                             .toList();
-                    List<GrammarResponse> grammarResponses = grammarRepository.findAllByLessonAndDeletedIsFalse(lesson)
+                    List<GrammarResponse> grammarResponses = lesson.getGrammars()
                             .stream().map(grammarMapper::toGrammarResponse)
                             .toList();
                     lessonResponse.setVocabularies(vocabularyResponses);
@@ -114,6 +102,15 @@ public class LessonServiceImp implements LessonService {
                     return lessonResponse;
                 }
         ).toList();
+    }
+
+    @Override
+    public Page<LessonResponse> getAllLessonsIsDeletedAndStatus_INACTICE(int subjectId, int page, int size) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
+                () -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND
+        ));
+        Page<Lesson> lessons = lessonRepository.findAllBySubjectAndDeletedAndStatus(subject,false, LessonStatus.INACTIVE, PageRequest.of(page, size));
+        return lessons.map(lessonMapper::toLessonResponse);
     }
 
     @Override
@@ -144,12 +141,10 @@ public class LessonServiceImp implements LessonService {
         Lesson lesson = lessonRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
         );
-        if(vocabularyRepository.countAllByLesson(lesson) > 0) {
-            throw new AppException(ErrorEnum.LESSON_HAS_VOCABULARY);
+        if (!lesson.getProgressLessons().isEmpty()) {
+            throw new AppException(ErrorEnum.LESSON_IN_USE);
         }
-        if(grammarRepository.countAllByLessonAndDeletedIsFalse(lesson) > 0) {
-            throw new AppException(ErrorEnum.LESSON_HAS_GRAMMAR);
-        }
-        lessonRepository.delete(lesson);
+        lesson.setDeleted(true);
+        lessonRepository.save(lesson);
     }
 }

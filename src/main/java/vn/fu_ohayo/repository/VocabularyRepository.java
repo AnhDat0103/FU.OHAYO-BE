@@ -1,5 +1,8 @@
 package vn.fu_ohayo.repository;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,13 +19,29 @@ import java.util.List;
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
 
-    int countAllByLesson(Lesson lesson);
+    @Query("SELECT v FROM Vocabulary v JOIN v.lessons l WHERE l.lessonId = :lessonId")
+    Page<Vocabulary> findAllByLessonId(@Param("lessonId") int lessonId, Pageable pageable);
 
-    Collection<Vocabulary> findAllByLesson(Lesson lesson);
+    @Query("SELECT COUNT(v) > 0 FROM Vocabulary v JOIN v.lessons l " +
+            "WHERE v.kanji = :kanji AND v.kana = :kana AND v.meaning = :meaning AND l.lessonId = :lessonId")
+    boolean existsByKanjiAndKanaAndMeaningAndLessonId(
+            @Param("kanji") String kanji,
+            @Param("kana") String kana,
+            @Param("meaning") String meaning,
+            @Param("lessonId") int lessonId
+    );
 
-    Page<Vocabulary> findAllByLesson(Pageable pageable, Lesson lesson);
+    @Query("SELECT COUNT(v) > 0 FROM Vocabulary v JOIN v.lessons l " +
+            "WHERE v.kanji = :kanji AND v.kana = :kana AND v.meaning = :meaning " +
+            "AND l.lessonId = :lessonId AND v.vocabularyId <> :vocabularyId")
+    boolean existsDuplicateVocabularyInLessonExceptId(
+            @Param("kanji") String kanji,
+            @Param("kana") String kana,
+            @Param("meaning") String meaning,
+            @Param("lessonId") int lessonId,
+            @Param("vocabularyId") int vocabularyId
+    );
 
-    boolean existsByKanjiAndKanaAndMeaningAndLesson(String kanji,String kana, String meaning, Lesson lesson);
 
-    boolean existsByKanjiAndKanaAndMeaningAndLessonAndVocabularyIdNot(String kanji, String kana, String meaning, Lesson lesson, int vocabularyId);
+    Vocabulary findAllByKanjiAndKanaAndMeaning( String kanji, String kana,String meaning);
 }

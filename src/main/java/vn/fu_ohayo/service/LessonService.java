@@ -11,8 +11,6 @@ public interface LessonService {
 
     LessonResponse createLesson(LessonRequest lessonRequest);
 
-    List<LessonResponse> getAllLessons();
-
     LessonResponse updateLesson(Integer id , LessonPatchRequest lessonRequest);
 
     void deleteLesson(Integer id);
@@ -22,4 +20,6 @@ public interface LessonService {
     LessonResponse getLessonById(int id);
 
     List<LessonResponse> getLessonBySubjectId(int subjectId);
+
+    Page<LessonResponse> getAllLessonsIsDeletedAndStatus_INACTICE(int subjectId, int page, int size);
 }

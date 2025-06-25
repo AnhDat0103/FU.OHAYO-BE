@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
@@ -33,6 +30,7 @@ public class Vocabulary {
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
     @Column(name = "vocabulary_id")
+    @EqualsAndHashCode.Include
     private int vocabularyId;
 
 
@@ -71,9 +69,8 @@ public class Vocabulary {
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
     
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    @ManyToMany(mappedBy = "vocabularies",fetch = FetchType.LAZY)
+    private Set<Lesson> lessons= new HashSet<>();
 
     @ManyToMany(mappedBy = "vocabularies")
     private Set<FavoriteList> favoriteLists = new HashSet<>();

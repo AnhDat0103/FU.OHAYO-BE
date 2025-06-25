@@ -47,6 +47,7 @@ public enum ErrorEnum {
     LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
     LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
+    LESSON_IN_USE("4028", "Lesson is using with any user" ),
 
     VOCABULARY_EXISTS("4017", "Vocabulary already exists in the lesson"),
     VOCABULARY_NOT_FOUND("4018", "Vocabulary not found with this kanji." ),

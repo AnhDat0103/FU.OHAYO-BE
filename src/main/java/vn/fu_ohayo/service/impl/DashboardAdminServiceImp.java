@@ -49,7 +49,7 @@ public class DashboardAdminServiceImp implements DashboardAdminService {
         int totalLessonNow = lessonRepository.countAllByStatus(LessonStatus.PUBLIC);
         int totalLessonBeforeThisMonth  = lessonRepository.countAllByStatusAndCreatedAtBefore(LessonStatus.PUBLIC, dateStartOfThisMonth);
         int totalProgressSubjectComplete = progressSubjectRepository.countAllByProgressStatus(ProgressStatus.COMPLETED);
-        int totalAllProgressSubjectComplete = progressSubjectRepository.countAll();
+        long totalAllProgressSubjectComplete = progressSubjectRepository.count();
         double completionRateNow = totalAllProgressSubjectComplete * 100.0 / totalProgressSubjectComplete;
         int totalProgressSubjectCompleteBeforeThisMonth = progressSubjectRepository.countAllByProgressStatusAndEndDateBefore(ProgressStatus.COMPLETED, dateStartOfThisMonth);
         int totalAllProgressSubjectCompleteBeforeThisMonth = progressSubjectRepository.countAllByEndDateBefore(dateStartOfThisMonth);

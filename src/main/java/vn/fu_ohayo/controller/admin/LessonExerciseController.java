@@ -53,7 +53,7 @@ public class LessonExerciseController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<LessonExerciseResponse> deleteExerciseLesson(@PathVariable int id) {
+    public ApiResponse<LessonExerciseResponse> deleteExerciseQuestionLesson(@PathVariable int id) {
         lessonExerciseService.deleteExerciseLesson(id);
         return ApiResponse.<LessonExerciseResponse>builder()
                 .message("Deleted exercise lesson successfully")
@@ -63,7 +63,7 @@ public class LessonExerciseController {
     }
 
     @PostMapping
-    public ApiResponse<LessonExerciseResponse> createExerciseLesson(@Valid @RequestBody LessonExerciseRequest request) {
+    public ApiResponse<LessonExerciseResponse> createExerciseQuestionLesson(@Valid @RequestBody LessonExerciseRequest request) {
         LessonExerciseResponse createdLessonExercise = lessonExerciseService.createExerciseLesson(request);
         return ApiResponse.<LessonExerciseResponse>builder()
                 .message("Created new exercise lesson successfully")
@@ -74,7 +74,7 @@ public class LessonExerciseController {
     }
 
     @PatchMapping("/{id}")
-    public ApiResponse<LessonExerciseResponse> updateExerciseLesson(
+    public ApiResponse<LessonExerciseResponse> updateExerciseQuestionLesson(
             @PathVariable int id, @RequestBody LessonExerciseRequest request) {
         LessonExerciseResponse updatedLessonExercise = lessonExerciseService.updateExerciseLesson(id, request);
         return ApiResponse.<LessonExerciseResponse>builder()

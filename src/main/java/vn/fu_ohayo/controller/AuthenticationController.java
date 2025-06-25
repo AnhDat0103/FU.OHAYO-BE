@@ -28,7 +28,9 @@ import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 import org.springframework.beans.factory.annotation.Value;
+
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 @Slf4j(topic = "AUTHCONTROLLER")
@@ -47,10 +49,10 @@ public class AuthenticationController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {
-            return ResponseEntity.ok(
-                    userService.registerInitial(initialRegisterRequest)
-            );
-        }
+        return ResponseEntity.ok(
+                userService.registerInitial(initialRegisterRequest)
+        );
+    }
 
     @GetMapping("/mailAgain")
     public ResponseEntity<String> sendMailAgain(@RequestParam("emailAgain") String email) {
@@ -106,7 +108,7 @@ public class AuthenticationController {
     public ApiResponse<String> getContext() {
         String a = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if("anonymousUser".equals(a)) {
+        if ("anonymousUser".equals(a)) {
             return ApiResponse.<String>builder()
                     .code("200")
                     .status("OK")
@@ -125,7 +127,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {
-        if(!userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getStatus().equals(UserStatus.ACTIVE)) {
+        if (!userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getStatus().equals(UserStatus.ACTIVE)) {
             throw new AppException(ErrorEnum.ACCOUNT_INACTIVE);
         }
         TokenResponse tokenResponse = authenticationService.getAccessToken(signInRequest);
@@ -138,6 +140,8 @@ public class AuthenticationController {
                 .maxAge(60 * 60 * 24 * 7L)
                 .build();
         log.info("User logged in successfully: {}", signInRequest.getEmail());
+        User userEnity = userService.getUserByEmail(signInRequest.getEmail());
+        userEnity.setLastLoginAt(LocalDateTime.now());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(ApiResponse.<TokenResponse>builder()
@@ -182,7 +186,6 @@ public class AuthenticationController {
                         .build()
         );
     }
-
 
 
     @GetMapping("/check-login")
@@ -237,13 +240,13 @@ public class AuthenticationController {
 
     @GetMapping("/code/{provider}")
     public void handleOAuthCallback(@PathVariable String provider,
-                                   @RequestParam("code") String code,
-                                   HttpServletResponse response) throws IOException {
+                                    @RequestParam("code") String code,
+                                    HttpServletResponse response) throws IOException {
         String accessToken = authenticationService.getAccessTokenFromProvider(provider, code);
         UserFromProvider user = authenticationService.getUserInfoFromProvider(provider, accessToken);
-
         String redirectUrl = "http://localhost:5173/oauth-callback?email=" + user.getEmail() + "&exist=" + user.isExist();
-
+        User userEnity = userService.getUserByEmail(user.getEmail());
+        userEnity.setLastLoginAt(LocalDateTime.now());
         response.sendRedirect(redirectUrl);
     }
 }

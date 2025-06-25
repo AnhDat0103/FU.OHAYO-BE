@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SystemLogRepository extends JpaRepository<SystemLog, Long> {
-    List<SystemLog> findTop7ByOrderByTimestampDesc();
+    List<SystemLog> findTop7ByRoleIsNotNullOrderByTimestampDesc();
 }

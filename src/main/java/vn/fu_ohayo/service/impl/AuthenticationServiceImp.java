@@ -89,7 +89,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
             log.info("Authentication failed for user: {}", request.getEmail());
             throw new AppException(ErrorEnum.AUTH_FAILED);
         }
-        User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         Set<GrantedAuthority> roles = new HashSet<>();
         roles.add(user.getRole());

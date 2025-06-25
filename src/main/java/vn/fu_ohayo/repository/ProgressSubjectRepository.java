@@ -38,9 +38,10 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
 
     int countAllByProgressStatus(ProgressStatus progressStatus);
 
-    int countAll();
-
     int countAllByProgressStatusAndEndDateBefore(ProgressStatus progressStatus, Date endDate);
 
-    int countAllByEndDateBefore(Date endDate);
+    int countAllByStartDateAfter(Date startDate);
+
+    int countAllByProgressStatusAndSubject(ProgressStatus progressStatus, Subject subject);
+    int countAllBySubject(Subject subject);
 }

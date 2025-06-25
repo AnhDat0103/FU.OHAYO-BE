@@ -172,6 +172,14 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StudyReminder> studyReminders;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_vocabulary",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "favorite_vocabulary_id")
+    )
+    private Set<FavoriteVocabulary> favoriteVocabularies;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();

@@ -20,7 +20,7 @@ public class ContentReadingProgressController {
             ){
         return contentReadingProgressService.markReadingProgress(userId, contentReadingId);
     }
-    @PostMapping("/CheckStatus")
+    @GetMapping("/checkStatus")
     //checkstatus kiem tra xem nguoi dung da hoan thanh doc bai hay chua
     public ApiResponse<Boolean> checkStatus(
             @RequestParam Long userId,

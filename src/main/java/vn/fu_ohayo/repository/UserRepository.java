@@ -49,6 +49,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     int countAllByStatusAndCreatedAtBefore(UserStatus status, Date createdAt);
 
     int countAllByStatusAndMembershipLevel(UserStatus UserStatus, MembershipLevel membershipLevel);
+    boolean existsByEmailAndStatus(String email, UserStatus status);
 
     @Query(value = """
         SELECT m.month AS monthNumber,

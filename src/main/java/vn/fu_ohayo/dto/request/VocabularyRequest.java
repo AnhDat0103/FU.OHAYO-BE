@@ -19,7 +19,6 @@ import vn.fu_ohayo.enums.PartOfSpeech;
 public class VocabularyRequest {
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_KANJI)
-    @NotBlank(message = ErrorEnum.NOT_EMPTY_KANJI)
     private String kanji;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_KANA)

@@ -66,17 +66,12 @@ public class VocabularyServiceImp implements VocabularyService {
 
     @Override
     public VocabularyResponse updatePutVocabulary(int vocabularyId, VocabularyRequest vocabularyRequest) {
-        Lesson lesson = lessonRepository.getLessonByLessonId(vocabularyRequest.getLessonId()).orElseThrow(
-                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
-        );
-
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
         );
-        if(vocabularyRepository.existsDuplicateVocabularyInLessonExceptId(vocabularyRequest.getKanji(),
-                    vocabularyRequest.getKana(),
+        if(vocabularyRepository.existsDuplicateVocabularyExceptId(vocabularyRequest.getKanji(),
                     vocabularyRequest.getMeaning(),
-                    lesson.getLessonId(), vocabularyId)){
+                    vocabularyId)){
                 throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
         }
         if(vocabularyRequest.getKanji() != null) {
@@ -111,8 +106,8 @@ public class VocabularyServiceImp implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(
                 () -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND)
         );
-        vocabularyRepository.delete(vocabulary);
-
+        vocabulary.setDeleted(true);
+        vocabularyRepository.save(vocabulary);
     }
 
     @Override
@@ -127,7 +122,7 @@ public class VocabularyServiceImp implements VocabularyService {
 
     @Override
     public Page<VocabularyResponse> getAllVocabulariesPage(int page, int size) {
-        return vocabularyRepository.findAll(PageRequest.of(page, size))
+        return vocabularyRepository.findAllByDeleted(false,PageRequest.of(page, size))
                 .map(vocabularyMapper::toVocabularyResponse);
     }
 
@@ -142,11 +137,13 @@ public class VocabularyServiceImp implements VocabularyService {
             if(existingVocabulary.getDeleted() == false) {
                 throw new AppException(ErrorEnum.VOCABULARY_EXISTS);
             } else{
+                updatePutVocabulary(existingVocabulary.getVocabularyId(), vocabularyRequest);
                 existingVocabulary.setDeleted(false);
                 return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(existingVocabulary));
             }
         }
         Vocabulary vocabulary = vocabularyMapper.toVocabulary(vocabularyRequest);
+        vocabulary.setDeleted(false);
         return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(vocabulary));
     }
 }

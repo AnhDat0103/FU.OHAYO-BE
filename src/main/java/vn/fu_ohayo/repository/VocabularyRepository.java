@@ -15,6 +15,7 @@ import vn.fu_ohayo.entity.Vocabulary;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
@@ -31,17 +32,17 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
             @Param("lessonId") int lessonId
     );
 
-    @Query("SELECT COUNT(v) > 0 FROM Vocabulary v JOIN v.lessons l " +
-            "WHERE v.kanji = :kanji AND v.kana = :kana AND v.meaning = :meaning " +
-            "AND l.lessonId = :lessonId AND v.vocabularyId <> :vocabularyId")
-    boolean existsDuplicateVocabularyInLessonExceptId(
+    @Query("SELECT COUNT(v) > 0 FROM Vocabulary v " +
+            "WHERE v.kanji = :kanji AND v.meaning = :meaning " +
+            "AND v.vocabularyId <> :vocabularyId")
+    boolean existsDuplicateVocabularyExceptId(
             @Param("kanji") String kanji,
-            @Param("kana") String kana,
             @Param("meaning") String meaning,
-            @Param("lessonId") int lessonId,
             @Param("vocabularyId") int vocabularyId
     );
 
 
     Vocabulary findAllByKanjiAndKanaAndMeaning( String kanji, String kana,String meaning);
+
+    Page<Vocabulary> findAllByDeleted(Boolean deleted, Pageable pageable);
 }

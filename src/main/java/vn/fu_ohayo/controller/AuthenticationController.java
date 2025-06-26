@@ -3,8 +3,10 @@ package vn.fu_ohayo.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -27,7 +29,7 @@ import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.MailService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
 import vn.fu_ohayo.service.impl.UserServiceImp;
-import org.springframework.beans.factory.annotation.Value;
+
 import java.io.IOException;
 
 
@@ -90,7 +92,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/complete-profile")
-    public ApiResponse<String> completeProfile(@RequestParam String email, @RequestBody CompleteProfileRequest completeProfileRequest) {
+    public ApiResponse<String> completeProfile( @RequestParam String email,@Valid @RequestBody CompleteProfileRequest completeProfileRequest) {
         log.info(email);
 
         userService.completeProfile(completeProfileRequest, email);
@@ -101,27 +103,6 @@ public class AuthenticationController {
                 .data("Profile completed successfully")
                 .build();
     }
-
-    @GetMapping("/complete")
-    public ApiResponse<String> getContext() {
-        String a = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if("anonymousUser".equals(a)) {
-            return ApiResponse.<String>builder()
-                    .code("200")
-                    .status("OK")
-                    .message("Profile completed successfully")
-                    .data("failed")
-                    .build();
-        }
-        return ApiResponse.<String>builder()
-                .code("200")
-                .status("OK")
-                .message("Profile completed successfully")
-                .data(a)
-                .build();
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody SignInRequest signInRequest) {

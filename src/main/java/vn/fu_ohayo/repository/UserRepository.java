@@ -15,15 +15,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByFullName(String fullName);
     boolean existsByEmail(String email);
-    boolean existsByEmailAndProvider(String email, Provider provider);
     Optional<User> findByEmailAndProvider(String email, Provider provider);
     boolean existsByPhone(String phone);
     int countAllByStatus(UserStatus status);
     int countAllByStatusAndCreatedAtBefore(UserStatus status, Date createdAt);
     int countAllByStatusAndMembershipLevel(UserStatus UserStatus, MembershipLevel membershipLevel);
+    boolean existsByEmailAndStatus(String email, UserStatus status);
 
-//    @Query(
-//            "SELECT u FROM User u JOIN u.subjects s WHERE s.subjectId = :courseId  AND u.userId = :userId"
-//    )
-//    User findBySubjectId(int courseId, int userId);
 }

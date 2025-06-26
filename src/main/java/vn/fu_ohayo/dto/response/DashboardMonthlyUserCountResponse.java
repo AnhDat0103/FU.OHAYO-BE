@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class DashboardTotalUserEachWeekResponse {
-    int totalUserWeek1;
-    int totalUserWeek2;
-    int totalUserWeek3;
-    int totalUserWeek4;
+public class DashboardMonthlyUserCountResponse {
+    private int month;
+    private long activeCount;
 }

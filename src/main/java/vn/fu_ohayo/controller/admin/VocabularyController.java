@@ -42,7 +42,7 @@ public class VocabularyController {
     public ApiResponse<VocabularyResponse> addVocabularyIntoLesson(
             @Valid @RequestBody VocabularyRequest vocabularyRequest,
             @PathVariable int lessonId) {
-        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(lessonId,vocabularyRequest);
+        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(lessonId, vocabularyRequest);
         return ApiResponse.<VocabularyResponse>builder()
                 .code("201")
                 .message("Vocabulary created successfully")

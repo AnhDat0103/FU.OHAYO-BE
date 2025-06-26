@@ -9,7 +9,9 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Vocabularies",
@@ -76,6 +78,9 @@ public class Vocabulary {
 
     @Column(name = "is_deleted")
     private Boolean deleted = false;
+
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private Set<Lesson> lessons = new HashSet<>();
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private List<ContentReading> contentReadings;

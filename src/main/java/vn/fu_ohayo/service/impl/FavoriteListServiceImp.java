@@ -37,7 +37,6 @@ public class FavoriteListServiceImp implements FavoriteListService {
     private final GrammarMapper grammarMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlashcardResponse> getAllFlashcards(String type, long favoriteListId) {
         // 1. Kiểm tra folder tồn tại
         favoriteListRepository.findById(favoriteListId)

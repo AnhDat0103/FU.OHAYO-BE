@@ -51,7 +51,7 @@ public class FavoriteListServiceImp implements FavoriteListService {
         int size = request.getPageSize() != null ? request.getPageSize() : 21;
         Pageable pageable = PageRequest.of(page, size);
         String keyword = request.getSearchName() != null ? request.getSearchName() : "";
-        String type = request.getType();
+        String type = request.getType(); // NEW: "vocabulary", "grammar", or "all"
         String view = request.getViewType(); // NEW: "mine" or "public"
         Boolean isPublic = request.getIsPublic();
 

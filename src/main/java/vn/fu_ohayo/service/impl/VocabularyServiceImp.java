@@ -30,6 +30,13 @@ public class VocabularyServiceImp implements VocabularyService {
     }
 
     @Override
+    public List<VocabularyResponse> getVocabularysByFavoriteVocabularyId(int id) {
+        return vocabularyRepository.findAllByFavoriteVocabularyId(id).stream()
+                .map(vocabularyMapper::toVocabularyResponse)
+                .toList();
+    }
+
+    @Override
     public List<VocabularyResponse> getAllVocabularies(int lessonId) {
         Lesson lesson = lessonRepository.getLessonByLessonId(lessonId).orElseThrow(
                 () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)

@@ -1,12 +1,12 @@
 package vn.fu_ohayo.mapper;
 
 import org.mapstruct.Mapper;
-import vn.fu_ohayo.dto.request.SearchUserRequest;
-import vn.fu_ohayo.dto.response.SearchUserResponse;
+import vn.fu_ohayo.dto.request.AdminSearchUserRequest;
+import vn.fu_ohayo.dto.response.AdminSearchUserResponse;
 import vn.fu_ohayo.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface SearchUserMapper {
-    User toUser(SearchUserRequest searchUserRequest);
-    SearchUserResponse toSearchUserResponse(User user);
+    User toUser(AdminSearchUserRequest adminSearchUserRequest);
+    AdminSearchUserResponse toSearchUserResponse(User user);
 }

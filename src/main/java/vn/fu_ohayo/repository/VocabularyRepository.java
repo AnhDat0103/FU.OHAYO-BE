@@ -1,21 +1,14 @@
 package vn.fu_ohayo.repository;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import vn.fu_ohayo.entity.Grammar;
-import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Vocabulary;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer> {
@@ -40,6 +33,12 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
             @Param("meaning") String meaning,
             @Param("vocabularyId") int vocabularyId
     );
+
+    @Query("SELECT v FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
+    List<Vocabulary> findAllByFavoriteVocabularyId(@Param("folderId") int folderId);
+
+    @Query("SELECT COUNT(v) FROM Vocabulary v JOIN v.favoriteVocabularies fv WHERE fv.id = :folderId")
+    int countByFavoriteVocabularyId(@Param("folderId") int folderId);
 
 
     Vocabulary findAllByKanjiAndKanaAndMeaning( String kanji, String kana,String meaning);

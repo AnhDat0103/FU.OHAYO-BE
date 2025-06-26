@@ -14,16 +14,13 @@ import java.util.List;
 @Builder
 public class DashboardOverviewResponse {
     int totalUserNow;
-    int totalUserLastMonth;
+    int totalUserCompareLastMonth;
     int totalSubjectNow;
-    int totalSubjectLastMonth;
+    int totalSubjectCompareLastMonth;
     int totalLessonNow;
-    int totalLessonLastMonth;
+    int totalLessonCompareLastMonth;
     double completionRateSubjectNow;
-    double completionRateSubjectLastMonth;
-    int totalUserNormal;
-    int totalUserOneYear;
-    int totalUserOneMonth;
-    int totalUserSixMonths;
+    double completionRateSubjectCompareLastMonth;
+    List<CountUserEachMembership>  countUserEachMembership;
     List<SystemLog> systemLogs;
 }

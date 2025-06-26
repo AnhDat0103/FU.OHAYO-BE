@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
@@ -15,6 +16,7 @@ import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.enums.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +42,16 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-
+@Where(clause = "is_deleted = false")
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @Email()
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
@@ -167,6 +172,14 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StudyReminder> studyReminders;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_vocabulary",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "favorite_vocabulary_id")
+    )
+    private Set<FavoriteVocabulary> favoriteVocabularies;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -182,4 +195,7 @@ public class User implements UserDetails, Serializable {
     protected void onUpdate() {
         updatedAt = new Date();
     }
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 }

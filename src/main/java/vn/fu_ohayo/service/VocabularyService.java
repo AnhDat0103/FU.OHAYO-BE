@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface VocabularyService {
 
+    List<VocabularyResponse> getVocabularysByFavoriteVocabularyId(int id);
+
     List<VocabularyResponse> getAllVocabularies(int lessonId);
 
     VocabularyResponse handleSaveVocabulary(int lessonId, VocabularyRequest vocabularyRequest);

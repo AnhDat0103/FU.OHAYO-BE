@@ -17,7 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Grammars",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"title_jp", "lesson_id"})
+                @UniqueConstraint(columnNames = {"title_jp"})
         },
         indexes = {
                 @Index(columnList = "title_jp", name = "title_jp_index"),

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.entity.QuizQuestion;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
@@ -36,4 +37,6 @@ public class VocabularyResponse {
     private JlptLevel jlptLevel;
 
     private Date updatedAt;
+
+    private String quizQuestion;
 }

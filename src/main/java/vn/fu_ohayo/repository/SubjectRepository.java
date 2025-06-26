@@ -46,4 +46,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
 
     Page<Subject> findAllByStatus(SubjectStatus status, Pageable pageable);
+
+    List<Subject> findAllBySubjectIdIn(List<Integer> subjectIds);
+
+    List<Subject> findAllByStatus(SubjectStatus status);
 }

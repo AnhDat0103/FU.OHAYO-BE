@@ -60,6 +60,8 @@ public enum ErrorEnum {
     USER_ALREADY_ENROLLED("4025", "User is already enrolled in subject." ),
     PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
     ANSWER_NOT_FOUND("4027","Can not found the answer." ),
+    LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
+
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 

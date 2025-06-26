@@ -138,4 +138,14 @@ public class SubjectController {
                 .build();
     }
 
+    @GetMapping("/getListAllSubject")
+    public ApiResponse<List<SubjectResponse>> getListAllSubject() {
+        return ApiResponse.<List<SubjectResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched list all subject successfully")
+                .data(subjectService.getAllListActiveSubjects())
+                .build();
+    }
+
 }

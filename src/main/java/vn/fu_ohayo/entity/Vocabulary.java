@@ -75,9 +75,8 @@ public class Vocabulary {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @ManyToMany(mappedBy = "vocabularies")
-    private Set<FavoriteList> favoriteLists = new HashSet<>();
-
+    @OneToMany(mappedBy = "vocabulary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FavoriteListVocabulary> favoriteListVocabularies = new HashSet<>();
 
     @Column(name = "created_at")
     private java.util.Date createdAt;

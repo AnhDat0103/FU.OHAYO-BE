@@ -36,4 +36,5 @@ public class VocabularyResponse {
     private JlptLevel jlptLevel;
 
     private Date updatedAt;
+
 }

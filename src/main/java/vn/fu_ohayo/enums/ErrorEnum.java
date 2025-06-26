@@ -47,8 +47,9 @@ public enum ErrorEnum {
     LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
     LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
+    LESSON_IN_USE("4028", "Lesson is using with any user" ),
 
-    VOCABULARY_EXISTS("4017", "Vocabulary already exists in the lesson"),
+    VOCABULARY_EXISTS("4017", "Vocabulary already exists"),
     VOCABULARY_NOT_FOUND("4018", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4019", "Grammar is  existed in this lesson." ),
     GRAMMAR_NOT_FOUND("4020", "Grammar not found with this title." ),
@@ -59,6 +60,8 @@ public enum ErrorEnum {
     USER_ALREADY_ENROLLED("4025", "User is already enrolled in subject." ),
     PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
     ANSWER_NOT_FOUND("4027","Can not found the answer." ),
+    LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
+
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 

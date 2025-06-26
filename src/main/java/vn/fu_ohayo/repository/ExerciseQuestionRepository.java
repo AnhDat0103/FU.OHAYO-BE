@@ -25,4 +25,5 @@ public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuesti
     @Transactional
     @Query("DELETE FROM ExerciseQuestion eq WHERE eq.lessonExercise.exerciseId = :exerciseId")
     void deleteByExerciseId(@Param("exerciseId") int exerciseId);
+    List<ExerciseQuestion> findByContentListening(ContentListening contentListening);
 }

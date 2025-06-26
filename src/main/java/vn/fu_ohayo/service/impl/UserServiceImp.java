@@ -3,7 +3,8 @@ package vn.fu_ohayo.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Parent;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.AuthConfig;
@@ -11,10 +12,10 @@ import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.request.AddUserRequest;
 import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.request.SearchUserRequest;
+import vn.fu_ohayo.dto.request.AdminSearchUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.SearchUserResponse;
+import vn.fu_ohayo.dto.response.AdminSearchUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.*;
@@ -60,22 +61,19 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<SearchUserResponse> searchUsersByName(SearchUserRequest request) {
-        return userRepository.findAll()
-                .stream()
-                .filter(user -> request.getFullName() == null
-                        || user.getFullName().toLowerCase().contains(request.getFullName().toLowerCase()))
-                .filter(user -> request.getMembershipLevel() == null
-                        || user.getMembershipLevel() == request.getMembershipLevel())
-                .filter(user -> request.getStatus() == null
-                        || user.getStatus() == request.getStatus())
-                .filter(user -> request.getRegisteredFrom() == null
-                        || !user.getCreatedAt().before(request.getRegisteredFrom()))
-                .filter(user -> request.getRegisteredTo() == null
-                        || !user.getCreatedAt().after(request.getRegisteredTo()))
-                .map(searchUserMapper::toSearchUserResponse)
-                .toList();
+    public Page<AdminSearchUserResponse> filterUsers(AdminSearchUserRequest request) {
+        Page<User> users = userRepository.filterUsers(
+                request.getFullName(),
+                request.getMembershipLevel(),
+                request.getStatus(),
+                request.getRegisteredFrom(),
+                request.getRegisteredTo(),
+                PageRequest.of(request.getCurrentPage(), request.getPageSize())
+        );
+
+        return users.map(searchUserMapper::toSearchUserResponse);
     }
+
 
     @Override
     public UserResponse registerUser(UserRegister userRegister) {
@@ -164,13 +162,11 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public UserResponse deleteUser(Long userId) {
-        UserResponse userResponse = userMapper.toUserResponse(
-                userRepository.findById(userId)
-                        .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND))
-        );
-        userRepository.deleteById(userId);
-        return userResponse;
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 
     @Override

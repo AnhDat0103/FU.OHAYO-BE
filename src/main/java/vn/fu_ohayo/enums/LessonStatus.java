@@ -3,7 +3,8 @@ package vn.fu_ohayo.enums;
 public enum LessonStatus {
     PUBLIC,
     PRIVATE,
-    DRAFT;
+    DRAFT,
+    INACTIVE;
 
     public static LessonStatus fromString(String status) {
         for (LessonStatus lessonStatus : LessonStatus.values()) {

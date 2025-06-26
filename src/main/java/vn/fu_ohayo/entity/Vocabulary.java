@@ -9,7 +9,9 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Vocabularies",
@@ -29,6 +31,7 @@ public class Vocabulary {
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
     @Column(name = "vocabulary_id")
+    @EqualsAndHashCode.Include
     private int vocabularyId;
 
 
@@ -66,16 +69,18 @@ public class Vocabulary {
     @Enumerated(EnumType.STRING)
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
-    
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
 
     @Column(name = "created_at")
     private java.util.Date createdAt;
 
     @Column(name = "updated_at")
     private java.util.Date updatedAt;
+
+    @Column(name = "is_deleted")
+    private Boolean deleted = false;
+
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private Set<Lesson> lessons = new HashSet<>();
 
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private List<ContentReading> contentReadings;

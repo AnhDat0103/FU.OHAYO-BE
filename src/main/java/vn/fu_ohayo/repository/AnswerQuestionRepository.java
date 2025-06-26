@@ -12,6 +12,7 @@ import vn.fu_ohayo.entity.AnswerQuestion;
 import vn.fu_ohayo.entity.ExerciseQuestion;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AnswerQuestionRepository extends JpaRepository<AnswerQuestion, Integer> {
@@ -35,4 +36,7 @@ public interface AnswerQuestionRepository extends JpaRepository<AnswerQuestion, 
     )
     List<AnswerQuestionRequest> findAllByExerciseQuestion_ExerciseQuestionId(int id);
 
+    List<AnswerQuestion> findByExerciseQuestion_ExerciseQuestionIdAndIsCorrect(Integer exerciseQuestionId, Boolean isCorrect);
+
+    List<AnswerQuestion> findByExerciseQuestion_ExerciseQuestionId(Integer exerciseQuestionId);
 }

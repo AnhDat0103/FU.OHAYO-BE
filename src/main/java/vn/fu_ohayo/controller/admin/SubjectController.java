@@ -87,7 +87,7 @@ public class SubjectController {
     }
 
     @PostMapping
-    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest, MultipartFile image, MultipartFile video) {
+    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest) {
         return ApiResponse.<SubjectResponse>builder()
                 .code("201")
                 .status("success")
@@ -135,6 +135,16 @@ public class SubjectController {
                 .status("success")
                 .message("Fetched subject successfully")
                 .data(subjectService.getSubjectById(id))
+                .build();
+    }
+
+    @GetMapping("/getListAllSubject")
+    public ApiResponse<List<SubjectResponse>> getListAllSubject() {
+        return ApiResponse.<List<SubjectResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched list all subject successfully")
+                .data(subjectService.getAllListActiveSubjects())
                 .build();
     }
 

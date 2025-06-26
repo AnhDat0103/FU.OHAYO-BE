@@ -37,7 +37,6 @@ public class ProgressContent {
     private int correctAnswers;
 
     @Version
-    @Column (name = "version")
     private Integer version;
     
     @Enumerated(EnumType.STRING)

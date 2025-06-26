@@ -1,40 +1,65 @@
 package vn.fu_ohayo.service.impl;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.response.CountUserEachMembership;
 import vn.fu_ohayo.dto.response.DashboardCouseraRateResponse;
 import vn.fu_ohayo.dto.response.DashboardOverviewResponse;
-import vn.fu_ohayo.dto.response.DashboardTotalUserEachWeekResponse;
+import vn.fu_ohayo.dto.response.DashboardMonthlyUserCountResponse;
+import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.SystemLog;
 import vn.fu_ohayo.enums.*;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.DashboardAdminService;
-import vn.fu_ohayo.service.UserService;
 
-import java.time.LocalDate;
+import java.math.BigInteger;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class DashboardAdminServiceImp implements DashboardAdminService {
-    private ProgressSubjectRepository progressSubjectRepository;
-    private UserRepository userRepository;
-    private SubjectRepository subjectRepository;
-    private LessonRepository lessonRepository;
-    private SystemLogRepository systemLogRepository;
-
+    private final ProgressSubjectRepository progressSubjectRepository;
+    private final UserRepository userRepository;
+    private final SubjectRepository subjectRepository;
+    private final LessonRepository lessonRepository;
+    private final SystemLogRepository systemLogRepository;
 
     @Override
-    public DashboardCouseraRateResponse countCouseraRate() {
-        return null;
+    public List<DashboardCouseraRateResponse> countCouseraRate(List<Integer> idSubjects) {
+        if (idSubjects == null || idSubjects.isEmpty()) {
+            throw new AppException(ErrorEnum.LIST_SUBJECT_NULL);
+        }
+        List<DashboardCouseraRateResponse> dashboardCouseraRateResponseList = new ArrayList<>();
+        List<Subject> subjectList = subjectRepository.findAllBySubjectIdIn(idSubjects);
+        for (Subject subject : subjectList) {
+            int totalProgressEachSubjectComplete = progressSubjectRepository.countAllByProgressStatusAndSubject(ProgressStatus.COMPLETED, subject);
+            int totalProgressEachSubject = progressSubjectRepository.countAllBySubject(subject);
+            double rateComplete = totalProgressEachSubjectComplete * 100 / totalProgressEachSubject;
+            dashboardCouseraRateResponseList.add(DashboardCouseraRateResponse.builder()
+                    .couseraCompleteRate(rateComplete)
+                    .subjectId(subject.getSubjectId())
+                    .totalUserJoin(totalProgressEachSubject)
+                    .subjectName(subject.getSubjectName())
+                    .build());
+        }
+        return dashboardCouseraRateResponseList;
     }
 
     @Override
-    public DashboardTotalUserEachWeekResponse countTotalUserEachWeek() {
-        return null;
+    public List<DashboardMonthlyUserCountResponse> countTotalUserEachMonth(int year) {
+        List<Object[]> rawData = userRepository.countActiveUsersEachMonth(year);
+
+        return rawData.stream()
+                .map(row -> new DashboardMonthlyUserCountResponse(
+                        ((Number) row[0]).intValue(),   // m.month
+                        ((Number) row[1]).longValue()   // COUNT(*)
+                ))
+                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -47,32 +72,30 @@ public class DashboardAdminServiceImp implements DashboardAdminService {
         int totalSubjectNow = subjectRepository.countAllByStatus(SubjectStatus.ACTIVE);
         int totalSubjectBeforeThisMonth = subjectRepository.countAllByStatusAndCreatedAtBefore(SubjectStatus.ACTIVE, dateStartOfThisMonth);
         int totalLessonNow = lessonRepository.countAllByStatus(LessonStatus.PUBLIC);
-        int totalLessonBeforeThisMonth  = lessonRepository.countAllByStatusAndCreatedAtBefore(LessonStatus.PUBLIC, dateStartOfThisMonth);
+        int totalLessonBeforeThisMonth = lessonRepository.countAllByStatusAndCreatedAtBefore(LessonStatus.PUBLIC, dateStartOfThisMonth);
         int totalProgressSubjectComplete = progressSubjectRepository.countAllByProgressStatus(ProgressStatus.COMPLETED);
-        int totalAllProgressSubjectComplete = progressSubjectRepository.countAll();
-        double completionRateNow = totalAllProgressSubjectComplete * 100.0 / totalProgressSubjectComplete;
+        long totalAllProgressSubject = progressSubjectRepository.count();
+        double completionRateNow = totalProgressSubjectComplete * 100.0 / totalAllProgressSubject;
         int totalProgressSubjectCompleteBeforeThisMonth = progressSubjectRepository.countAllByProgressStatusAndEndDateBefore(ProgressStatus.COMPLETED, dateStartOfThisMonth);
-        int totalAllProgressSubjectCompleteBeforeThisMonth = progressSubjectRepository.countAllByEndDateBefore(dateStartOfThisMonth);
-        double completionRateBeforeThisMonth = totalProgressSubjectCompleteBeforeThisMonth * 100.0 / totalAllProgressSubjectCompleteBeforeThisMonth;
-        int totalUserNormal = userRepository.countAllByStatusAndMembershipLevel(UserStatus.ACTIVE, MembershipLevel.NORMAL);
-        int totalUserOneYear = userRepository.countAllByStatusAndMembershipLevel(UserStatus.ACTIVE, MembershipLevel.ONE_YEAR);
-        int totalUserOneMonth = userRepository.countAllByStatusAndMembershipLevel(UserStatus.ACTIVE, MembershipLevel.ONE_MONTH);
-        int totalUserSixMonths = userRepository.countAllByStatusAndMembershipLevel(UserStatus.ACTIVE, MembershipLevel.SIX_MONTHS);
-        List<SystemLog> systemLogs = systemLogRepository.findTop7ByOrderByTimestampDesc();
+        int totalAllProgressSubjectBeforeThisMonth = progressSubjectRepository.countAllByStartDateAfter(dateStartOfThisMonth);
+        double completionRateBeforeThisMonth = totalProgressSubjectCompleteBeforeThisMonth * 100.0 / totalAllProgressSubjectBeforeThisMonth;
+        List<CountUserEachMembership> countUserEachMembershipList = Arrays.stream(MembershipLevel.values())
+                .map(level -> CountUserEachMembership.builder()
+                        .membershipLevel(level)
+                        .count(userRepository.countAllByStatusAndMembershipLevel(UserStatus.ACTIVE, level))
+                        .build())
+                .collect(Collectors.toList());
         return DashboardOverviewResponse.builder()
                 .totalUserNow(totalUserNow)
-                .totalUserLastMonth(totalUserBeforeThisMonth)
+                .totalUserCompareLastMonth(totalUserNow - totalUserBeforeThisMonth)
                 .totalSubjectNow(totalSubjectNow)
-                .totalSubjectLastMonth(totalSubjectBeforeThisMonth)
+                .totalSubjectCompareLastMonth(totalSubjectNow - totalSubjectBeforeThisMonth)
                 .totalLessonNow(totalLessonNow)
-                .totalLessonLastMonth(totalLessonBeforeThisMonth)
+                .totalLessonCompareLastMonth(totalLessonNow - totalLessonBeforeThisMonth)
                 .completionRateSubjectNow(completionRateNow)
-                .completionRateSubjectLastMonth(completionRateBeforeThisMonth)
-                .totalUserNormal(totalUserNormal)
-                .totalUserOneYear(totalUserOneYear)
-                .totalUserOneMonth(totalUserOneMonth)
-                .totalUserSixMonths(totalUserSixMonths)
-                .systemLogs(systemLogs)
+                .completionRateSubjectCompareLastMonth((completionRateNow - completionRateBeforeThisMonth) / completionRateBeforeThisMonth)
+                .countUserEachMembership(countUserEachMembershipList)
+                .systemLogs(new ArrayList<>())
                 .build();
     }
 }

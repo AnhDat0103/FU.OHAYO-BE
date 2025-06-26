@@ -32,10 +32,6 @@ public class AddUserRequest {
     @Email(message = ErrorEnum.INVALID_EMAIL_MS)
     String email;
 
-    @NotNull(message = ErrorEnum.NOT_EMPTY_NAME)
-    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
-    private String username;
-
     @NotNull(message = ErrorEnum.NOT_EMPTY_PASSWORD)
     @Size(min = 5, message = ErrorEnum.INVALID_PASSWORD)
     private String password;

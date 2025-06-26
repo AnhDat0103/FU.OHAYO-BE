@@ -26,7 +26,7 @@ public class FavoriteListController {
 
 
     @GetMapping
-    public ApiResponse<Page<FolderFavoriteResponse>> getAllFolders(@RequestBody FavoriteListRequest favoriteListRequest) {
+    public ApiResponse<Page<FolderFavoriteResponse>> getAllFolders(@ModelAttribute FavoriteListRequest favoriteListRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
         return ApiResponse.<Page<FolderFavoriteResponse>>builder()

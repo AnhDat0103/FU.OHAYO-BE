@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Subject;
+import vn.fu_ohayo.entity.Vocabulary;
 import vn.fu_ohayo.enums.LessonStatus;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +34,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     int countAllByStatus(LessonStatus status);
 
     int countAllByStatusAndCreatedAtBefore(LessonStatus status, Date createdAt);
+
+    Page<Lesson> findAllBySubjectAndDeletedAndStatus(Subject subject, boolean deleted, LessonStatus status, Pageable pageable);
+
 }

@@ -29,11 +29,7 @@ public class GrammarServiceImp implements GrammarService {
 
     @Override
     public GrammarResponse saveGrammar(GrammarRequest grammarRequest) {
-        Lesson lesson = lessonRepository.findById(grammarRequest.getLessonId()).orElseThrow(
-                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
-        );
-        Optional<Grammar> grammarOptional = grammarRepository.findByTitleJpAndLesson(grammarRequest.getTitleJp(), lesson);
-
+        Optional<Grammar> grammarOptional = grammarRepository.findByTitleJp(grammarRequest.getTitleJp());
         if (grammarOptional.isPresent()) {
             if(grammarOptional.get().getDeleted()) {
                 grammarOptional.get().setDeleted(false);
@@ -51,7 +47,6 @@ public class GrammarServiceImp implements GrammarService {
                 .meaning(grammarRequest.getMeaning())
                 .structure(grammarRequest.getStructure())
                 .usage(grammarRequest.getUsage())
-                .lesson(lesson)
                 .usage(grammarRequest.getUsage())
                 .build();
         return grammarMapper.toGrammarResponse(grammarRepository.save(grammar));
@@ -61,10 +56,9 @@ public class GrammarServiceImp implements GrammarService {
     public GrammarResponse updateGrammar(int id, GrammarRequest grammarRequest) {
         Grammar grammar = grammarRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.GRAMMAR_NOT_FOUND));
-        if(grammarRepository.existsByTitleJpAndMeaningAndLessonAndGrammarIdNot(
+        if(grammarRepository.existsByTitleJpAndMeaningAndGrammarIdNot(
                 grammarRequest.getTitleJp(),
                 grammarRequest.getMeaning(),
-                grammar.getLesson(),
                 id
         )){
             throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
@@ -75,12 +69,6 @@ public class GrammarServiceImp implements GrammarService {
         grammar.setUsage(grammarRequest.getUsage());
         grammar.setExample(grammarRequest.getExample());
         grammar.setJlptLevel(grammarRequest.getJlptLevel());
-        Optional<Lesson> lessonOptional = lessonRepository.findById(grammarRequest.getLessonId());
-        if (lessonOptional.isPresent()) {
-            grammar.setLesson(lessonOptional.get());
-        } else {
-            throw new AppException(ErrorEnum.LESSON_NOT_FOUND);
-        }
         return grammarMapper.toGrammarResponse(grammarRepository.save(grammar));
     }
 
@@ -88,10 +76,9 @@ public class GrammarServiceImp implements GrammarService {
     public GrammarResponse patchGrammar(int id, PatchGrammarRequest patchGrammarRequest) {
         Grammar grammar = grammarRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.GRAMMAR_NOT_FOUND));
-        if(grammarRepository.existsByTitleJpAndMeaningAndLessonAndGrammarIdNot(
+        if(grammarRepository.existsByTitleJpAndMeaningAndGrammarIdNot(
                 patchGrammarRequest.getTitleJp(),
                 patchGrammarRequest.getMeaning(),
-                grammar.getLesson(),
                 id
         )){
             throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
@@ -130,7 +117,7 @@ public class GrammarServiceImp implements GrammarService {
     public Page<GrammarResponse> getAllGrammars(int lessonId, int page, int size) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new AppException(ErrorEnum.LESSON_NOT_FOUND));
-        Page<Grammar> grammarPage = grammarRepository.findAllByLessonAndDeletedIsFalse(lesson, PageRequest.of(page, size));
+        Page<Grammar> grammarPage = grammarRepository.findAllByLessonIdAndDeletedIsFalse(lesson.getLessonId(), PageRequest.of(page, size));
         return grammarPage.map(grammarMapper::toGrammarResponse);
     }
 

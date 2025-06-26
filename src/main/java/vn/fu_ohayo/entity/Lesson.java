@@ -60,10 +60,20 @@ public class Lesson {
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(
+            name = "Lesson_Vocabulary",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
+    )
     private java.util.List<Vocabulary> vocabularies;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(
+            name = "Lesson_Grammar",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "grammar_id")
+    )
     private java.util.List<Grammar> grammars;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -72,6 +82,8 @@ public class Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProgressLesson> progressLessons;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @PrePersist
     protected void onCreate() {

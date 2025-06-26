@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.fu_ohayo.enums.Gender;
@@ -41,13 +42,16 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-
+@Where(clause = "is_deleted = false")
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY
     )
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @Email()
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
@@ -167,6 +171,14 @@ public class User implements UserDetails, Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StudyReminder> studyReminders;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_vocabulary",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "favorite_vocabulary_id")
+    )
+    private Set<FavoriteVocabulary> favoriteVocabularies;
 
     @PrePersist
     protected void onCreate() {

@@ -17,4 +17,5 @@ public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuesti
     Page<ExerciseQuestion> findAllByContentListening(ContentListening contentListening, Pageable page);
     List<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise);
     Page<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise, Pageable pageable);
+    List<ExerciseQuestion> findByContentListening(ContentListening contentListening);
 }

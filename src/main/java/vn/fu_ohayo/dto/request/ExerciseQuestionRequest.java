@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 @Builder
 public class ExerciseQuestionRequest {
+    private Integer questionId;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String questionText;

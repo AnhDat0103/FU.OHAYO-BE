@@ -134,7 +134,7 @@ public class VocabularyController {
     public ApiResponse<Page<VocabularyResponse>> getAllVocabulariesWithoutLesson(
             @PathVariable int lessonId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "6") int size) {
         Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabularies(lessonId, page, size);
         return ApiResponse.<Page<VocabularyResponse>>builder()
                 .code("200")

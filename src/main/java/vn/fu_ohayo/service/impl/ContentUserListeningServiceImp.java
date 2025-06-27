@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import vn.fu_ohayo.dto.request.AnswerListeningRequest;
 import vn.fu_ohayo.entity.AnswerQuestion;
 import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.entity.ExerciseQuestion;
@@ -33,9 +34,10 @@ public class ContentUserListeningServiceImp implements ContentListeningProgressS
     private final UserRepository userRepository;
     private final ContentListeningRepository contentListeningRepository;
 
+
     @Override
     public ProgressContent saveListeningProgress(Long userId, Long contentListeningId,
-                                                 List<ExerciseQuestionRequest> userAnswers) {
+                                                 List<AnswerListeningRequest> userAnswers) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -50,7 +52,7 @@ public class ContentUserListeningServiceImp implements ContentListeningProgressS
         int correctAnswers = 0;
 
         // Calculate correct answers
-        for (ExerciseQuestionRequest userAnswer : userAnswers) {
+        for (AnswerListeningRequest userAnswer : userAnswers) {
             ExerciseQuestion question = exerciseQuestionRepository.findById(userAnswer.getQuestionId())
                     .orElseThrow(() -> new EntityNotFoundException("Question not found"));
 
@@ -59,11 +61,11 @@ public class ContentUserListeningServiceImp implements ContentListeningProgressS
                     .findByExerciseQuestion_ExerciseQuestionIdAndIsCorrect(question.getExerciseQuestionId(), true);
 
             boolean hasCorrectAnswer = false;
-            if (userAnswer.getAnswers() != null) {
-                for (AnswerQuestionRequest answer : userAnswer.getAnswers()) {
+            if (userAnswer.getAnswerText() != null) {
+                for (AnswerListeningRequest answer : userAnswers) {
                     for (AnswerQuestion correctAns : correctAnswer) {
-                        if (answer.getAnswerId() == correctAns.getAnswerId() &&
-                                Boolean.TRUE.equals(answer.getIsCorrect())) {
+                        if (answer.getQuestionId() == correctAns.getAnswerId() &&
+                                Boolean.TRUE.equals(answer.getAnswerText().equals(correctAns.getAnswerText()))) {
                             hasCorrectAnswer = true;
                             break;
                         }

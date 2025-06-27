@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
@@ -25,6 +26,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@Where(clause = "is_deleted = false")
+
 public class Vocabulary {
 
     @Id @GeneratedValue(

@@ -15,6 +15,7 @@ import vn.fu_ohayo.enums.Relationship;
 @NoArgsConstructor
 @Data
 @Builder
+
 public class ParentStudent {
     @Id @GeneratedValue(
             strategy = jakarta.persistence.GenerationType.IDENTITY

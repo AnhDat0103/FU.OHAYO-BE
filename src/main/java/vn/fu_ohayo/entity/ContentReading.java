@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.*;
 
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 public class ContentReading {
     @Id
     @GeneratedValue(

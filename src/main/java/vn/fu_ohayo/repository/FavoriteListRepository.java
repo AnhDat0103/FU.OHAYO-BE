@@ -12,9 +12,9 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email = :email
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        AND SIZE(f.vocabularies) > 0
-        AND SIZE(f.grammars) = 0
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND SIZE(f.favoriteListVocabularies) > 0
+          AND SIZE(f.favoriteListGrammars) = 0
     """)
     Page<FavoriteList> findVocabularyFolders(
             @Param("email") String email,
@@ -25,9 +25,9 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email = :email
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        AND SIZE(f.grammars) > 0
-        AND SIZE(f.vocabularies) = 0
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND SIZE(f.favoriteListGrammars) > 0
+          AND SIZE(f.favoriteListVocabularies) = 0
     """)
     Page<FavoriteList> findGrammarFolders(
             @Param("email") String email,
@@ -38,7 +38,7 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email = :email
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     Page<FavoriteList> findAllFolders(
             @Param("email") String email,
@@ -49,8 +49,8 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email <> :email
-        AND f.isPublic = true
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND f.isPublic = true
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
     Page<FavoriteList> findPublicFoldersExcludeUser(
             @Param("email") String email,
@@ -61,10 +61,10 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email <> :email
-        AND f.isPublic = true
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        AND SIZE(f.vocabularies) > 0
-        AND SIZE(f.grammars) = 0
+          AND f.isPublic = true
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND SIZE(f.favoriteListVocabularies) > 0
+          AND SIZE(f.favoriteListGrammars) = 0
     """)
     Page<FavoriteList> findPublicVocabularyFoldersExcludeUser(
             @Param("email") String email,
@@ -75,10 +75,10 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     @Query("""
         SELECT f FROM FavoriteList f
         WHERE f.user.email <> :email
-        AND f.isPublic = true
-        AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        AND SIZE(f.grammars) > 0
-        AND SIZE(f.vocabularies) = 0    
+          AND f.isPublic = true
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND SIZE(f.favoriteListGrammars) > 0
+          AND SIZE(f.favoriteListVocabularies) = 0    
     """)
     Page<FavoriteList> findPublicGrammarFoldersExcludeUser(
             @Param("email") String email,
@@ -87,13 +87,13 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     );
 
     @Query("""
-    SELECT f FROM FavoriteList f
-    WHERE f.user.email = :email
-    AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    AND f.isPublic = :isPublic
-    AND SIZE(f.vocabularies) > 0
-    AND SIZE(f.grammars) = 0
-""")
+        SELECT f FROM FavoriteList f
+        WHERE f.user.email = :email
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND f.isPublic = :isPublic
+          AND SIZE(f.favoriteListVocabularies) > 0
+          AND SIZE(f.favoriteListGrammars) = 0
+    """)
     Page<FavoriteList> findMyVocabularyFoldersWithPublic(
             @Param("email") String email,
             @Param("keyword") String keyword,
@@ -102,13 +102,13 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     );
 
     @Query("""
-    SELECT f FROM FavoriteList f
-    WHERE f.user.email = :email
-    AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    AND f.isPublic = :isPublic
-    AND SIZE(f.grammars) > 0
-    AND SIZE(f.vocabularies) = 0
-""")
+        SELECT f FROM FavoriteList f
+        WHERE f.user.email = :email
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND f.isPublic = :isPublic
+          AND SIZE(f.favoriteListGrammars) > 0
+          AND SIZE(f.favoriteListVocabularies) = 0
+    """)
     Page<FavoriteList> findMyGrammarFoldersWithPublic(
             @Param("email") String email,
             @Param("keyword") String keyword,
@@ -117,11 +117,11 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
     );
 
     @Query("""
-    SELECT f FROM FavoriteList f
-    WHERE f.user.email = :email
-    AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    AND f.isPublic = :isPublic
-""")
+        SELECT f FROM FavoriteList f
+        WHERE f.user.email = :email
+          AND LOWER(f.favoriteListName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          AND f.isPublic = :isPublic
+    """)
     Page<FavoriteList> findMyAllFoldersWithPublic(
             @Param("email") String email,
             @Param("keyword") String keyword,
@@ -131,10 +131,18 @@ public interface FavoriteListRepository extends JpaRepository<FavoriteList, Long
 
     // === ĐẾM SỐ MỤC ===
 
-    @Query("SELECT COUNT(v) FROM FavoriteList f JOIN f.vocabularies v WHERE f.favoriteId = :id")
+    @Query("""
+        SELECT COUNT(fv) 
+        FROM FavoriteListVocabulary fv 
+        WHERE fv.favoriteListId = :id
+    """)
     long countVocabularies(@Param("id") long favoriteListId);
 
-    @Query("SELECT COUNT(g) FROM FavoriteList f JOIN f.grammars g WHERE f.favoriteId = :id")
+    @Query("""
+        SELECT COUNT(fg) 
+        FROM FavoriteListGrammar fg 
+        WHERE fg.favoriteListId = :id
+    """)
     long countGrammars(@Param("id") long favoriteListId);
 
 }

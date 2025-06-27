@@ -4,21 +4,20 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "Grammars",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"title_jp", "lesson_id"})
+                @UniqueConstraint(columnNames = {"title_jp"})
         },
         indexes = {
                 @Index(columnList = "title_jp", name = "title_jp_index"),
@@ -35,6 +34,7 @@ public class Grammar {
             strategy = GenerationType.IDENTITY
     )
     @Column(name = "grammar_id")
+    @EqualsAndHashCode.Include
     private int grammarId;
 
     @NotEmpty(message = ErrorEnum.NOT_EMPTY_TITLE)
@@ -62,9 +62,9 @@ public class Grammar {
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+
+    @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
+    private Set<Lesson> lessons = new HashSet<>();
 
     @Column(name = "created_at")
     private Date createdAt;

@@ -38,9 +38,22 @@ public class VocabularyController {
                 .build();
     }
 
+    @PostMapping("/{lessonId}")
+    public ApiResponse<VocabularyResponse> addVocabularyIntoLesson(
+            @Valid @RequestBody VocabularyRequest vocabularyRequest,
+            @PathVariable int lessonId) {
+        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(lessonId, vocabularyRequest);
+        return ApiResponse.<VocabularyResponse>builder()
+                .code("201")
+                .message("Vocabulary created successfully")
+                .status("success")
+                .data(createdVocabulary)
+                .build();
+    }
+
     @PostMapping
-    public ApiResponse<VocabularyResponse> createVocabulary(@Valid @RequestBody VocabularyRequest vocabularyRequest) {
-        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(vocabularyRequest.getLessonId(), vocabularyRequest);
+    public ApiResponse<VocabularyResponse> addVocabulary(@Valid @RequestBody VocabularyRequest vocabularyRequest) {
+        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(vocabularyRequest);
         return ApiResponse.<VocabularyResponse>builder()
                 .code("201")
                 .message("Vocabulary created successfully")
@@ -97,11 +110,22 @@ public class VocabularyController {
     public ApiResponse<Page<VocabularyResponse>> getAllVocabularies(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabularíesPage(page, size);
+        Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabulariesPage(page, size);
         return ApiResponse.<Page<VocabularyResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Fetched all vocabularies successfully")
+                .data(vocabularyResponses)
+                .build();
+    }
+
+    @GetMapping("/favorite/{id}")
+    public ApiResponse<List<VocabularyResponse>> getVocabularyByFavoriteVocabularyId(@PathVariable int id) {
+        List<VocabularyResponse> vocabularyResponses = vocabularyService.getVocabularysByFavoriteVocabularyId(id);
+        return ApiResponse.<List<VocabularyResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched vocabularies by favorite folder successfully")
                 .data(vocabularyResponses)
                 .build();
     }

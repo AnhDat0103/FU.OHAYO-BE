@@ -48,10 +48,8 @@ public class UserServiceImp implements UserService {
     AdminUpdateUserMapper adminUpdateUserMapper;
     RoleRepository roleRepository;
     SearchUserMapper searchUserMapper;
-    SubjectRepository subjectRepository;
     ParentStudentRepository parentStudentRepository;
     MemberShipLevelOfUserRepository memberShipLevelOfUserRepository;
-    MemberShipLevelRepository memberShipLevelRepository;
 
 
     @Override
@@ -86,14 +84,9 @@ public class UserServiceImp implements UserService {
     @Override
     public ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if (userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-            return ApiResponse.builder()
-                    .message(ErrorEnum.EMAIL_EXIST.getMessage())
-                    .code(ErrorEnum.EMAIL_EXIST.getCode())
-                    .status("FAIL")
-                    .build();
+        if(!userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.INACTIVE)) {
+            throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
-
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
         if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
             return ApiResponse.builder()

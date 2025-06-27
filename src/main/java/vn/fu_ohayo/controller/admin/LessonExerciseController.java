@@ -16,6 +16,7 @@ import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
 @RequestMapping("/exercise-questions")
 public class LessonExerciseController {
 
+
     private final LessonExerciseService lessonExerciseService;
 
     public LessonExerciseController(LessonExerciseService lessonExerciseService) {
@@ -37,6 +38,7 @@ public class LessonExerciseController {
                 .build();
     }
 
+
     @GetMapping("/exercise-details")
     public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionsByLessonExerciseId(
             @RequestParam(defaultValue = "0") int page,
@@ -51,9 +53,8 @@ public class LessonExerciseController {
                 .data(response)
                 .build();
     }
-
     @DeleteMapping("/{id}")
-    public ApiResponse<LessonExerciseResponse> deleteExerciseQuestionLesson(@PathVariable int id) {
+    public ApiResponse<LessonExerciseResponse> deleteExerciseLesson(@PathVariable int id) {
         lessonExerciseService.deleteExerciseLesson(id);
         return ApiResponse.<LessonExerciseResponse>builder()
                 .message("Deleted exercise lesson successfully")

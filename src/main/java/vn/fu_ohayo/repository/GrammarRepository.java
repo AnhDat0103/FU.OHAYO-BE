@@ -1,5 +1,6 @@
 package vn.fu_ohayo.repository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,12 +15,12 @@ import java.util.Optional;
 @Repository
 public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
 
-    int countAllByLessonAndDeletedIsFalse(Lesson lesson);
+    Optional<Grammar> findByTitleJp(String titleJp);
 
-    Page<Grammar> findAllByLessonAndDeletedIsFalse(Lesson lesson, Pageable pageable);
-    List<Grammar> findAllByLessonAndDeletedIsFalse(Lesson lesson);
+    boolean existsByTitleJpAndMeaningAndGrammarIdNot(String titleJp, String meaning, int grammarId);
 
-    Optional<Grammar> findByTitleJpAndLesson(String titleJp, Lesson lesson);
+    @Query("SELECT g FROM Grammar g JOIN g.lessons l " +
+            "WHERE l.lessonId = :lessonId AND g.deleted = false")
+    Page<Grammar> findAllByLessonIdAndDeletedIsFalse(@Param("lessonId") int lessonId, Pageable pageable);
 
-    boolean existsByTitleJpAndMeaningAndLessonAndGrammarIdNot(String titleJp, String meaning, Lesson lesson, int grammarId);
 }

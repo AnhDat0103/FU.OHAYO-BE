@@ -37,7 +37,4 @@ public class GrammarRequest {
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_JLPT_LEVEL)
     private JlptLevel jlptLevel;
-
-    private int lessonId;
-
 }

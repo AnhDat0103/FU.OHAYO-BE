@@ -199,6 +199,8 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
 
     @Override
     public void deleteExerciseLesson(int id) {
+        answerQuestionRepository.deleteAllByExerciseId(id);
+        exerciseQuestionRepository.deleteByExerciseId(id);
         lessonExerciseRepository.deleteById(id);
     }
 

@@ -78,8 +78,8 @@ public class Grammar {
     @ManyToMany(mappedBy = "grammars", fetch = FetchType.LAZY)
     private Set<ContentReading> contentReadings;
 
-    @ManyToMany(mappedBy = "grammars")
-    private Set<FavoriteList> favoriteLists = new HashSet<>();
+    @OneToMany(mappedBy = "grammar", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FavoriteListGrammar> favoriteListGrammars = new HashSet<>();
 
     @Column(name = "is_deleted")
     private Boolean deleted = false;

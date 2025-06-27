@@ -4,6 +4,7 @@ package vn.fu_ohayo.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.Subject;
@@ -37,4 +38,9 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
     Page<Lesson> findAllBySubjectAndDeletedAndStatus(Subject subject, boolean deleted, LessonStatus status, Pageable pageable);
 
+    @Query(
+            "SELECT COUNT(v) > 0 FROM Vocabulary v JOIN v.lessons l " +
+            "WHERE v.vocabularyId = :vocabularyId AND l.lessonId = :lessonId"
+    )
+    boolean existsVocabularyInLesson(int vocabularyId, int lessonId);
 }

@@ -36,4 +36,5 @@ public class GrammarResponse {
     private Date updateAt;
 
     private boolean isDeleted;
+
 }

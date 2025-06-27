@@ -41,22 +41,11 @@ public class FavoriteList {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @ManyToMany
-    @JoinTable(
-            name = "favorite_list_vocabulary",
-            joinColumns = @JoinColumn(name = "favorite_list_id"),
-            inverseJoinColumns = @JoinColumn(name = "vocabulary_id")
-    )
-    private Set<Vocabulary> vocabularies = new HashSet<>();
+    @OneToMany(mappedBy = "favoriteList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FavoriteListVocabulary> favoriteListVocabularies = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "favorite_list_grammar",
-            joinColumns = @JoinColumn(name = "favorite_list_id"),
-            inverseJoinColumns = @JoinColumn(name = "grammar_id")
-    )
-    private Set<Grammar> grammars = new HashSet<>();
-
+    @OneToMany(mappedBy = "favoriteList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FavoriteListGrammar> favoriteListGrammars = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

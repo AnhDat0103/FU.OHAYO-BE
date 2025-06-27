@@ -1,5 +1,6 @@
 package vn.fu_ohayo.repository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +45,8 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
     Vocabulary findAllByKanjiAndKanaAndMeaning( String kanji, String kana,String meaning);
 
     Page<Vocabulary> findAllByDeleted(Boolean deleted, Pageable pageable);
+
+    @Query("SELECT v FROM Vocabulary v WHERE v.deleted = false AND v.vocabularyId NOT IN " +
+            "(SELECT voc.vocabularyId  FROM  Lesson l  JOIN l.vocabularies voc WHERE l.lessonId = :lessonId)")
+    Page<Vocabulary> findAllNotInLesson(int lessonId, Pageable pageable);
 }

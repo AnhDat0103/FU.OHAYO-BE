@@ -9,8 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.AddFavoriteFolderRequest;
+import vn.fu_ohayo.dto.request.FavoriteListDetailRequest;
 import vn.fu_ohayo.dto.request.FavoriteListRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.FavoriteDetailResponse;
+import vn.fu_ohayo.dto.response.FlashCardStatusResponse;
 import vn.fu_ohayo.dto.response.FolderFavoriteResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.service.FavoriteListService;
@@ -24,6 +27,19 @@ public class FavoriteListController {
 
     private final FavoriteListService favoriteListService;
 
+    @GetMapping("/{folderId}")
+    public ApiResponse<FavoriteDetailResponse> getFavoriteDetails(
+            @PathVariable Long folderId,
+            @ModelAttribute FavoriteListDetailRequest favoriteListDetailRequest
+            ) {
+
+        return ApiResponse.<FavoriteDetailResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched folder favorite details successfully")
+                .data(favoriteListService.getFavoriteFolderById(folderId, favoriteListDetailRequest))
+                .build();
+    }
 
     @GetMapping
     public ApiResponse<Page<FolderFavoriteResponse>> getAllFolders(@ModelAttribute FavoriteListRequest favoriteListRequest) {

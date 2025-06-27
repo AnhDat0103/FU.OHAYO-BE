@@ -29,7 +29,6 @@ public class LessonExercise {
 
 //  @Size(min = 1, message = ErrorEnum.MIN_TIME_1)
     @Min(1)
-    @Max(100)
     @Column(name = "duration")
     private long duration;
 

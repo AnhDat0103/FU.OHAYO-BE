@@ -87,7 +87,7 @@ public class SubjectController {
     }
 
     @PostMapping
-    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest, MultipartFile image, MultipartFile video) {
+    public ApiResponse<SubjectResponse> createSubject(@Valid @RequestBody SubjectRequest subjectRequest) {
         return ApiResponse.<SubjectResponse>builder()
                 .code("201")
                 .status("success")

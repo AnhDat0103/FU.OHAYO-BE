@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
@@ -26,13 +23,15 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 public class Vocabulary {
 
     @Id @GeneratedValue(
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
     @Column(name = "vocabulary_id")
+    @EqualsAndHashCode.Include
     private int vocabularyId;
 
 
@@ -84,11 +83,21 @@ public class Vocabulary {
     @Column(name = "updated_at")
     private java.util.Date updatedAt;
 
+    @Column(name = "is_deleted")
+    private Boolean deleted = false;
+
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private Set<Lesson> lessons = new HashSet<>();
+
     @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
     private List<ContentReading> contentReadings;
 
-    @Column(name = "is_deleted")
-    private Boolean deleted = false;
+    @ManyToMany(mappedBy = "vocabularies", fetch = FetchType.LAZY)
+    private List<FavoriteVocabulary> favoriteVocabularies ;
+
+
+    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+    private QuizQuestion quizQuestion;
 
     @PrePersist
     protected void onCreate() {

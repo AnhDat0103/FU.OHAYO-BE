@@ -1,0 +1,56 @@
+package vn.fu_ohayo.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.entity.ContentReading;
+import vn.fu_ohayo.entity.ProgressContent;
+import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ProgressStatus;
+import vn.fu_ohayo.repository.ContentReadingRepository;
+import vn.fu_ohayo.repository.ProgressContentRepository;
+import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.service.ContentReadingProgressService;
+import vn.fu_ohayo.service.ProgressContentService;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Service
+@RequiredArgsConstructor
+public class ContentReadingProgressserviceImp implements ContentReadingProgressService {
+    private final UserRepository userRepository;
+    private final ContentReadingRepository contentReadingRepository;
+    private final ProgressContentRepository progressContentRepository;
+    private final ProgressContentService progressContentService;
+
+    @Override
+    public ApiResponse<String> markReadingProgress(Long userId, Long contentReadingId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found" + userId));
+        ContentReading contentReading = contentReadingRepository.findById(contentReadingId)
+                .orElseThrow(() -> new RuntimeException("Content reading not found" + contentReadingId));
+        //neu return 404 hoac 400 thi doi contentid thanh contentreadingid nguoc lai
+        ProgressContent progressContent = progressContentRepository.findByUserAndContent(user, contentReading.getContent())
+                .orElseGet(() -> ProgressContent.builder()
+                        .user(user)
+                        .content(contentReading.getContent())
+                        .build());
+        progressContent.setProgressStatus(ProgressStatus.COMPLETED);
+        //set thoi gian hoan thanh
+//        progressContent.setCreatedAt(Date.from(LocalDateTime.now().toInstant()));
+        progressContentRepository.save(progressContent);
+        return ApiResponse.<String>builder()
+                .status("200")
+                .message("Reading progress marked successfully")
+                .data("Content reading progress marked for user: " + userId + " and content reading: " + contentReadingId)
+                .build();
+    }
+
+    @Override
+    public Boolean isDoneReading(Long userId, Long contentReadingId) {
+        return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, contentReadingId)
+                .map(progressContent -> progressContent.getProgressStatus() == ProgressStatus.COMPLETED)
+                .orElse(false);
+    }
+}

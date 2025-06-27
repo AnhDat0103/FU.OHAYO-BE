@@ -18,7 +18,7 @@ public enum ErrorEnum {
     PHONE_EXIST("2002", "Phone is used to register."),
     USERNAME_EXIST("2003","Username is used to register" ),
     EMAIL_OR_PASSWORD_INCORRECT("2004", "Email or password is incorrect."),
-
+    INVALID_AGE("2005", "Your Age in range 5-100 years old."),
     // 3xxx - authorization
     ORDER_ID_NOT_FOUND("3001", "Order ID not found"),
     AUTH_FAILED ("3002", "Email or password is not exactly"),
@@ -47,8 +47,9 @@ public enum ErrorEnum {
     LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
     LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
+    LESSON_IN_USE("4028", "Lesson is using with any user" ),
 
-    VOCABULARY_EXISTS("4017", "Vocabulary already exists in the lesson"),
+    VOCABULARY_EXISTS("4017", "Vocabulary already exists"),
     VOCABULARY_NOT_FOUND("4018", "Vocabulary not found with this kanji." ),
     GRAMMAR_EXISTED("4019", "Grammar is  existed in this lesson." ),
     GRAMMAR_NOT_FOUND("4020", "Grammar not found with this title." ),
@@ -77,9 +78,10 @@ public enum ErrorEnum {
     public static final String NOT_EMPTY_EMAIL = "Email must not be empty";
     public static final String NOT_EMPTY_PASSWORD = "Password must not be empty";
     public static final String INVALID_PASSWORD = "Password must be at least 5 characters";
-    public static final String INVALID_NAME = "Full name must be less than 50 characters";
+    public static final String INVALID_NAME = "Fullname be more than 1 character and less than 50 charaters";
+    public static final String INVALID_NAME2 = "Full name must have no numbers or special characters allowed";
     public static final String NOT_EMPTY_NAME = "Full name cannot be null";
-    public static final String INVALID_PHONE = "Phone number must be between 10 and 12 digits";
+    public static final String INVALID_PHONE = "Phone number must must start with 0 and  be between 10 and 12 digits";
     public static final String INVALID_ADDRESS = "Address must be less than 255 characters";
     public static final String INVALID_URL_AVATAR = "Avatar URL must be less than 255 characters";
     public static final String INVALID_URL_AUDIO = "File audio must be less than 255 characters";

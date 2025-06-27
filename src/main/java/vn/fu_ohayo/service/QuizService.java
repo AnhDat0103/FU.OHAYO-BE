@@ -23,9 +23,9 @@ import java.util.Map;
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 @Service
 public class QuizService {
-    QuizRepository quizRepository;
-    RestTemplate restTemplate = new RestTemplate();
-    FavoriteVocabularyRepository favoriteVocabularyRepository;
+    final QuizRepository quizRepository;
+    final RestTemplate restTemplate = new RestTemplate(); // OK
+    final FavoriteVocabularyRepository favoriteVocabularyRepository;
 
     public void getQuestion(Integer favoriteVocabularyId) {
 

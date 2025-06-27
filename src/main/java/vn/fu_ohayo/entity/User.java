@@ -42,7 +42,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@Where(clause = "is_deleted = false")
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY

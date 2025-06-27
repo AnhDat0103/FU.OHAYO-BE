@@ -10,6 +10,6 @@ import vn.fu_ohayo.entity.Vocabulary;
 public interface VocabularyMapper {
     Vocabulary toVocabulary(VocabularyRequest vocabularyRequest);
 
-    @Mapping(source = "quizQuestion", target = "quizQuestion")
+//    @Mapping(source = "quizQuestion", target = "quizQuestion")
     VocabularyResponse toVocabularyResponse(Vocabulary vocabulary);
 }

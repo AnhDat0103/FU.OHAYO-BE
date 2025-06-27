@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
@@ -28,6 +29,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Data
+@Where(clause = "is_deleted = false")
+
 public class Grammar {
 
     @Id @GeneratedValue(

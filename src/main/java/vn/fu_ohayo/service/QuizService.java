@@ -2,8 +2,10 @@ package vn.fu_ohayo.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,13 +24,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 @Service
+
 public class QuizService {
     final QuizRepository quizRepository;
-    final RestTemplate restTemplate = new RestTemplate(); // OK
+    final RestTemplate restTemplate;
     final FavoriteVocabularyRepository favoriteVocabularyRepository;
 
     public void getQuestion(Integer favoriteVocabularyId) {
-
         FavoriteVocabulary favoriteVocabulary = favoriteVocabularyRepository.findById(favoriteVocabularyId)
                 .orElseThrow(() -> new RuntimeException("Favorite vocabulary not found"));
 

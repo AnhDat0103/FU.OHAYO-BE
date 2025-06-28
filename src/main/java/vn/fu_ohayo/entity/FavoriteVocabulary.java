@@ -23,7 +23,7 @@ public class FavoriteVocabulary {
    @Id @GeneratedValue(
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
-    private int id;
+    private Integer id;
 
     @Column(name = "is_public")
     private boolean isPublic = false;

@@ -19,7 +19,7 @@ public class QuizQuestion {
     @Column(name = "question")
     String question;
 
-    @OneToOne
-    @JoinColumn(name =  "vocabulary_id", unique = true)
-    private Vocabulary vocabulary;
+//    @OneToOne
+//    @JoinColumn(name =  "vocabulary_id", unique = true)
+//    private Vocabulary vocabulary;
 }

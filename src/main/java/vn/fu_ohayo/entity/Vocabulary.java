@@ -26,7 +26,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Where(clause = "is_deleted = false")
+@Data
 
 public class Vocabulary {
 
@@ -99,8 +99,8 @@ public class Vocabulary {
     private List<FavoriteVocabulary> favoriteVocabularies ;
 
 
-    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
-    private QuizQuestion quizQuestion;
+//    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+//    private QuizQuestion quizQuestion;
 
     @PrePersist
     protected void onCreate() {

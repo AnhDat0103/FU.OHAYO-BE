@@ -24,10 +24,4 @@ public class AddFavoriteFolderRequest {
     @NotNull(message = "Visibility (isPublic) must be specified")
     Boolean isPublic;
 
-    @NotBlank(message = "Type must be specified")
-    @Pattern(
-            regexp = "^(vocabulary|grammar)$",
-            message = "Type must be either 'vocabulary' or 'grammar'"
-    )
-    String type;
 }

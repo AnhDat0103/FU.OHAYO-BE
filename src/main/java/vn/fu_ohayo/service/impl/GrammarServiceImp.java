@@ -125,4 +125,20 @@ public class GrammarServiceImp implements GrammarService {
     public Page<GrammarResponse> getAllGrammarsPage(int page, int size) {
         return grammarRepository.findAll(PageRequest.of(page, size))
                 .map(grammarMapper::toGrammarResponse);    }
+
+    @Override
+    public Page<GrammarResponse> getGrammarsNotInLesson(int lessonId, int page, int size) {
+        return grammarRepository.findAllNotInLesson(lessonId, PageRequest.of(page, size))
+                .map(grammarMapper::toGrammarResponse);
+    }
+
+    @Override
+    public void deleteGrammarFromLesson(int id, int lessonId) {
+        grammarRepository.removeGrammarInLessonId(id, lessonId);
+    }
+
+    @Override
+    public void handleSaveGrammarIntoLesson(int lessonId, int grammarId) {
+        grammarRepository.saveGrammarIntoLesson(lessonId, grammarId);
+    }
 }

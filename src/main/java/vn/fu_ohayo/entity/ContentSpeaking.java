@@ -20,7 +20,6 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "dialogues")
 @ToString(exclude = "dialogues")
 @Builder
-@Where(clause = "is_deleted = false")
 public class ContentSpeaking {
     @Id
     @GeneratedValue(

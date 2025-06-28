@@ -73,6 +73,18 @@ public class VocabularyController {
                 .build();
     }
 
+    @DeleteMapping("/{id}/remove-from-lesson/{lessonId}")
+    public ApiResponse<Void> deleteVocabularyFromLesson(@PathVariable int id,
+                                              @PathVariable int lessonId) {
+        vocabularyService.deleteVocabularyFromLesson(id, lessonId);
+        return ApiResponse.<Void>builder()
+                .code("204")
+                .message("Vocabulary deleted successfully")
+                .status("success")
+                .data(null)
+                .build();
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteVocabulary(@PathVariable int id) {
         vocabularyService.deleteVocabularyById(id);
@@ -134,7 +146,7 @@ public class VocabularyController {
     public ApiResponse<Page<VocabularyResponse>> getAllVocabulariesWithoutLesson(
             @PathVariable int lessonId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "6") int size) {
         Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabularies(lessonId, page, size);
         return ApiResponse.<Page<VocabularyResponse>>builder()
                 .code("200")

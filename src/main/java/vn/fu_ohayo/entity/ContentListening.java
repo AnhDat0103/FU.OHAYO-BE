@@ -18,7 +18,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@Where(clause = "is_deleted = false")
 public class ContentListening {
     @Id
     @GeneratedValue(

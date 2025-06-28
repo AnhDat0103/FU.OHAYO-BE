@@ -16,7 +16,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
-@Where(clause = "is_deleted = false")
 @Table(name = "Favorite_Vocabulary")
 public class FavoriteVocabulary {
 

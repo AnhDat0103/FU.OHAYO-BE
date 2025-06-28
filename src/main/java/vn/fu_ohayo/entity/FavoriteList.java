@@ -17,7 +17,6 @@ import java.util.Set;
 @Setter
 @Builder
 @Table(name = "Favorite_List")
-@Where(clause = "is_deleted = false")
 public class FavoriteList {
 
     @Column(name = "is_deleted")

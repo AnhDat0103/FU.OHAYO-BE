@@ -99,8 +99,8 @@ public class Vocabulary {
     private List<FavoriteVocabulary> favoriteVocabularies ;
 
 
-//    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
-//    private QuizQuestion quizQuestion;
+    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+    private QuizQuestion quizQuestion;
 
     @PrePersist
     protected void onCreate() {

@@ -51,6 +51,8 @@ public class FavoriteVocabulary {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
+
+
     @PrePersist
     protected void onAdd() {
         this.addedAt = new Date();

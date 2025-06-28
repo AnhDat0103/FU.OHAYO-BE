@@ -1,4 +1,4 @@
-package vn.fu_ohayo.controller.favoriteList;
+package vn.fu_ohayo.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +22,17 @@ public class QuizController {
 
     private final FavoriteVocabularyRepository favoriteVocabularyRepository;
     private final VocabularyMapper vocabularyMapper;
-    private final QuizService quizDataService;
+    private final QuizService quizService;
 
-    public QuizController(FavoriteVocabularyRepository favoriteVocabularyRepository, VocabularyMapper vocabularyMapper, QuizService quizDataService) {
+    public QuizController(FavoriteVocabularyRepository favoriteVocabularyRepository, VocabularyMapper vocabularyMapper, QuizService quizService) {
         this.favoriteVocabularyRepository = favoriteVocabularyRepository;
         this.vocabularyMapper = vocabularyMapper;
-        this.quizDataService = quizDataService;
+        this.quizService = quizService;
     }
 
     @GetMapping()
     private ResponseEntity<Set<VocabularyResponse>> getList(@RequestParam("id") Integer id) {
-        quizDataService.getQuestion(id);
+        quizService.getQuestion(id);
         Set<VocabularyResponse> list = favoriteVocabularyRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).
                 getVocabularies()
                 .stream()

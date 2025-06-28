@@ -148,4 +148,9 @@ public class VocabularyServiceImp implements VocabularyService {
         vocabulary.setDeleted(false);
         return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(vocabulary));
     }
+
+    @Override
+    public void deleteVocabularyFromLesson(int id, int lessonId) {
+        vocabularyRepository.removeVocabInLessonId(id, lessonId);
+    }
 }

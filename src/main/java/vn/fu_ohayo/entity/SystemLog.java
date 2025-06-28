@@ -30,6 +30,7 @@ public class SystemLog {
     private String details;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private RoleEnum role;
 
     @PrePersist

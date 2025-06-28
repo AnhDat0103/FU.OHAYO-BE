@@ -22,7 +22,7 @@ public class FavoriteVocabulary {
    @Id @GeneratedValue(
             strategy = jakarta.persistence.GenerationType.IDENTITY
     )
-    private int id;
+    private Integer id;
 
     @Column(name = "is_public")
     private boolean isPublic = false;
@@ -50,6 +50,8 @@ public class FavoriteVocabulary {
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
+
+
 
     @PrePersist
     protected void onAdd() {

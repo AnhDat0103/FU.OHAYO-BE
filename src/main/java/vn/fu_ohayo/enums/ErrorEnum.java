@@ -62,6 +62,8 @@ public enum ErrorEnum {
     ANSWER_NOT_FOUND("4027","Can not found the answer." ),
     LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
 
+    PROGRESS_VOCABULARY_NOT_FOUND("4029", "Progress not found" ),
+
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 

@@ -1,10 +1,9 @@
 package vn.fu_ohayo.service.impl;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import vn.fu_ohayo.dto.response.CountLearnBySubjectResponse;
-import vn.fu_ohayo.dto.response.ProgressVocabularyResponse;
-import vn.fu_ohayo.dto.response.RecentlyLearnVocabularyResponse;
-import vn.fu_ohayo.dto.response.SubjectResponse;
+import vn.fu_ohayo.dto.request.ProgressUpdateRequest;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.ProgressStatus;
@@ -14,7 +13,10 @@ import vn.fu_ohayo.mapper.SubjectMapper;
 import vn.fu_ohayo.repository.ProgressSubjectRepository;
 import vn.fu_ohayo.repository.ProgressVocabularyRepository;
 import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.repository.VocabularyRepository;
 import vn.fu_ohayo.service.ProgressVocabularyService;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,13 +27,18 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
     private final ProgressSubjectRepository progressSubjectRepository;
     private final SubjectMapper subjectMapper;
     private final ProgressMapper progressMapper;
+    private final VocabularyRepository vocabularyRepository;
 
-    public ProgressVocabularyServiceImp(ProgressVocabularyRepository progressVocabularyRepository, UserRepository userRepository, ProgressSubjectRepository progressSubjectRepository, SubjectMapper subjectMapper, ProgressMapper progressMapper) {
+    public ProgressVocabularyServiceImp(ProgressVocabularyRepository progressVocabularyRepository, UserRepository userRepository,
+                                        ProgressSubjectRepository progressSubjectRepository,
+                                        SubjectMapper subjectMapper, ProgressMapper progressMapper,
+                                        VocabularyRepository vocabularyRepository) {
         this.progressVocabularyRepository = progressVocabularyRepository;
         this.userRepository = userRepository;
         this.progressSubjectRepository = progressSubjectRepository;
         this.subjectMapper = subjectMapper;
         this.progressMapper = progressMapper;
+        this.vocabularyRepository = vocabularyRepository;
     }
     // lấy ds các vocabulary của tất cả subject đang học của user
     private List<Vocabulary> getVocabulariesOfSubjectsInProgress(User user) {
@@ -107,6 +114,43 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
                 .recentlyLearnVocabularyRespons(getRecentlyLearnWordsByUserId(user, 5))
                 .build();
    }
+
+    @Override
+    public void updateProgress(int vocabularyId, ProgressUpdateRequest request, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId)
+                .orElseThrow(() -> new AppException(ErrorEnum.VOCABULARY_NOT_FOUND));
+
+        ProgressVocabulary progressVocabulary = progressVocabularyRepository
+                .findByUserAndVocabulary(user, vocabulary);
+
+        if (progressVocabulary == null) {
+            progressVocabulary = new ProgressVocabulary();
+            progressVocabulary.setUser(user);
+            progressVocabulary.setVocabulary(vocabulary);
+        }
+        progressVocabulary.setProgressStatus(request.getStatus().equals("MASTERED") ?
+                ProgressStatus.COMPLETED : ProgressStatus.IN_PROGRESS);
+
+        progressVocabularyRepository.save(progressVocabulary);
+    }
+
+    @Override
+    public List<ProgressVocabularyFlashCardResponse> getKnownProgressVocabularies(String email, int lessonId) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+
+        List<Vocabulary> vocabularies = vocabularyRepository.findAllByLessonId(lessonId);
+        List<ProgressVocabulary> progressVocabularies = progressVocabularyRepository.findAllByUserAndProgressStatusAndVocabularyIn(user, ProgressStatus.COMPLETED, vocabularies);
+        return progressVocabularies.stream().map(
+                p -> {
+                    ProgressVocabularyFlashCardResponse progressVocabularyFlashCardResponse = new ProgressVocabularyFlashCardResponse();
+                    progressVocabularyFlashCardResponse.setVocabularyId(p.getVocabulary().getVocabularyId());
+                    progressVocabularyFlashCardResponse.setProgressStatus(p.getProgressStatus());
+                    return progressVocabularyFlashCardResponse;
+                }
+        ).toList();
+    }
 
 
 }

@@ -21,6 +21,9 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Integer>
     @Query("SELECT v FROM Vocabulary v JOIN v.lessons l WHERE l.lessonId = :lessonId")
     Page<Vocabulary> findAllByLessonId(@Param("lessonId") int lessonId, Pageable pageable);
 
+    @Query("SELECT v FROM Vocabulary v JOIN v.lessons l WHERE l.lessonId = :lessonId")
+    List<Vocabulary> findAllByLessonId(@Param("lessonId") int lessonId);
+
     @Query("SELECT COUNT(v) > 0 FROM Vocabulary v JOIN v.lessons l " +
             "WHERE v.kanji = :kanji AND v.kana = :kana AND v.meaning = :meaning AND l.lessonId = :lessonId")
     boolean existsByKanjiAndKanaAndMeaningAndLessonId(

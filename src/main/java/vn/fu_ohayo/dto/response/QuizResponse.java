@@ -1,12 +1,12 @@
 package vn.fu_ohayo.dto.response;
 
 import lombok.Data;
-import vn.fu_ohayo.entity.QuizQuestion;
-import vn.fu_ohayo.enums.JlptLevel;
-import vn.fu_ohayo.enums.PartOfSpeech;
 
-import java.util.Date;
-@Data
+import lombok.Getter;
+import lombok.Setter;
+import vn.fu_ohayo.enums.PartOfSpeech;
+@Getter
+@Setter
 public class QuizResponse {
 
     private String vocabularyId;

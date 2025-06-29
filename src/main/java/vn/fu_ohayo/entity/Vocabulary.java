@@ -26,7 +26,6 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Data
 
 public class Vocabulary {
 

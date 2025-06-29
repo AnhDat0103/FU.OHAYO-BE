@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.config.AuthConfig;
@@ -57,8 +58,11 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginForAdmin(@RequestBody AdminLoginRequest adminLoginRequest) {
+        boolean matched = BCrypt.checkpw(adminLoginRequest.getPassword(), "$2a$10$suPmRmnayJFDsLMiG9gri.kpfOHpqj8WKzQnFScm.IP6lv75A8P6G");
+
+        log.info("Password match result: {}", matched);
         TokenResponse tokenResponse = authenticationService.getAccessTokenForAdmin(adminLoginRequest);
-        log.info("INFOR" + adminLoginRequest.getEmail());
+
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)

@@ -14,9 +14,6 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.mapper.FeedbackMapper;
 import vn.fu_ohayo.repository.FeedbackRepository;
 import vn.fu_ohayo.repository.UserRepository;
-
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +54,6 @@ public class FeedBackController {
     }
     @PostMapping("/postFeedback")
     public ResponseEntity<?> postFeedback(@RequestBody FeedbackDTO feedbackDTO, Authentication authentication) {
-        // Lấy user hiện tại từ token (authentication)
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

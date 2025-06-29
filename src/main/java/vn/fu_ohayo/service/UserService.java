@@ -18,13 +18,9 @@ import java.util.List;
 public interface UserService {
     UserProfileDTO getUserProfileDTO(String email);
     List<UserResponse> getAllUsers();
-
     ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest);
-
     UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email);
-
     Page<AdminSearchUserResponse> filterUsers(AdminSearchUserRequest request);
-
     UserResponse registerUser(UserRegister userRegister);
     void deleteUser(Long userId);
     UserResponse updateUser(Long userId, AdminUpdateUserRequest adminUpdateUserRequest);

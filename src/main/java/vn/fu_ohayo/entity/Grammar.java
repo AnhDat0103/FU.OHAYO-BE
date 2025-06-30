@@ -30,7 +30,6 @@ import java.util.Set;
 @Builder
 @Data
 @Where(clause = "is_deleted = false")
-
 public class Grammar {
 
     @Id @GeneratedValue(

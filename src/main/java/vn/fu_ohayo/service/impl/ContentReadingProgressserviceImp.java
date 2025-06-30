@@ -22,7 +22,6 @@ public class ContentReadingProgressserviceImp implements ContentReadingProgressS
     private final UserRepository userRepository;
     private final ContentReadingRepository contentReadingRepository;
     private final ProgressContentRepository progressContentRepository;
-    private final ProgressContentService progressContentService;
 
     @Override
     public ApiResponse<String> markReadingProgress(Long userId, Long contentReadingId) {
@@ -30,7 +29,6 @@ public class ContentReadingProgressserviceImp implements ContentReadingProgressS
                 .orElseThrow(() -> new RuntimeException("User not found" + userId));
         ContentReading contentReading = contentReadingRepository.findById(contentReadingId)
                 .orElseThrow(() -> new RuntimeException("Content reading not found" + contentReadingId));
-        //neu return 404 hoac 400 thi doi contentid thanh contentreadingid nguoc lai
         ProgressContent progressContent = progressContentRepository.findByUserAndContent(user, contentReading.getContent())
                 .orElseGet(() -> ProgressContent.builder()
                         .user(user)

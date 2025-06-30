@@ -156,14 +156,18 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     @Override
     public LessonExerciseResponse createExerciseLesson(LessonExerciseRequest lessonExerciseRequest) {
         Lesson lesson = handleGetLessonById(lessonExerciseRequest.getLessonId());
+        // Validate that there is at least one question with one correct answer
         LessonExercise lessonExercise = LessonExercise.builder()
                 .title(lessonExerciseRequest.getTitle())
                 .duration(lessonExerciseRequest.getDuration())
                 .lesson(lesson)
                 .build();
+        // Check if content is provided
         lessonExercise = lessonExerciseRepository.save(lessonExercise);
         List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
+        // Validate that there is at least one question with one correct answer
         if (lessonExerciseRequest.getContent() != null) {
+            // Check if there is at least one question with one correct answer
             for (ExerciseQuestionRequest exerciseQuestionRequest : lessonExerciseRequest.getContent()) {
                 ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
                         .questionText(exerciseQuestionRequest.getQuestionText())
@@ -179,6 +183,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                             .build();
                     answerQuestionRepository.save(answerQuestion);
                 }
+                // Add to response
                 exerciseQuestionResponses.add(ExerciseQuestionResponse.builder()
                         .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
                         .questionText(exerciseQuestion.getQuestionText())
@@ -188,6 +193,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                         .build());
             }
         }
+        // If no content is provided, return an empty response
         return LessonExerciseResponse.builder()
                 .id(lessonExercise.getExerciseId())
                 .title(lessonExercise.getTitle())

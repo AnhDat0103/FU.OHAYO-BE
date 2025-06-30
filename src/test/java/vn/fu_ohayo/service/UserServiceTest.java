@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import vn.fu_ohayo.config.AuthConfig;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.UserStatus;
@@ -20,6 +22,9 @@ import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.impl.UserServiceImp;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +33,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -98,9 +103,47 @@ public class UserServiceTest {
         request.setEmail("existing@example.com");
         request.setPassword("pass");
 
-        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.ACTIVE)).thenReturn(false);
+        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.INACTIVE)).thenReturn(false);
 
         AppException exception = assertThrows(AppException.class, () -> userService.registerInitial(request));
         assertEquals(ErrorEnum.EMAIL_EXIST.getMessage(), exception.getMessage());
     }
+
+    @Test
+    void findByID_Test() {
+        Long userId = 1L;
+        User user = User.builder()
+                .userId(userId)
+                .email("thai110504@gmail.com").build();
+        Mockito.when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(user));
+
+        User user1 = userService.getUserById(1L);
+
+        assertEquals(user1.getEmail(), user.getEmail());
+    }
+
+    @Test
+    void findByID_NotFound_Test() {
+        Long userId = 1L;
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        AppException exception = assertThrows(AppException.class, () -> userService.getUserById(userId));
+        assertEquals(ErrorEnum.USER_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void getAllUser_Test() {
+    // Arrange
+        List<UserResponse> userList = new ArrayList<>();
+       userList.add(UserResponse.builder().userId(1L).email("thai110504@gmail.com").build());
+       userList.add(UserResponse.builder().userId(2L).email("thai1105044@gmail.com").build());
+
+        Mockito.when(userService.getAllUsers()).thenReturn(userList);
+
+        // Act
+        List<UserResponse> result = userService.getAllUsers();
+
+        // Assert
+        assertEquals(2, result.size());
+    }
+
 }

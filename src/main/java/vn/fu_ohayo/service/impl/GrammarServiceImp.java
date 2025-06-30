@@ -29,15 +29,21 @@ public class GrammarServiceImp implements GrammarService {
 
     @Override
     public GrammarResponse saveGrammar(GrammarRequest grammarRequest) {
-        Optional<Grammar> grammarOptional = grammarRepository.findByTitleJp(grammarRequest.getTitleJp());
-        if (grammarOptional.isPresent()) {
-            if(grammarOptional.get().getDeleted()) {
-                grammarOptional.get().setDeleted(false);
-
+        String normalizedTitleJp = grammarRequest.getTitleJp().replace("〜", "~").replace("～", "~").trim();
+        Grammar grammarOptional = grammarRepository.findByTitleJp(normalizedTitleJp);
+        if (grammarOptional != null) {
+            if(grammarOptional.getDeleted()) {
+                grammarOptional.setDeleted(false);
+                grammarOptional.setTitleJp(grammarRequest.getTitleJp());
+                grammarOptional.setJlptLevel(grammarRequest.getJlptLevel());
+                grammarOptional.setExample(grammarRequest.getExample());
+                grammarOptional.setMeaning(grammarRequest.getMeaning());
+                grammarOptional.setStructure(grammarRequest.getStructure());
+                grammarOptional.setUsage(grammarRequest.getUsage());
+                return grammarMapper.toGrammarResponse(grammarRepository.save(grammarOptional));
             } else {
                 throw new AppException(ErrorEnum.GRAMMAR_EXISTED);
             }
-            return grammarMapper.toGrammarResponse(grammarRepository.save(grammarOptional.get()));
         }
 
         Grammar grammar = Grammar.builder()
@@ -47,7 +53,7 @@ public class GrammarServiceImp implements GrammarService {
                 .meaning(grammarRequest.getMeaning())
                 .structure(grammarRequest.getStructure())
                 .usage(grammarRequest.getUsage())
-                .usage(grammarRequest.getUsage())
+                .deleted(false)
                 .build();
         return grammarMapper.toGrammarResponse(grammarRepository.save(grammar));
     }

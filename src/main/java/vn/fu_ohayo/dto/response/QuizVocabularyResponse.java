@@ -1,13 +1,11 @@
 package vn.fu_ohayo.dto.response;
 
-import lombok.Data;
-
 import lombok.Getter;
 import lombok.Setter;
 import vn.fu_ohayo.enums.PartOfSpeech;
 @Getter
 @Setter
-public class QuizResponse {
+public class QuizVocabularyResponse {
 
     private String vocabularyId;
 

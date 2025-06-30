@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import vn.fu_ohayo.dto.response.QuizResponse;
+import vn.fu_ohayo.dto.response.QuizVocabularyResponse;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.VocabularyMapper;
@@ -29,10 +29,20 @@ public class QuizController {
         this.quizService = quizService;
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<Set<QuizResponse>> getAllList(@RequestParam("id") int id) {
-        quizService.getQuestion(id);
-        Set<QuizResponse> list = favoriteVocabularyRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).
+    @GetMapping("/vocabulary-list")
+    public ResponseEntity<Set<QuizVocabularyResponse>> getAllVocabularyList(@RequestParam("id") int id) {
+        quizService.genVocabQuestion(id);
+        Set<QuizVocabularyResponse> list = favoriteVocabularyRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).
+                getVocabularies()
+                .stream()
+                .map(vocabularyMapper :: toQuizResponse).collect(Collectors.toSet());
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/grammar-list")
+    public ResponseEntity<Set<QuizVocabularyResponse>> getAllGrammarList(@RequestParam("id") int id) {
+        quizService.genVocabQuestion(id);
+        Set<QuizVocabularyResponse> list = favoriteVocabularyRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).
                 getVocabularies()
                 .stream()
                 .map(vocabularyMapper :: toQuizResponse).collect(Collectors.toSet());

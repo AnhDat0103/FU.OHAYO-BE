@@ -30,7 +30,7 @@ public class QuizService {
     final RestTemplate restTemplate;
     final FavoriteVocabularyRepository favoriteVocabularyRepository;
 
-    public void getQuestion(Integer favoriteVocabularyId) {
+    public void genVocabQuestion(Integer favoriteVocabularyId) {
         FavoriteVocabulary favoriteVocabulary = favoriteVocabularyRepository.findById(favoriteVocabularyId)
                 .orElseThrow(() -> new RuntimeException("Favorite vocabulary not found"));
 
@@ -43,6 +43,20 @@ public class QuizService {
             }
         });
     }
+//
+//    public void genGrammarQuestion(Integer favoriteGrammarId) {
+//        FavoriteVocabulary favoriteVocabulary = favoriteVocabularyRepository.findById(favoriteGrammarId)
+//                .orElseThrow(() -> new RuntimeException("Favorite vocabulary not found"));
+//
+//        favoriteVocabulary.getVocabularies().forEach(vocabulary -> {
+//            if (vocabulary.getQuizQuestion() == null) {
+//                quizRepository.save(QuizQuestion.builder()
+//                        .vocabulary(vocabulary)
+//                        .question(generateQuiz(vocabulary.getKanji() + " (" + vocabulary.getKana() + ")"))
+//                        .build());
+//            }
+//        });
+//    }
 
     public String generateQuiz(String word) {
         String API_KEY = "AIzaSyBUILxmrrbIGNiCcLZaN6RTYom3L9mW0F0";

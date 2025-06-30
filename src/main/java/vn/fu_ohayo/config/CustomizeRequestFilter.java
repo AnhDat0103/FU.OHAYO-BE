@@ -17,10 +17,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.fu_ohayo.enums.TokenType;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.UserServiceDetail;
 import vn.fu_ohayo.service.impl.AdminDetailService;
 import vn.fu_ohayo.service.impl.AdminServiceDetail;
+import vn.fu_ohayo.service.impl.JwtServiceImp;
 
 import java.io.IOException;
 @Slf4j(topic = "CustomizeRequestFilter")
@@ -28,7 +30,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class CustomizeRequestFilter extends OncePerRequestFilter {
-    JwtService jwtService;
+    JwtServiceImp jwtService;
     UserServiceDetail userServiceDetail;
     AdminDetailService adminDetailService;
     @Override
@@ -43,13 +45,21 @@ public class CustomizeRequestFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            log.info("Extracted token: {}", token);
+
+            try {
+                jwtService.extractToken(token, TokenType.ACCESS_TOKEN);
+            } catch (AppException e) {
+                if (e.getMessage().equals("Access token expired")) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
+                    return;
+                } else {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
+            }
             try {
                 String username = jwtService.extractUserInformation(token, TokenType.ACCESS_TOKEN).getEmail();
-                log.info("Extracted username from token: {}", username);
-
                 UserDetails user = null;
-
                 try {
                     user = userServiceDetail.UserServiceDetail().loadUserByUsername(username);
                     log.info("Loaded as USER");

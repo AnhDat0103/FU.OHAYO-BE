@@ -18,7 +18,10 @@ import java.util.Optional;
 @Repository
 public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
 
-    Optional<Grammar> findByTitleJp(String titleJp);
+    @Query(
+            value = "SELECT * from grammars where title_jp = :titleJp", nativeQuery = true
+    )
+    Grammar findByTitleJp(String titleJp);
 
     boolean existsByTitleJpAndMeaningAndGrammarIdNot(String titleJp, String meaning, int grammarId);
 

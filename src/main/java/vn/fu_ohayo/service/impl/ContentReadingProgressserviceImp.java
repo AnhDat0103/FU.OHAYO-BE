@@ -3,6 +3,7 @@ package vn.fu_ohayo.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.entity.ProgressContent;
 import vn.fu_ohayo.entity.User;
@@ -47,8 +48,16 @@ public class ContentReadingProgressserviceImp implements ContentReadingProgressS
 
     @Override
     public Boolean isDoneReading(Long userId, Long contentReadingId) {
-        return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, contentReadingId)
-                .map(progressContent -> progressContent.getProgressStatus() == ProgressStatus.COMPLETED)
+        ContentReading contentReading = contentReadingRepository.findById(contentReadingId)
+                .orElseThrow(() -> new RuntimeException("Content reading not found" + contentReadingId));
+
+        Content content = contentReading.getContent();
+        if (content == null) {
+            throw new RuntimeException("Content not found for content reading ID: " + contentReadingId);
+        }
+
+        return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, content.getContentId())
+                .map(pc -> pc.getProgressStatus() == ProgressStatus.COMPLETED)
                 .orElse(false);
     }
 }

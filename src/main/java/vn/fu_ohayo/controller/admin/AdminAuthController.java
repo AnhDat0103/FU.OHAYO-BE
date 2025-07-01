@@ -58,9 +58,6 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginForAdmin(@RequestBody AdminLoginRequest adminLoginRequest) {
-        boolean matched = BCrypt.checkpw(adminLoginRequest.getPassword(), "$2a$10$suPmRmnayJFDsLMiG9gri.kpfOHpqj8WKzQnFScm.IP6lv75A8P6G");
-
-        log.info("Password match result: {}", matched);
         TokenResponse tokenResponse = authenticationService.getAccessTokenForAdmin(adminLoginRequest);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", tokenResponse.getRefreshToken())

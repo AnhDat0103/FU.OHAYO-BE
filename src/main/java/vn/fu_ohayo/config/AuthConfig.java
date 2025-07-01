@@ -36,7 +36,7 @@ public class AuthConfig {
     @Order(1)
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/admin/**") // chỉ áp dụng cho /admin/**
-                .authorizeHttpRequests(req -> req.requestMatchers("/**").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(req -> req.requestMatchers(PUBLIC_ENDPOINTS).permitAll().anyRequest().authenticated())
                 .sessionManagement(mgr -> mgr.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(adminAuthenticationProvider())
                 .addFilterBefore(customizeRequestFilter, UsernamePasswordAuthenticationFilter.class)

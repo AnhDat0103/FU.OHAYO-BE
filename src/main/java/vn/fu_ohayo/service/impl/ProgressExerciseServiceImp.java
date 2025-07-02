@@ -1,7 +1,7 @@
 package vn.fu_ohayo.service.impl;
 
 import org.springframework.stereotype.Service;
-import vn.fu_ohayo.dto.request.AnswerQuestionRequest;
+import vn.fu_ohayo.dto.request.ExerciseResultRequest;
 import vn.fu_ohayo.dto.request.UserQuestionResponseRequest;
 import vn.fu_ohayo.dto.request.UserResponseRequest;
 import vn.fu_ohayo.dto.response.*;
@@ -14,6 +14,7 @@ import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.ProgressExerciseService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,14 +26,14 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final LessonExerciseRepository lessonExerciseRepository;
     private final AnswerQuestionRepository answerQuestionRepository;
-    private final LessonExerciseMapper lessonExerciseMapper;
+    private final ExerciseResultRepository exerciseResultRepository;
     public ProgressExerciseServiceImp(UserResponseQuestionRepository userResponseQuestionRepository,
                                       ExerciseQuestionRepository exerciseQuestionRepository,
                                       UserRepository userRepository,
                                       ExerciseQuestionMapper exerciseQuestionMapper,
                                       LessonExerciseRepository lessonExerciseRepository,
                                       AnswerQuestionRepository answerQuestionRepository,
-                                      LessonExerciseMapper lessonExerciseMapper
+                                      ExerciseResultRepository exerciseResultRepository
                                      )  {
         this.userResponseQuestionRepository = userResponseQuestionRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
@@ -40,7 +41,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
         this.exerciseQuestionMapper = exerciseQuestionMapper;
         this.lessonExerciseRepository = lessonExerciseRepository;
         this.answerQuestionRepository = answerQuestionRepository;
-        this.lessonExerciseMapper = lessonExerciseMapper;
+        this.exerciseResultRepository = exerciseResultRepository;
     }
 
 
@@ -58,6 +59,24 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
                 .content(questions)
                 .id(exerciseId)
                 .build();
+    }
+
+    @Override
+    public void createExerciseResult(ExerciseResultRequest exerciseResultRequest, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        LessonExercise lessonExercise = lessonExerciseRepository.findById(exerciseResultRequest.getExerciseId())
+                .orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
+
+        ExerciseResult exerciseResult = ExerciseResult.builder()
+                .user(user)
+                .lessonExercise(lessonExercise)
+                .totalQuestions(exerciseResultRequest.getTotalQuestions())
+                .correctAnswers(exerciseResultRequest.getCorrectAnswers())
+                .submissionTime(new Date())
+                .build();
+
+        exerciseResultRepository.save(exerciseResult);
     }
 
 
@@ -89,7 +108,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
                 .userId(user.getUserId())
                 .build();
 
-        saveUserResponses(userResponseRequest, exerciseQuestionResponse, user);
+        saveUserResponses(questionResultResponse, exerciseQuestionResponse, user);
 
          return  response;
     }
@@ -99,55 +118,85 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
             List<ExerciseQuestionResponse> exerciseQuestionResponses,
             List<UserQuestionResponseRequest> userQuestionResponseRequests) {
         List<QuestionResultResponse> questionResultResponses = new ArrayList<>();
-        exerciseQuestionResponses.forEach(e-> {
-            userQuestionResponseRequests.forEach(u -> {
-                if(e.getExerciseQuestionId() == u.getQuestionId()){
-                    QuestionResultResponse questionResultResponse = QuestionResultResponse.builder()
-                            .isCorrect(checkCorrectAnswer(e,u))
-                            .userResponseId(u.getSelectedAnswerId())
-                            .exerciseQuestionResponse(e)
-                            .build();
-                    questionResultResponses.add(questionResultResponse);
-                }
+        if(userQuestionResponseRequests.isEmpty()) {
+            exerciseQuestionResponses.forEach(e -> {
+                QuestionResultResponse questionResultResponse = QuestionResultResponse.builder()
+                        .isCorrect(false)
+                        .userResponseId(-1)
+                        .exerciseQuestionResponse(e)
+                        .build();
+                questionResultResponses.add(questionResultResponse);
             });
-        });
+        }else {
+            exerciseQuestionResponses.forEach(e-> {
+                userQuestionResponseRequests.forEach(u -> {
+                    if(e.getExerciseQuestionId() == u.getQuestionId()){
+                        QuestionResultResponse questionResultResponse = QuestionResultResponse.builder()
+                                .isCorrect(checkCorrectAnswer(e,u.getSelectedAnswerId()))
+                                .userResponseId(u.getSelectedAnswerId())
+                                .exerciseQuestionResponse(e)
+                                .build();
+                        questionResultResponses.add(questionResultResponse);
+                    }
+                });
+            });
+        }
         return  questionResultResponses;
 
     }
 
-    public boolean checkCorrectAnswer(ExerciseQuestionResponse e, UserQuestionResponseRequest u) {
-        if(u.getSelectedAnswerId() == -1) {
+    public boolean checkCorrectAnswer(ExerciseQuestionResponse e, int userResponseId) {
+        if(userResponseId == -1) {
             return false;
         }
         return e.getAnswerQuestions().stream()
                 .anyMatch(
-                        t -> t.getAnswerId() == u.getSelectedAnswerId()
+                        t -> t.getAnswerId() == userResponseId
                         && t.getIsCorrect() == true
                 );
     }
 
     public void saveUserResponses(
-            UserResponseRequest userResponseRequest,
+            List<QuestionResultResponse> questionResultResponse,
             List<ExerciseQuestionResponse> exerciseQuestionResponses,
             User user
     ) {
         List<UserResponseQuestion> userResponseQuestions = new ArrayList<>();
         for (ExerciseQuestionResponse e : exerciseQuestionResponses) {
-            for(UserQuestionResponseRequest u : userResponseRequest.getUserQuestionResponseRequests()) {
-                if(e.getExerciseQuestionId() == u.getQuestionId()) {
+            for(QuestionResultResponse u : questionResultResponse) {
+                if(e.getExerciseQuestionId() == u.getExerciseQuestionResponse().getExerciseQuestionId()) {
                     UserResponseQuestion userResponseQuestion = UserResponseQuestion.builder()
-                            .question(exerciseQuestionRepository.findById(u.getQuestionId()).get())
+                            .question(exerciseQuestionRepository.findById(u.getExerciseQuestionResponse().getExerciseQuestionId()).get())
                             .user(user)
-                            .answerQuestion(answerQuestionRepository.findById(u.getSelectedAnswerId()).get())
-                            .isCorrect(checkCorrectAnswer(e,u))
+                            .answerQuestion(
+                                    answerQuestionRepository.findById(u.getUserResponseId()).isPresent() ?
+                                            answerQuestionRepository.findById(u.getUserResponseId()).get() :
+                                            null
+                            )
+                            .isCorrect(checkCorrectAnswer(e,u.getUserResponseId()))
                             .build();
                     userResponseQuestions.add(userResponseQuestion);
                 }
             }
-
-
         }
-        userResponseQuestionRepository.saveAll(userResponseQuestions);
+        userResponseQuestions.forEach(u -> {
+            if(userResponseQuestionRepository.existsByQuestion_ExerciseQuestionId(u.getQuestion().getExerciseQuestionId())){
+                UserResponseQuestion existingResponse = userResponseQuestionRepository
+                        .findByQuestion_ExerciseQuestionId(u.getQuestion().getExerciseQuestionId());
+                existingResponse.setAnswerQuestion(u.getAnswerQuestion());
+                existingResponse.setIsCorrect(u.getIsCorrect());
+                existingResponse.setCreatedAt(new Date());
+                userResponseQuestionRepository.save(existingResponse);
+            } else {
+                UserResponseQuestion newResponse = UserResponseQuestion.builder()
+                        .question(u.getQuestion())
+                        .user(u.getUser())
+                        .answerQuestion(u.getAnswerQuestion())
+                        .isCorrect(u.getIsCorrect())
+                        .build();
+                userResponseQuestionRepository.save(newResponse);
+            }
+        });
     }
 
 }

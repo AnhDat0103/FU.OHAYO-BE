@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
+import vn.fu_ohayo.entity.LessonExercise;
 
 public interface LessonExerciseService {
 
@@ -17,5 +18,7 @@ public interface LessonExerciseService {
     void deleteExerciseLesson(int id);
 
     Page<ExerciseQuestionResponse> getExerciseQuestionByExerciseLesson(int page, int size, int exerciseId);
+
+    LessonExercise getLessonExerciseById(int id);
 
 }

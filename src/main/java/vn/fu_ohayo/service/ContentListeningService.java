@@ -15,5 +15,6 @@ public interface ContentListeningService {
     ContentListeningResponse updatePatchContentListening(long id, ContentListeningRequest request);
     Page<ContentListeningResponse> getContentListeningPage(int page, int size);
     ContentListeningResponse acceptContentListening(long id);
+    ContentListeningResponse rejectContentListening(long id);
 
 }

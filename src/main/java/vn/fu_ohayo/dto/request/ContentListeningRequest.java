@@ -41,6 +41,4 @@ public class ContentListeningRequest {
     @Enumerated(EnumType.STRING)
     private JlptLevel jlptLevel;
 
-    @Enumerated(EnumType.STRING)
-    private ContentStatus status;
 }

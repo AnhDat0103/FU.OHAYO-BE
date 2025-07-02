@@ -62,7 +62,7 @@ public enum ErrorEnum {
     PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
     ANSWER_NOT_FOUND("4027","Can not found the answer." ),
     LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
-
+    EXIST_AT_LEAST_CONTENT_LISTENING_OR_EXERCISE("4029", "Question exist at last in content listening or exercise"),
     PROGRESS_VOCABULARY_NOT_FOUND("4029", "Progress not found" ),
 
     // 5xxx - server error

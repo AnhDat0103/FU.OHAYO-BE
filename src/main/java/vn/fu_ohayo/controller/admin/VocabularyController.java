@@ -38,16 +38,16 @@ public class VocabularyController {
                 .build();
     }
 
-    @PostMapping("/{lessonId}")
-    public ApiResponse<VocabularyResponse> addVocabularyIntoLesson(
-            @Valid @RequestBody VocabularyRequest vocabularyRequest,
+    @PostMapping("/{vocabularyId}/add-to-lesson/{lessonId}")
+    public ApiResponse<Void> addVocabularyIntoLesson(
+            @PathVariable int vocabularyId,
             @PathVariable int lessonId) {
-        VocabularyResponse createdVocabulary = vocabularyService.handleSaveVocabulary(lessonId, vocabularyRequest);
-        return ApiResponse.<VocabularyResponse>builder()
+         vocabularyService.handleSaveVocabulary(lessonId, vocabularyId);
+        return ApiResponse.<Void>builder()
                 .code("201")
                 .message("Vocabulary created successfully")
                 .status("success")
-                .data(createdVocabulary)
+                .data(null)
                 .build();
     }
 
@@ -70,6 +70,18 @@ public class VocabularyController {
                 .message("Vocabulary updated successfully")
                 .status("success")
                 .data(updatedVocabulary)
+                .build();
+    }
+
+    @DeleteMapping("/{id}/remove-from-lesson/{lessonId}")
+    public ApiResponse<Void> deleteVocabularyFromLesson(@PathVariable int id,
+                                              @PathVariable int lessonId) {
+        vocabularyService.deleteVocabularyFromLesson(id, lessonId);
+        return ApiResponse.<Void>builder()
+                .code("204")
+                .message("Vocabulary deleted successfully")
+                .status("success")
+                .data(null)
                 .build();
     }
 
@@ -126,6 +138,20 @@ public class VocabularyController {
                 .code("200")
                 .status("success")
                 .message("Fetched vocabularies by favorite folder successfully")
+                .data(vocabularyResponses)
+                .build();
+    }
+
+    @GetMapping("get-all-without-lesson/{lessonId}")
+    public ApiResponse<Page<VocabularyResponse>> getAllVocabulariesWithoutLesson(
+            @PathVariable int lessonId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        Page<VocabularyResponse> vocabularyResponses = vocabularyService.getAllVocabularies(lessonId, page, size);
+        return ApiResponse.<Page<VocabularyResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched all vocabularies without lesson successfully")
                 .data(vocabularyResponses)
                 .build();
     }

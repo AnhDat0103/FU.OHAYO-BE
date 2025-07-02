@@ -28,4 +28,7 @@ public interface ContentSpeakingService {
     Page<ContentSpeakingResponse> getContentSpeakingPage(int page, int size);
 
     ContentSpeakingResponse acceptContentSpeaking(long id);
+
+    ContentSpeakingResponse rejectContentSpeaking(long id);
+
 }

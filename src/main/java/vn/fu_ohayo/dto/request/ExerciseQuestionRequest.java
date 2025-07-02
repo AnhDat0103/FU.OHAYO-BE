@@ -1,12 +1,14 @@
 package vn.fu_ohayo.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.entity.LessonExercise;
 
 import java.util.List;
 
@@ -16,11 +18,13 @@ import java.util.List;
 @Data
 @Builder
 public class ExerciseQuestionRequest {
-    private Integer questionId;
-
-    @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
+    @NotNull(message = "Question text cannot be null")
+    @NotBlank(message = "Question text cannot be blank")
     private String questionText;
+    @NotNull(message = "The list must contain at least 2 answer")
+    @Size(min = 2, message = "The list must contain aßt least 2 answer")
+    private List<AnswerQuestionRequest> answerQuestions;
+    private Long contentListeningId;
+    private Integer exerciseId;
 
-    @Size(min = 2, message = "The list must contain at least 2 answer")
-    private List<AnswerQuestionRequest> answers;
 }

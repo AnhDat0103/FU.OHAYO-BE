@@ -1,9 +1,11 @@
-package vn.fu_ohayo.service.impl;
+package vn.fu_ohayo.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,23 +16,21 @@ import vn.fu_ohayo.entity.FavoriteVocabulary;
 import vn.fu_ohayo.entity.QuizQuestion;
 import vn.fu_ohayo.repository.FavoriteVocabularyRepository;
 import vn.fu_ohayo.repository.QuizRepository;
-import vn.fu_ohayo.repository.VocabularyRepository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
+@Service
+
 public class QuizService {
-    VocabularyRepository vocabularyRepository;
-    QuizRepository quizRepository;
-    RestTemplate restTemplate = new RestTemplate();
-    FavoriteVocabularyRepository favoriteVocabularyRepository;
+    final QuizRepository quizRepository;
+    final RestTemplate restTemplate;
+    final FavoriteVocabularyRepository favoriteVocabularyRepository;
 
-    public void getQuestion(int favoriteVocabularyId) {
-
+    public void genVocabQuestion(Integer favoriteVocabularyId) {
         FavoriteVocabulary favoriteVocabulary = favoriteVocabularyRepository.findById(favoriteVocabularyId)
                 .orElseThrow(() -> new RuntimeException("Favorite vocabulary not found"));
 
@@ -43,6 +43,20 @@ public class QuizService {
             }
         });
     }
+//
+//    public void genGrammarQuestion(Integer favoriteGrammarId) {
+//        FavoriteVocabulary favoriteVocabulary = favoriteVocabularyRepository.findById(favoriteGrammarId)
+//                .orElseThrow(() -> new RuntimeException("Favorite vocabulary not found"));
+//
+//        favoriteVocabulary.getVocabularies().forEach(vocabulary -> {
+//            if (vocabulary.getQuizQuestion() == null) {
+//                quizRepository.save(QuizQuestion.builder()
+//                        .vocabulary(vocabulary)
+//                        .question(generateQuiz(vocabulary.getKanji() + " (" + vocabulary.getKana() + ")"))
+//                        .build());
+//            }
+//        });
+//    }
 
     public String generateQuiz(String word) {
         String API_KEY = "AIzaSyBUILxmrrbIGNiCcLZaN6RTYom3L9mW0F0";

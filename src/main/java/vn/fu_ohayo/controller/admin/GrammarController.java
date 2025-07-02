@@ -88,4 +88,36 @@ public class GrammarController {
                 .build();
     }
 
+    @GetMapping("/not-in-lesson/{lessonId}")
+    public ApiResponse<Page<GrammarResponse>> getGrammarsNotInLesson(
+            @PathVariable int lessonId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        Page<GrammarResponse> grammarsNotInLesson = grammarService.getGrammarsNotInLesson(lessonId, page, size);
+        return ApiResponse.<Page<GrammarResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Fetched grammars not in lesson successfully")
+                .data(grammarsNotInLesson)
+                .build();
+    }
+
+    @DeleteMapping("/{id}/remove-from-lesson/{lessonId}")
+    public ApiResponse<Void> deleteGrammarFromLesson(@PathVariable int id, @PathVariable int lessonId) {
+        grammarService.deleteGrammarFromLesson(id, lessonId);
+        return ApiResponse.<Void>builder()
+                .status("success")
+                .message("Grammar removed from lesson successfully")
+                .build();
+    }
+
+    @PostMapping("{grammarId}/add-to-lesson/{lessonId}")
+    public ApiResponse<Void> addGrammarToLesson(@PathVariable int grammarId, @PathVariable int lessonId) {
+        grammarService.handleSaveGrammarIntoLesson(lessonId, grammarId);
+        return ApiResponse.<Void>builder()
+                .status("success")
+                .message("Grammar added to lesson successfully")
+                .build();
+    }
+
 }

@@ -38,4 +38,5 @@ public class VocabularyResponse {
 
     private Date updatedAt;
 
+    private QuizQuestionResponse quizQuestion;
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.LessonStatus;
 
@@ -27,6 +28,8 @@ uniqueConstraints = {
                 @Index(name = "idx_subject_id", columnList = "subject_id")
 }
         )
+@Where(clause = "is_deleted = false")
+
 public class Lesson {
 
     @Id @GeneratedValue(

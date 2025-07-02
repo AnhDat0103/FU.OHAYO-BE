@@ -87,26 +87,22 @@ public class UserServiceImp implements UserService {
         if(!userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.INACTIVE)) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
-        String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
-            return ApiResponse.builder()
-                    .message("You can only create 3 Students")
-                    .code("1001")
-                    .status("FAIL")
-                    .build();
-        }
+//        String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
+//        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
+//            throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
+//        }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
-        if (!emailParent.equals("anonymousUser")) {
-            User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-            ParentStudent parentStudent = ParentStudent.builder()
-                    .verificationCode("")
-                    .parent(parent)
-                    .student(user)
-                    .parentCodeStatus(ParentCodeStatus.CONFIRM)
-                    .build();
-            parentStudentRepository.save(parentStudent);
-        }
+//        if (!emailParent.equals("anonymousUser")) {
+//            User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+//            ParentStudent parentStudent = ParentStudent.builder()
+//                    .verificationCode("")
+//                    .parent(parent)
+//                    .student(user)
+//                    .parentCodeStatus(ParentCodeStatus.CONFIRM)
+//                    .build();
+//            parentStudentRepository.save(parentStudent);
+//        }
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
         mailService.sendEmail(initialRegisterRequest.getEmail(), token);
         return ApiResponse.<InitialRegisterRequest>builder()

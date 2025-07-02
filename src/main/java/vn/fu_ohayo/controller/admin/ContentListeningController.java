@@ -89,5 +89,18 @@ public class ContentListeningController {
                 .data(response)
                 .build();
     }
+
+    @PatchMapping("/reject/{id}")
+    public ApiResponse<ContentListeningResponse> rejectContentListening(
+            @PathVariable Long id
+    ) {
+        ContentListeningResponse response = contentListeningService.rejectContentListening(id);
+        return ApiResponse.<ContentListeningResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
 }
 

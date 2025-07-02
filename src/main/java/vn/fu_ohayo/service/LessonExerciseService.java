@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
+import vn.fu_ohayo.entity.LessonExercise;
 
 import java.util.List;
 
@@ -25,4 +26,7 @@ public interface LessonExerciseService {
     void handleSaveExerciseQuestionIntoLesson(Long lessonId, Long exerciseQuestionId);
 
     void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId);
+
+    LessonExercise getLessonExerciseById(int id);
+
 }

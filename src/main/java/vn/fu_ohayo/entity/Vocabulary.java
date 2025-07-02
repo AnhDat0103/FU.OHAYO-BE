@@ -26,7 +26,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-
+@Where(clause = "is_deleted = false")
 public class Vocabulary {
 
     @Id @GeneratedValue(

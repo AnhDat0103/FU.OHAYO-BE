@@ -64,7 +64,7 @@ public class ContentReadingServiceImp implements ContentReadingService {
                 .timeNew(contentReadingRequest.getTimeNew())
                 .scriptJp(contentReadingRequest.getScriptJp())
                 .scriptVn(contentReadingRequest.getScriptVn())
-                .status(contentReadingRequest.getStatus())
+                .status(ContentStatus.DRAFT)
                 .jlptLevel(contentReadingRequest.getJlptLevel())
                 .build();
         return contentReadingRepository.save(contentReading);
@@ -86,26 +86,41 @@ public class ContentReadingServiceImp implements ContentReadingService {
     public ContentReadingResponse updatePatchContentReading(long id, ContentReadingRequest request) {
         ContentReading contentReading = contentReadingRepository.findById(id).orElse(null);
         if (contentReading != null) {
-            if(request.getImage() != null) {
+            boolean isUpdated = false;
+            if (request.getImage() != null && !request.getImage().equals(contentReading.getImage())) {
                 contentReading.setImage(request.getImage());
+                isUpdated = true;
             }
-            if(request.getTitle() != null) {
+            if (request.getTitle() != null && !request.getTitle().equals(contentReading.getTitle())) {
                 contentReading.setTitle(request.getTitle());
+                isUpdated = true;
             }
-            if(request.getCategory() != null) {
+            if (request.getCategory() != null && !request.getCategory().equals(contentReading.getCategory())) {
                 contentReading.setCategory(request.getCategory());
+                isUpdated = true;
             }
-            if(request.getAudioFile() != null) {
+            if (request.getAudioFile() != null && !request.getAudioFile().equals(contentReading.getAudioFile())) {
                 contentReading.setAudioFile(request.getAudioFile());
+                isUpdated = true;
             }
-            if(request.getTimeNew() != null) {
-                contentReading.setTimeNew(request.getTimeNew());
-            }
-            if(request.getScriptJp() != null) {
+            if (request.getScriptJp() != null && !request.getScriptJp().equals(contentReading.getScriptJp())) {
                 contentReading.setScriptJp(request.getScriptJp());
+                isUpdated = true;
             }
-            if(request.getScriptVn() != null) {
+            if (request.getScriptVn() != null && !request.getScriptVn().equals(contentReading.getScriptVn())) {
                 contentReading.setScriptVn(request.getScriptVn());
+                isUpdated = true;
+            }
+            if (request.getTimeNew() != null && !request.getTimeNew().equals(contentReading.getTimeNew())) {
+                contentReading.setTimeNew(request.getTimeNew());
+                isUpdated = true;
+            }
+            if(request.getJlptLevel() != null && !request.getJlptLevel().equals(contentReading.getJlptLevel())) {
+                contentReading.setJlptLevel(request.getJlptLevel());
+                isUpdated = true;
+            }
+            if (isUpdated) {
+                contentReading.setStatus(ContentStatus.DRAFT);
             }
             contentReadingRepository.save(contentReading);
         }
@@ -188,6 +203,14 @@ public class ContentReadingServiceImp implements ContentReadingService {
     public ContentReadingResponse acceptContentReading(long id) {
         ContentReading contentReading = getContentReadingById(id);
         contentReading.setStatus(ContentStatus.PUBLIC);
+        contentReadingRepository.save(contentReading);
+        return contentMapper.toContentReadingResponse(contentReading);
+    }
+
+    @Override
+    public ContentReadingResponse rejectContentReading(long id) {
+        ContentReading contentReading = getContentReadingById(id);
+        contentReading.setStatus(ContentStatus.REJECT);
         contentReadingRepository.save(contentReading);
         return contentMapper.toContentReadingResponse(contentReading);
     }

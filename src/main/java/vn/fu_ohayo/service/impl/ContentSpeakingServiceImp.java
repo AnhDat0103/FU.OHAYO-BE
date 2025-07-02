@@ -50,7 +50,7 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
                 .image(contentSpeakingRequest.getImage())
                 .title(contentSpeakingRequest.getTitle())
                 .category(contentSpeakingRequest.getCategory())
-                .status(contentSpeakingRequest.getStatus())
+                .status(ContentStatus.DRAFT)
                 .jlptLevel(contentSpeakingRequest.getJlptLevel())
                 .content(newContent)
                 .build();
@@ -86,15 +86,26 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     @Override
     public ContentSpeakingResponse updatePatchContentSpeaking(long id, ContentSpeakingRequest request) {
         ContentSpeaking contentSpeaking = getContentSpeakingById(id);
-        if(contentSpeaking != null){
-            if (request.getTitle() != null) {
-                contentSpeaking.setTitle(request.getTitle());
-            }
-            if (request.getImage() != null) {
+        if (contentSpeaking != null) {
+            boolean isUpdated = false;
+            if (request.getImage() != null && !request.getImage().equals(contentSpeaking.getImage())) {
                 contentSpeaking.setImage(request.getImage());
+                isUpdated = true;
             }
-            if (request.getCategory() != null) {
+            if (request.getTitle() != null && !request.getTitle().equals(contentSpeaking.getTitle())) {
+                contentSpeaking.setTitle(request.getTitle());
+                isUpdated = true;
+            }
+            if (request.getCategory() != null && !request.getCategory().equals(contentSpeaking.getCategory())) {
                 contentSpeaking.setCategory(request.getCategory());
+                isUpdated = true;
+            }
+            if(request.getJlptLevel() != null && !request.getJlptLevel().equals(contentSpeaking.getJlptLevel())) {
+                contentSpeaking.setJlptLevel(request.getJlptLevel());
+                isUpdated = true;
+            }
+            if (isUpdated) {
+                contentSpeaking.setStatus(ContentStatus.DRAFT);
             }
             contentSpeakingRepository.save(contentSpeaking);
         }
@@ -113,6 +124,14 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     public ContentSpeakingResponse acceptContentSpeaking(long id) {
         ContentSpeaking contentSpeaking = getContentSpeakingById(id);
         contentSpeaking.setStatus(ContentStatus.PUBLIC);
+        contentSpeakingRepository.save(contentSpeaking);
+        return contentMapper.toContentSpeakingResponse(contentSpeaking);
+    }
+
+    @Override
+    public ContentSpeakingResponse rejectContentSpeaking(long id) {
+        ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        contentSpeaking.setStatus(ContentStatus.REJECT);
         contentSpeakingRepository.save(contentSpeaking);
         return contentMapper.toContentSpeakingResponse(contentSpeaking);
     }

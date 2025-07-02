@@ -171,7 +171,6 @@ public class FavoriteListServiceImp implements FavoriteListService {
                 .isPublic(original.isPublic())
                 .isDeleted(original.isDeleted())
                 .createdAt(new Date())
-                .isDeleted(false)
                 .build();
         favoriteListRepository.save(copy);
 

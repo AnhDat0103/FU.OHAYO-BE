@@ -30,7 +30,7 @@ public class CompleteProfileRequest {
     private Date dob;
 
     @NotNull
-    private RoleEnum role;
+    private RoleEnum role = RoleEnum.USER;
 
     private String address;
 

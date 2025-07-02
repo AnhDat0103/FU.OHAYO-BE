@@ -193,6 +193,7 @@ public class AuthenticationController {
             throw new AppException(ErrorEnum.INVALID_TOKEN);
         }
         TokenResponse tokenResponse = authenticationService.getRefreshToken(refreshToken, "user");
+        log.info(tokenResponse.getAccessToken());
         return ResponseEntity.ok(
                 ApiResponse.<TokenResponse>builder()
                         .code("200")

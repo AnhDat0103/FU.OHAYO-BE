@@ -24,7 +24,8 @@ public enum ErrorEnum {
     AUTH_FAILED ("3002", "Email or password is not exactly"),
     EXCEED_DAILY_CODE_LIMIT("3003", "You have already created 5 codes today. Please try again tomorrow."),
     MAX_STUDENT_LIMIT("3004", "You can manage up to 3 students only."),
-
+    UNAUTHORIZED("401", "Access token expired"),
+    FORBIDDEN("403", "Invalid token signature"),
     // 4xxx - not found
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
@@ -61,6 +62,8 @@ public enum ErrorEnum {
     PROGRESS_NOT_FOUND("4026", "Progress not found for the user and subject." ),
     ANSWER_NOT_FOUND("4027","Can not found the answer." ),
     LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
+
+    PROGRESS_VOCABULARY_NOT_FOUND("4029", "Progress not found" ),
 
     // 5xxx - server error
     // 6xxx - PaymentErrorCode

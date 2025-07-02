@@ -30,7 +30,6 @@ import java.util.Set;
 @Builder
 @Data
 @Where(clause = "is_deleted = false")
-
 public class Grammar {
 
     @Id @GeneratedValue(
@@ -80,6 +79,9 @@ public class Grammar {
 
     @OneToMany(mappedBy = "grammar", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FavoriteListGrammar> favoriteListGrammars = new HashSet<>();
+
+    @OneToOne(mappedBy = "grammar", cascade = CascadeType.ALL)
+    private QuizQuestion quizQuestion;
 
     @Column(name = "is_deleted")
     private Boolean deleted = false;

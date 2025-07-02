@@ -14,4 +14,10 @@ public interface GrammarService {
     void deleteGrammarById(int id);
     Page<GrammarResponse> getAllGrammars(int lessonId, int page, int size);
     Page<GrammarResponse> getAllGrammarsPage(int page, int size);
+
+    Page<GrammarResponse> getGrammarsNotInLesson(int lessonId, int page, int size);
+
+    void deleteGrammarFromLesson(int id, int lessonId);
+
+    void handleSaveGrammarIntoLesson(int lessonId, int grammarId);
 }

@@ -26,7 +26,6 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Where(clause = "is_deleted = false")
 
 public class Vocabulary {
 
@@ -72,10 +71,6 @@ public class Vocabulary {
     @Enumerated(EnumType.STRING)
     @Column(name = "jlpt_level")
     private JlptLevel jlptLevel;
-    
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
 
     @OneToMany(mappedBy = "vocabulary", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FavoriteListVocabulary> favoriteListVocabularies = new HashSet<>();

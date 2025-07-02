@@ -22,4 +22,6 @@ public interface VocabularyService {
     Page<VocabularyResponse> getAllVocabulariesPage(int page, int size);
 
     VocabularyResponse handleSaveVocabulary(@Valid VocabularyRequest vocabularyRequest);
+
+    void deleteVocabularyFromLesson(int id, int lessonId);
 }

@@ -44,7 +44,7 @@ public class ContentListeningServiceImp implements ContentListeningService {
                 .audioFile(contentListeningRequest.getAudioFile())
                 .scriptJp(contentListeningRequest.getScriptJp())
                 .scriptVn(contentListeningRequest.getScriptVn())
-                .status(contentListeningRequest.getStatus())
+                .status(ContentStatus.DRAFT)
                 .jlptLevel(contentListeningRequest.getJlptLevel())
                 .build();
         return contentListeningRepository.save(contentListening);
@@ -66,23 +66,37 @@ public class ContentListeningServiceImp implements ContentListeningService {
     public ContentListeningResponse updatePatchContentListening(long id, ContentListeningRequest request) {
         ContentListening contentListening = contentListeningRepository.findBycontentListeningId(id);
         if (contentListening != null) {
-            if(request.getImage() != null) {
+            boolean isUpdated = false;
+            if (request.getImage() != null && !request.getImage().equals(contentListening.getImage())) {
                 contentListening.setImage(request.getImage());
+                isUpdated = true;
             }
-            if(request.getTitle() != null) {
+            if (request.getTitle() != null && !request.getTitle().equals(contentListening.getTitle())) {
                 contentListening.setTitle(request.getTitle());
+                isUpdated = true;
             }
-            if(request.getCategory() != null) {
+            if (request.getCategory() != null && !request.getCategory().equals(contentListening.getCategory())) {
                 contentListening.setCategory(request.getCategory());
+                isUpdated = true;
             }
-            if(request.getAudioFile() != null) {
+            if (request.getAudioFile() != null && !request.getAudioFile().equals(contentListening.getAudioFile())) {
                 contentListening.setAudioFile(request.getAudioFile());
+                isUpdated = true;
             }
-            if(request.getScriptJp() != null) {
+            if (request.getScriptJp() != null && !request.getScriptJp().equals(contentListening.getScriptJp())) {
                 contentListening.setScriptJp(request.getScriptJp());
+                isUpdated = true;
             }
-            if(request.getScriptVn() != null) {
+            if (request.getScriptVn() != null && !request.getScriptVn().equals(contentListening.getScriptVn())) {
                 contentListening.setScriptVn(request.getScriptVn());
+                isUpdated = true;
+            }
+            if(request.getJlptLevel() != null && !request.getJlptLevel().equals(contentListening.getJlptLevel())) {
+                contentListening.setJlptLevel(request.getJlptLevel());
+                isUpdated = true;
+            }
+            if (isUpdated) {
+                contentListening.setStatus(ContentStatus.DRAFT);
             }
             contentListeningRepository.save(contentListening);
         }
@@ -94,12 +108,21 @@ public class ContentListeningServiceImp implements ContentListeningService {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<ContentListening> prs = contentListeningRepository.findAllByDeleted(pageable, false);
         Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
-        return responsePage;    }
+        return responsePage;
+    }
 
     @Override
     public ContentListeningResponse acceptContentListening(long id) {
         ContentListening contentListening = getContentListeningById(id);
         contentListening.setStatus(ContentStatus.PUBLIC);
+        contentListeningRepository.save(contentListening);
+        return contentMapper.toContentListeningResponse(contentListening);
+    }
+
+    @Override
+    public ContentListeningResponse rejectContentListening(long id) {
+        ContentListening contentListening = getContentListeningById(id);
+        contentListening.setStatus(ContentStatus.REJECT);
         contentListeningRepository.save(contentListening);
         return contentMapper.toContentListeningResponse(contentListening);
     }

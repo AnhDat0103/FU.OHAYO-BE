@@ -3,7 +3,7 @@ package vn.fu_ohayo.controller.admin;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.dto.request.ExerciseQuestionRequestForListening;
+import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.entity.ExerciseQuestion;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/question")
-public class ContentListeningQuestionController {
+public class ExerciseQuestionController {
 private final ExerciseQuestionService exerciseQuestionService;
 
-    public ContentListeningQuestionController(ExerciseQuestionService exerciseQuestionService) {
+    public ExerciseQuestionController(ExerciseQuestionService exerciseQuestionService) {
         this.exerciseQuestionService = exerciseQuestionService;
     }
 
@@ -29,7 +29,19 @@ private final ExerciseQuestionService exerciseQuestionService;
                 .code("200")
                 .status("success")
                 .message("get page of exercise questions by content listening id")
-                .data(exerciseQuestionService.getExerciseQuestionPage(page - 1, size, contentListeningId))
+                .data(exerciseQuestionService.getExerciseQuestionByContentListeingPage(page - 1, size, contentListeningId))
+                .build();
+    }
+
+    @GetMapping("/")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionPage(
+            @RequestParam(defaultValue="1" ) int page,
+            @RequestParam(defaultValue = "5") int size ){
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("get page of exercise questions")
+                .data(exerciseQuestionService.getExerciseQuestionPage(page - 1, size))
                 .build();
     }
 
@@ -44,7 +56,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     }
 
     @PostMapping
-    public ApiResponse<ExerciseQuestionResponse> createExerciseQuestion(@Valid @RequestBody ExerciseQuestionRequestForListening request) {
+    public ApiResponse<ExerciseQuestionResponse> createExerciseQuestion(@Valid @RequestBody ExerciseQuestionRequest request) {
         ExerciseQuestionResponse newExerciseQuestion =exerciseQuestionService.handleCreateExerciseQuestion(request);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("201")
@@ -55,7 +67,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     }
 
     @PostMapping("/many")
-    public ApiResponse<List<ExerciseQuestionResponse>> createManyExerciseQuestion(@Valid @RequestBody List<ExerciseQuestionRequestForListening> requests) {
+    public ApiResponse<List<ExerciseQuestionResponse>> createManyExerciseQuestion(@Valid @RequestBody List<ExerciseQuestionRequest> requests) {
         List<ExerciseQuestionResponse> newExerciseQuestion =exerciseQuestionService.handleCreateAllExerciseQuestion(requests);
         return ApiResponse.<List<ExerciseQuestionResponse>>builder()
                 .code("201")
@@ -78,7 +90,7 @@ private final ExerciseQuestionService exerciseQuestionService;
     @PatchMapping("/{id}")
     public  ApiResponse<ExerciseQuestionResponse> patchExerciseQuestion(
             @PathVariable int id,
-            @Valid @RequestBody ExerciseQuestionRequestForListening request){
+            @Valid @RequestBody ExerciseQuestionRequest request){
         ExerciseQuestionResponse ExerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id,request );
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")

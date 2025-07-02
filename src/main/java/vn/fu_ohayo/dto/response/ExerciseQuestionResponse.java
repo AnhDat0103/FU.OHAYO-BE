@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.dto.request.AnswerQuestionRequest;
 import vn.fu_ohayo.entity.AnswerQuestion;
+import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -20,4 +21,5 @@ public class ExerciseQuestionResponse {
     private Date createdAt;
     private Date updatedAt;
     private List<AnswerQuestionRequest> answerQuestions;
+    private ContentStatus status;
 }

@@ -37,7 +37,20 @@ public class LessonExerciseController {
                 .data(response)
                 .build();
     }
-
+    @GetMapping("/available-exercise-questions")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getAvailableExerciseQuestions(
+            @RequestParam Long lessonId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<ExerciseQuestionResponse> response = lessonExerciseService.getAllExerciseQuestions(lessonId, page, size);
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+                .message("Fetched available exercise questions successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(response)
+                .build();
+    }
 
     @GetMapping("/exercise-details")
     public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionsByLessonExerciseId(
@@ -83,6 +96,32 @@ public class LessonExerciseController {
                 .status(HTTP_SUCCESS_RESPONSE)
                 .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .data(updatedLessonExercise)
+                .build();
+    }
+
+    @PostMapping("/{lessonId}/add-exercise-question/{exerciseId}")
+    public ApiResponse<Void> addExerciseQuestionToLesson(
+            @PathVariable Long lessonId,
+            @PathVariable Long exerciseId) {
+        lessonExerciseService.handleSaveExerciseQuestionIntoLesson(lessonId, exerciseId);
+        return ApiResponse.<Void>builder()
+                .message("Added exercise question to lesson successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(null)
+                .build();
+    }
+
+    @DeleteMapping("/{lessonId}/remove-exercise-question/{exerciseQuestionId}")
+    public ApiResponse<Void> removeExerciseQuestionFromLesson(
+            @PathVariable Long lessonId,
+            @PathVariable Long exerciseQuestionId) {
+        lessonExerciseService.handleDeleteExerciseQuestionFromLesson(lessonId, exerciseQuestionId);
+        return ApiResponse.<Void>builder()
+                .message("Removed exercise question from lesson successfully")
+                .status(HTTP_SUCCESS_RESPONSE)
+                .code(HTTP_SUCCESS_CODE_RESPONSE)
+                .data(null)
                 .build();
     }
 }

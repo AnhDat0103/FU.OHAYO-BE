@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PasswordForgotImpTest {
 
+   // mock is a way to create a fake object that simulates the behavior of a real object
     @Mock
     private UserRepository userRepository;
 
@@ -33,12 +34,14 @@ class PasswordForgotImpTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    // InjectMocks is used to create an instance of the class under test and inject the mocks into it
     @InjectMocks
     private PasswordForgotImp passwordForgotService;
 
     private User testUser;
     private final String testEmail = "test@example.com";
 
+    //run before each test
     @BeforeEach
     void setUp() {
         testUser = new User();

@@ -10,12 +10,11 @@ import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
-import vn.fu_ohayo.entity.AnswerQuestion;
-import vn.fu_ohayo.entity.ExerciseQuestion;
-import vn.fu_ohayo.entity.Lesson;
-import vn.fu_ohayo.entity.LessonExercise;
+import vn.fu_ohayo.dto.response.VocabularyResponse;
+import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
 import vn.fu_ohayo.repository.AnswerQuestionRepository;
 import vn.fu_ohayo.repository.ExerciseQuestionRepository;
 import vn.fu_ohayo.repository.LessonExerciseRepository;
@@ -32,14 +31,16 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     private final ExerciseQuestionRepository exerciseQuestionRepository;
     private final AnswerQuestionRepository answerQuestionRepository;
     private final LessonExerciseRepository lessonExerciseRepository;
+    private final ExerciseQuestionMapper exerciseQuestionMapper;
 
     public LessonExerciseServiceImp(LessonRepository lessonRepository, ExerciseQuestionRepository exerciseQuestionRepository,
                                     AnswerQuestionRepository answerQuestionRepository,
-                                    LessonExerciseRepository lessonExerciseRepository) {
+                                    LessonExerciseRepository lessonExerciseRepository, ExerciseQuestionMapper exerciseQuestionMapper) {
         this.lessonRepository = lessonRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.lessonExerciseRepository = lessonExerciseRepository;
+        this.exerciseQuestionMapper = exerciseQuestionMapper;
     }
 
 
@@ -225,5 +226,21 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                     .build();
         });
 
+    }
+
+    @Override
+    public void handleSaveExerciseQuestionIntoLesson(Long lessonId, Long exerciseQuestionId) {
+        exerciseQuestionRepository.saveExerciseQuestionIntoLessonId(lessonId, exerciseQuestionId);
+    }
+
+    @Override
+    public void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId) {
+        exerciseQuestionRepository.removeExerciseQuestionInLessonId(exerciseQuestionId, lessonId);
+    }
+
+    @Override
+    public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size ) {
+        Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllAvailableExerciseQuestions(lessonId, PageRequest.of(page, size));
+        return exerciseQuestions.map(exerciseQuestionMapper::toExerciseQuestionResponse);
     }
 }

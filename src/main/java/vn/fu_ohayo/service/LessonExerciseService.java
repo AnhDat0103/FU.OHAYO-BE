@@ -6,6 +6,8 @@ import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 
+import java.util.List;
+
 public interface LessonExerciseService {
 
     Page<LessonExerciseResponse> getAllContentByLesson(int page, int size, int lessonId);
@@ -18,4 +20,9 @@ public interface LessonExerciseService {
 
     Page<ExerciseQuestionResponse> getExerciseQuestionByExerciseLesson(int page, int size, int exerciseId);
 
+    Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size);
+
+    void handleSaveExerciseQuestionIntoLesson(Long lessonId, Long exerciseQuestionId);
+
+    void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId);
 }

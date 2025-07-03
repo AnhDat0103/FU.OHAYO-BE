@@ -52,22 +52,21 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     public Page<LessonExerciseResponse> getAllContentByLesson(int page, int size, int lessonId) {
         Lesson lesson = handleGetLessonById(lessonId);
         Page<LessonExercise> lessonExercises = lessonExerciseRepository.findAllByLesson(lesson, PageRequest.of(page, size));
-        return  lessonExercises.map(le-> {
-                    List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(le);
-                    if(exerciseQuestions.isEmpty()) {
-                        throw new AppException(ErrorEnum.EXERCISE_QUESTION_NOT_FOUND);
-                    }
-                    List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
-                    for (ExerciseQuestion exerciseQuestion : exerciseQuestions) {
-                        ExerciseQuestionResponse ex = ExerciseQuestionResponse.builder()
-                                .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
-                                .questionText(exerciseQuestion.getQuestionText())
-                                .updatedAt(exerciseQuestion.getUpdatedAt())
-                                .createdAt(exerciseQuestion.getCreatedAt())
-                                .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
-                                .build();
-                        exerciseQuestionResponses.add(ex);
-                    }
+        return lessonExercises.map(le -> {
+            List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(le);
+            List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
+            if (!exerciseQuestions.isEmpty()) {
+                for (ExerciseQuestion exerciseQuestion : exerciseQuestions) {
+                    ExerciseQuestionResponse ex = ExerciseQuestionResponse.builder()
+                            .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
+                            .questionText(exerciseQuestion.getQuestionText())
+                            .updatedAt(exerciseQuestion.getUpdatedAt())
+                            .createdAt(exerciseQuestion.getCreatedAt())
+                            .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
+                            .build();
+                    exerciseQuestionResponses.add(ex);
+                }
+            }
             return LessonExerciseResponse.builder()
                     .id(le.getExerciseId())
                     .title(le.getTitle())
@@ -153,6 +152,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                 .content(exerciseQuestionResponses)
                 .build();
     }
+
     @Override
     public LessonExerciseResponse createExerciseLesson(LessonExerciseRequest lessonExerciseRequest) {
         Lesson lesson = handleGetLessonById(lessonExerciseRequest.getLessonId());

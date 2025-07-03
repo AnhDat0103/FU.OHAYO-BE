@@ -105,8 +105,13 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public List<SubjectResponse> getAllListActiveSubjects() {
+    public List<SubjectResponse> getAllListActiveSubjectsByStatus() {
         return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE).stream().map(subjectMapper::toSubjectResponse).toList() ;
+    }
+
+    @Override
+    public List<SubjectResponse> getAllListSubjects() {
+        return subjectRepository.findAll().stream().map(subjectMapper::toSubjectResponse).toList() ;
     }
 
     @Override

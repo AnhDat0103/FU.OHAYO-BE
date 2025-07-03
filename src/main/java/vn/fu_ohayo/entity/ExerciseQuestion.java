@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,9 @@ public class ExerciseQuestion {
     @OneToMany(mappedBy = "exerciseQuestion", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
 //    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestion> answerQuestions;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status = ContentStatus.DRAFT;
 
     @Column(name = "created_at")
     private Date createdAt;

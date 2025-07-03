@@ -7,10 +7,17 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
+import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.mapper.LessonMapper;
 import vn.fu_ohayo.service.ContentListeningService;
+
+import java.util.List;
+
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_CODE_RESPONSE;
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
 
 @RequiredArgsConstructor
 @RestController
@@ -102,5 +109,19 @@ public class ContentListeningController {
                 .data(response)
                 .build();
     }
+
+    @GetMapping("/jlptLevel")
+    public ApiResponse<List<ContentListeningResponse>> getContentListeningByLever(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam JlptLevel jlptLevel) {
+        return ApiResponse.<List<ContentListeningResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("success")
+                .data(contentListeningService.getListContentListeningsBylever(jlptLevel))
+                .build();
+    }
+
 }
 

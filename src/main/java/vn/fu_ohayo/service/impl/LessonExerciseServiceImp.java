@@ -99,7 +99,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
             exerciseQuestionRepository.deleteAll(existingQuestions);
             //create new exercise questions and answers
             for (ExerciseQuestionRequest questionRequest : lessonExerciseRequest.getContent()) {
-                List<AnswerQuestionRequest> answerRequests = questionRequest.getAnswers();
+                List<AnswerQuestionRequest> answerRequests = questionRequest.getAnswerQuestions();
                 int countCorrectAnswers = 0;
                 for (AnswerQuestionRequest answerRequest : answerRequests) {
                     if (Boolean.TRUE.equals(answerRequest.getIsCorrect())) {
@@ -175,7 +175,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                         .lessonExercise(lessonExercise)
                         .build();
                 exerciseQuestion = exerciseQuestionRepository.save(exerciseQuestion);
-                List<AnswerQuestionRequest> answerQuestionRequests = exerciseQuestionRequest.getAnswers();
+                List<AnswerQuestionRequest> answerQuestionRequests = exerciseQuestionRequest.getAnswerQuestions();
                 for (AnswerQuestionRequest answerQuestionRequest : answerQuestionRequests) {
                     AnswerQuestion answerQuestion = AnswerQuestion.builder()
                             .answerText(answerQuestionRequest.getAnswerText())
@@ -242,5 +242,8 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size ) {
         Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllAvailableExerciseQuestions(lessonId, PageRequest.of(page, size));
         return exerciseQuestions.map(exerciseQuestionMapper::toExerciseQuestionResponse);
+
+    public LessonExercise getLessonExerciseById(int id) {
+        return lessonExerciseRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
     }
 }

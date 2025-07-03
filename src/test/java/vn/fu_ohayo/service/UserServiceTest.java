@@ -79,7 +79,7 @@ import static org.mockito.Mockito.verify;
                 .password("hashedPassword")
                 .build();
 
-        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.INACTIVE)).thenReturn(true);
+        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.INACTIVE)).thenReturn(false);
         Mockito.when(userRepository.save(any(User.class))).thenReturn(user);
         Mockito.when(jwtService.generateAccessToken(1L, request.getEmail(), null)).thenReturn("fake-jwt");
 
@@ -103,7 +103,7 @@ import static org.mockito.Mockito.verify;
         request.setEmail("existing@example.com");
         request.setPassword("pass");
 
-        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.INACTIVE)).thenReturn(false);
+        Mockito.when(userRepository.existsByEmailAndStatus(request.getEmail(), UserStatus.INACTIVE)).thenReturn(true);
 
         AppException exception = assertThrows(AppException.class, () -> userService.registerInitial(request));
         assertEquals(ErrorEnum.EMAIL_EXIST.getMessage(), exception.getMessage());

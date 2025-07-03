@@ -12,7 +12,7 @@ import vn.fu_ohayo.enums.PartOfSpeech;
 @NoArgsConstructor
 @Builder
 public class FavoriteListDetailRequest {
-    private String type = "all";
+    private String type; // "vocabulary" or "grammar"
     private PartOfSpeech category;
     private JlptLevel jlptLevel;
     private Integer currentPage = 0;

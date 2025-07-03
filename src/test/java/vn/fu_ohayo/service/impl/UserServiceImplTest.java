@@ -53,7 +53,8 @@ class UserServiceImplTest {
 
         AppException exception = assertThrows(AppException.class, () ->
                 userService.deleteUser(userId));
-        assertEquals(ErrorEnum.USER_NOT_FOUND, exception.getMessage());
+        assertEquals(ErrorEnum.USER_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(ErrorEnum.USER_NOT_FOUND.getCode(), exception.getCode());
     }
 
     // ========== Test addUser ==========
@@ -68,7 +69,8 @@ class UserServiceImplTest {
 
         AppException exception = assertThrows(AppException.class, () ->
                 userService.addUser(request));
-        assertEquals(ErrorEnum.EMAIL_EXIST, exception.getMessage());
+        assertEquals(ErrorEnum.EMAIL_EXIST.getMessage(), exception.getMessage());
+        assertEquals(ErrorEnum.EMAIL_EXIST.getCode(), exception.getCode());
     }
 
     @Test
@@ -83,7 +85,8 @@ class UserServiceImplTest {
 
         AppException exception = assertThrows(AppException.class, () ->
                 userService.addUser(request));
-        assertEquals(ErrorEnum.PHONE_EXIST, exception.getMessage());
+        assertEquals(ErrorEnum.PHONE_EXIST.getMessage(), exception.getMessage());
+        assertEquals(ErrorEnum.PHONE_EXIST.getCode(), exception.getCode());
     }
 
     @Test

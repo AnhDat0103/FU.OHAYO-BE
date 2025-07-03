@@ -6,4 +6,7 @@ import vn.fu_ohayo.entity.UserResponseQuestion;
 
 @Repository
 public interface UserResponseQuestionRepository extends JpaRepository<UserResponseQuestion, Integer> {
+    boolean existsByQuestion_ExerciseQuestionId(int questionExerciseQuestionId);
+
+    UserResponseQuestion findByQuestion_ExerciseQuestionId(int exerciseQuestionId);
 }

@@ -242,7 +242,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size ) {
         Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllAvailableExerciseQuestions(lessonId, PageRequest.of(page, size));
         return exerciseQuestions.map(exerciseQuestionMapper::toExerciseQuestionResponse);
-
+    }
     public LessonExercise getLessonExerciseById(int id) {
         return lessonExerciseRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
     }

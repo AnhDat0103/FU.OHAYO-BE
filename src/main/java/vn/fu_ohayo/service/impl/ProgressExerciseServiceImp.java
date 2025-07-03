@@ -12,6 +12,7 @@ import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
 import vn.fu_ohayo.mapper.LessonExerciseMapper;
 import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.ProgressExerciseService;
+import vn.fu_ohayo.service.ProgressLessonService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,13 +28,15 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
     private final LessonExerciseRepository lessonExerciseRepository;
     private final AnswerQuestionRepository answerQuestionRepository;
     private final ExerciseResultRepository exerciseResultRepository;
+    private final ProgressLessonService progressLessonService;
     public ProgressExerciseServiceImp(UserResponseQuestionRepository userResponseQuestionRepository,
                                       ExerciseQuestionRepository exerciseQuestionRepository,
                                       UserRepository userRepository,
                                       ExerciseQuestionMapper exerciseQuestionMapper,
                                       LessonExerciseRepository lessonExerciseRepository,
                                       AnswerQuestionRepository answerQuestionRepository,
-                                      ExerciseResultRepository exerciseResultRepository
+                                      ExerciseResultRepository exerciseResultRepository,
+                                      ProgressLessonService progressLessonService
                                      )  {
         this.userResponseQuestionRepository = userResponseQuestionRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
@@ -42,6 +45,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
         this.lessonExerciseRepository = lessonExerciseRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseResultRepository = exerciseResultRepository;
+        this.progressLessonService = progressLessonService;
     }
 
 
@@ -109,6 +113,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
                 .build();
 
         saveUserResponses(questionResultResponse, exerciseQuestionResponse, user);
+        progressLessonService.updateProgressLesson(user.getEmail(), lessonExercise.getLesson().getLessonId(), true);
 
          return  response;
     }

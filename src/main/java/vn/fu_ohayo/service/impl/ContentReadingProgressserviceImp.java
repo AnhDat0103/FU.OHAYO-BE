@@ -47,7 +47,9 @@ public class ContentReadingProgressserviceImp implements ContentReadingProgressS
 
     @Override
     public Boolean isDoneReading(Long userId, Long contentReadingId) {
-        return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, contentReadingId)
+        ContentReading contentReading = contentReadingRepository.findById(contentReadingId)
+                .orElseThrow(() -> new RuntimeException("Content reading not found" + contentReadingId));
+        return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, contentReading.getContent().getContentId())
                 .map(progressContent -> progressContent.getProgressStatus() == ProgressStatus.COMPLETED)
                 .orElse(false);
     }

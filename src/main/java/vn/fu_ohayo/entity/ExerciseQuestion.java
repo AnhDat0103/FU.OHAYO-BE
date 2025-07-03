@@ -24,7 +24,6 @@ public class ExerciseQuestion {
 
     @Column(name = "question_text", columnDefinition = "TEXT")
     @NotNull(message = "Question text cannot be null")
-    @NotBlank(message = "Question text cannot be blank")
     private String questionText;
 
     @ManyToOne

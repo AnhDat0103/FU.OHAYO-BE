@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface ContentListeningService {
     Page<ContentListeningResponse> getContentListeningPage(int page, int size);
     ContentListeningResponse acceptContentListening(long id);
     ContentListeningResponse rejectContentListening(long id);
-
+    List<ContentListeningResponse> getListContentListeningsBylever(JlptLevel jlptLevel);
 }

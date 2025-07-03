@@ -7,8 +7,6 @@ import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.entity.LessonExercise;
 
-import java.util.List;
-
 public interface LessonExerciseService {
 
     Page<LessonExerciseResponse> getAllContentByLesson(int page, int size, int lessonId);
@@ -28,6 +26,5 @@ public interface LessonExerciseService {
     void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId);
 
     LessonExercise getLessonExerciseById(int id);
-
 
 }

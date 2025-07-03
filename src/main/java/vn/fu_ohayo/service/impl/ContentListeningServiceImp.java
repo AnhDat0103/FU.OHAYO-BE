@@ -10,9 +10,13 @@ import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
+import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentListeningRepository;
 import vn.fu_ohayo.service.ContentListeningService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContentListeningServiceImp implements ContentListeningService {
@@ -125,6 +129,11 @@ public class ContentListeningServiceImp implements ContentListeningService {
         contentListening.setStatus(ContentStatus.REJECT);
         contentListeningRepository.save(contentListening);
         return contentMapper.toContentListeningResponse(contentListening);
+    }
+
+    @Override
+    public List<ContentListeningResponse> getListContentListeningsBylever(JlptLevel jlptLevel) {
+        return contentListeningRepository.findAllByJlptLevel(jlptLevel).stream().map(contentMapper::toContentListeningResponse).collect(Collectors.toList());
     }
 
 }

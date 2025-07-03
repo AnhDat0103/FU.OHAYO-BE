@@ -26,4 +26,6 @@ public interface ContentReadingService {
     List<VocabularyResponse> getVocabulariesByContentReadingId(long contentReadingId);
     List<GrammarResponse> getGrammarsByContentReadingId(long contentReadingId);
     ContentReadingResponse acceptContentReading(long id);
+    ContentReadingResponse rejectContentReading(long id);
+
 }

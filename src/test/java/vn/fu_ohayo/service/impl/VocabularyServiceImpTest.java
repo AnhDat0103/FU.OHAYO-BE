@@ -87,6 +87,63 @@ class VocabularyServiceImpTest {
         assertEquals(ErrorEnum.VOCABULARY_EXISTS.getMessage(), ex.getMessage());
     }
 
+    // Test: existing vocabulary found, not deleted (should throw)
+    @Test
+    void handleSaveVocabulary_existingNotDeleted_throws() {
+        VocabularyRequest request = new VocabularyRequest();
+        request.setKanji("k");
+        request.setKana("ka");
+        request.setMeaning("m");
+        Vocabulary existing = new Vocabulary();
+        existing.setDeleted(false);
+
+        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(existing);
+
+        AppException ex = assertThrows(AppException.class, () -> vocabularyServiceImp.handleSaveVocabulary(request));
+        assertEquals(ErrorEnum.VOCABULARY_EXISTS.getMessage(), ex.getMessage());
+    }
+
+    // Test: existing vocabulary found, deleted (should restore and update)
+    @Test
+    void handleSaveVocabulary_existingDeleted_restores() {
+        VocabularyRequest request = new VocabularyRequest();
+        request.setKanji("k");
+        request.setKana("ka");
+        request.setMeaning("m");
+        Vocabulary existing = new Vocabulary();
+        existing.setDeleted(true);
+        existing.setVocabularyId(1);
+
+        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(existing);
+        when(vocabularyRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(vocabularyRepository.existsDuplicateVocabularyExceptId(any(), any(), anyInt())).thenReturn(false); // for updatePutVocabulary
+        when(vocabularyRepository.save(any())).thenReturn(existing);
+        when(vocabularyMapper.toVocabularyResponse(any())).thenReturn(new VocabularyResponse());
+
+        VocabularyResponse response = vocabularyServiceImp.handleSaveVocabulary(request);
+        assertNotNull(response);
+        assertFalse(existing.getDeleted());
+    }
+
+    // Test: no existing vocabulary (should create new)
+    @Test
+    void handleSaveVocabulary_newVocabulary_creates() {
+        VocabularyRequest request = new VocabularyRequest();
+        request.setKanji("k");
+        request.setKana("ka");
+        request.setMeaning("m");
+
+        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(null);
+        Vocabulary newVocab = new Vocabulary();
+        when(vocabularyMapper.toVocabulary(request)).thenReturn(newVocab);
+        when(vocabularyRepository.save(any())).thenReturn(newVocab);
+        when(vocabularyMapper.toVocabularyResponse(any())).thenReturn(new VocabularyResponse());
+
+        VocabularyResponse response = vocabularyServiceImp.handleSaveVocabulary(request);
+        assertNotNull(response);
+        assertFalse(newVocab.getDeleted());
+    }
+
     // Tests for updatePutVocabulary(int vocabularyId, VocabularyRequest vocabularyRequest)
     @Test
     void updatePutVocabulary_success_updateAllFields() {
@@ -188,60 +245,5 @@ class VocabularyServiceImpTest {
 
     }
 
-    // Test: existing vocabulary found, not deleted (should throw)
-    @Test
-    void handleSaveVocabulary_existingNotDeleted_throws() {
-        VocabularyRequest request = new VocabularyRequest();
-        request.setKanji("k");
-        request.setKana("ka");
-        request.setMeaning("m");
-        Vocabulary existing = new Vocabulary();
-        existing.setDeleted(false);
 
-        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(existing);
-
-        AppException ex = assertThrows(AppException.class, () -> vocabularyServiceImp.handleSaveVocabulary(request));
-        assertEquals(ErrorEnum.VOCABULARY_EXISTS.getMessage(), ex.getMessage());
-    }
-
-    // Test: existing vocabulary found, deleted (should restore and update)
-    @Test
-    void handleSaveVocabulary_existingDeleted_restores() {
-        VocabularyRequest request = new VocabularyRequest();
-        request.setKanji("k");
-        request.setKana("ka");
-        request.setMeaning("m");
-        Vocabulary existing = new Vocabulary();
-        existing.setDeleted(true);
-        existing.setVocabularyId(1);
-
-        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(existing);
-        when(vocabularyRepository.findById(1)).thenReturn(Optional.of(existing));
-        when(vocabularyRepository.existsDuplicateVocabularyExceptId(any(), any(), anyInt())).thenReturn(false); // for updatePutVocabulary
-        when(vocabularyRepository.save(any())).thenReturn(existing);
-        when(vocabularyMapper.toVocabularyResponse(any())).thenReturn(new VocabularyResponse());
-
-        VocabularyResponse response = vocabularyServiceImp.handleSaveVocabulary(request);
-        assertNotNull(response);
-        assertFalse(existing.getDeleted());
-    }
-
-    // Test: no existing vocabulary (should create new)
-    @Test
-    void handleSaveVocabulary_newVocabulary_creates() {
-        VocabularyRequest request = new VocabularyRequest();
-        request.setKanji("k");
-        request.setKana("ka");
-        request.setMeaning("m");
-
-        when(vocabularyRepository.findAllByKanjiAndKanaAndMeaning("k", "ka", "m")).thenReturn(null);
-        Vocabulary newVocab = new Vocabulary();
-        when(vocabularyMapper.toVocabulary(request)).thenReturn(newVocab);
-        when(vocabularyRepository.save(any())).thenReturn(newVocab);
-        when(vocabularyMapper.toVocabularyResponse(any())).thenReturn(new VocabularyResponse());
-
-        VocabularyResponse response = vocabularyServiceImp.handleSaveVocabulary(request);
-        assertNotNull(response);
-        assertFalse(newVocab.getDeleted());
-    }
 }

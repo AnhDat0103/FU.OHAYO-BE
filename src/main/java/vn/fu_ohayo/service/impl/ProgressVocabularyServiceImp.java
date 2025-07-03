@@ -17,6 +17,7 @@ import vn.fu_ohayo.repository.VocabularyRepository;
 import vn.fu_ohayo.service.ProgressVocabularyService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -131,6 +132,7 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
         }
         progressVocabulary.setProgressStatus(request.getStatus().equals("MASTERED") ?
                 ProgressStatus.COMPLETED : ProgressStatus.IN_PROGRESS);
+        progressVocabulary.setReviewedAt(new Date());
 
         progressVocabularyRepository.save(progressVocabulary);
     }

@@ -45,7 +45,6 @@ public class AuthenticationController {
     UserRepository userRepository;
     AuthenticationServiceImp authenticationService;
     JwtService jwtService;
-    UserMapper userMapper;
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> registerInit(@RequestBody InitialRegisterRequest initialRegisterRequest) {

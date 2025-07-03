@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.AuthConfig;
@@ -84,25 +85,31 @@ public class UserServiceImp implements UserService {
     @Override
     public ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if(!userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.INACTIVE)) {
+        if(userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.INACTIVE)) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
-//        String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
-//        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
-//            throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
-//        }
+        String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
+            throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
+        }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
-        var user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
-//        if (!emailParent.equals("anonymousUser")) {
-//            User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-//            ParentStudent parentStudent = ParentStudent.builder()
-//                    .verificationCode("")
-//                    .parent(parent)
-//                    .student(user)
-//                    .parentCodeStatus(ParentCodeStatus.CONFIRM)
-//                    .build();
-//            parentStudentRepository.save(parentStudent);
-//        }
+            User user = null;
+        if(!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
+             user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
+        }
+        else {
+            user = userRepository.findByEmail(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        }
+        if (!emailParent.equals("anonymousUser")) {
+            User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+            ParentStudent parentStudent = ParentStudent.builder()
+                    .verificationCode("")
+                    .parent(parent)
+                    .student(user)
+                    .parentCodeStatus(ParentCodeStatus.CONFIRM)
+                    .build();
+            parentStudentRepository.save(parentStudent);
+        }
         String token = jwtService.generateAccessToken(user.getUserId(), initialRegisterRequest.getEmail(), null);
         mailService.sendEmail(initialRegisterRequest.getEmail(), token);
         return ApiResponse.<InitialRegisterRequest>builder()
@@ -219,27 +226,10 @@ public class UserServiceImp implements UserService {
     public UserResponse getUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        MembershipLevelOfUser membershipLevelOfUser = memberShipLevelOfUserRepository.findByUserUserId(user.getUserId());
 
-        if (membershipLevelOfUser != null && membershipLevelOfUser.getEndDate().isAfter(LocalDate.now())) {
-            user.setMembershipLevel(MembershipLevel.ONE_MONTH);
-        }
-        else if(membershipLevelOfUser != null && !membershipLevelOfUser.getEndDate().isAfter(LocalDate.now())) {
-            user.setMembershipLevel(MembershipLevel.NORMAL);
-        }
-        userRepository.save(user);
             UserResponse userResponse = userMapper.toUserResponse(user);
             List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
             List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
-            filteredChildren.forEach(parentStudent -> {
-                MembershipLevelOfUser membershipLevelOfUser1 = memberShipLevelOfUserRepository.findByUserUserId(parentStudent.getStudent().getUserId());
-                 if(membershipLevelOfUser1 != null && !membershipLevelOfUser1.getEndDate().isAfter(LocalDate.now())) {
-                     User user1 = userRepository.findByEmail(parentStudent.getStudent().getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-                     user1.setMembershipLevel(MembershipLevel.NORMAL);
-                     userRepository.save(user1);
-                }
-
-            });
             if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
                 userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
 
@@ -250,4 +240,16 @@ public class UserServiceImp implements UserService {
 
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void setMemberShipLevel() {
+        List<MembershipLevelOfUser> memberships = memberShipLevelOfUserRepository.findAll();
+        memberships.forEach((user) -> {
+            LocalDate today = LocalDate.now();
+            if (user.getEndDate().isBefore(today)) {
+                User user1 = user.getUser();
+                user1.setMembershipLevel(MembershipLevel.NORMAL);
+                userRepository.save(user1);
+            }
+        });
+    }
 }

@@ -51,7 +51,7 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public Page<SubjectResponse> getAllActiveSubjects(int page, int size, String email) {
-        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.ACTIVE, email, PageRequest.of(page, size))
+        return subjectRepository.findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus.PUBLIC, email, PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
                     s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
@@ -63,7 +63,7 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size) {
-        return subjectRepository.findAll(PageRequest.of(page, size))
+        return subjectRepository.findAllByIsDeleted(false,PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
                     s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
@@ -75,7 +75,7 @@ public class SubjectServiceImp implements SubjectService {
     @Override
     public Page<ProgressSubjectResponse> getAllByUserId(int page, int size, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        Page<ProgressSubject> progressSubjects = progressSubjectRepository.findAllByUserAndSubject_Status(user, SubjectStatus.ACTIVE, PageRequest.of(page, size));
+        Page<ProgressSubject> progressSubjects = progressSubjectRepository.findAllByUserAndSubject_Status(user, SubjectStatus.PUBLIC, PageRequest.of(page, size));
 
         if (progressSubjects.hasContent()) {
             return progressSubjects.map(ps -> {
@@ -94,8 +94,8 @@ public class SubjectServiceImp implements SubjectService {
     }
 
     @Override
-    public Page<SubjectResponse> getAllActiveSubjects(int page, int size) {
-        return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE, PageRequest.of(page, size))
+    public Page<SubjectResponse> getAllPublicSubjects(int page, int size) {
+        return subjectRepository.findAllByStatusAndIsDeleted(SubjectStatus.PUBLIC, false, PageRequest.of(page, size))
                 .map(subjectMapper::toSubjectResponse)
                 .map(s -> {
                     s.setCountUsers(progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) > 0 ? progressSubjectRepository.countUserBySubject_SubjectId(s.getSubjectId()) : 0);
@@ -106,12 +106,36 @@ public class SubjectServiceImp implements SubjectService {
 
     @Override
     public List<SubjectResponse> getAllListActiveSubjectsByStatus() {
-        return subjectRepository.findAllByStatus(SubjectStatus.ACTIVE).stream().map(subjectMapper::toSubjectResponse).toList() ;
+        return subjectRepository.findAllByStatus(SubjectStatus.PUBLIC).stream().map(subjectMapper::toSubjectResponse).toList() ;
     }
 
     @Override
     public List<SubjectResponse> getAllListSubjects() {
         return subjectRepository.findAll().stream().map(subjectMapper::toSubjectResponse).toList() ;
+    }
+
+    @Override
+    public SubjectResponse acceptSubject(int id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+        if (subject.getStatus() == SubjectStatus.DRAFT) {
+            subject.setStatus(SubjectStatus.PUBLIC);
+            Subject updatedSubject = subjectRepository.save(subject);
+            return subjectMapper.toSubjectResponse(updatedSubject);
+        }
+        return null;
+    }
+
+    @Override
+    public SubjectResponse rejectSubject(int id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+        if (subject.getStatus() == SubjectStatus.DRAFT) {
+            subject.setStatus(SubjectStatus.REJECTED);
+            Subject updatedSubject = subjectRepository.save(subject);
+            return subjectMapper.toSubjectResponse(updatedSubject);
+        }
+        return null;
     }
 
     @Override
@@ -123,7 +147,8 @@ public class SubjectServiceImp implements SubjectService {
             throw new AppException(ErrorEnum.SUBJECT_NAME_EXISTS);
         }
         Subject subject = subjectMapper.toSubject(subjectRequest);
-        subject.setStatus(SubjectStatus.INACTIVE);
+        subject.setStatus(SubjectStatus.DRAFT);
+        subject.setIsDeleted(false);
         return subjectMapper.toSubjectResponse(subjectRepository.save(subject));
     }
 
@@ -152,6 +177,7 @@ public class SubjectServiceImp implements SubjectService {
         if (subjectRequest.getThumbnailUrl() != null) {
             subject.setThumbnailUrl(subjectRequest.getThumbnailUrl());
         }
+        subject.setStatus(SubjectStatus.DRAFT);
         Subject updatedSubject = subjectRepository.save(subject);
         return subjectMapper.toSubjectResponse(updatedSubject);
     }
@@ -160,10 +186,10 @@ public class SubjectServiceImp implements SubjectService {
     public void deleteSubject(int id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
-        if (progressSubjectRepository.countUserBySubject_SubjectId(id) > 0) {
-            throw new AppException(ErrorEnum.SUBJECT_IN_USE);
-        }
-        subjectRepository.delete(subject);
+
+        subject.setStatus(SubjectStatus.DRAFT);
+        subject.setIsDeleted(true);
+        subjectRepository.save(subject);
     }
 
     @Override

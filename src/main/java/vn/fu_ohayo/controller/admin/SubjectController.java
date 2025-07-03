@@ -64,7 +64,7 @@ public class SubjectController {
                 .code("200")
                 .status("success")
                 .message("Get all subjects successfully")
-                .data(subjectService.getAllActiveSubjects(page, size))
+                .data(subjectService.getAllPublicSubjects(page, size))
                 .build();
     }
 
@@ -106,6 +106,25 @@ public class SubjectController {
                 .data(subjectService.updateSubject(id, subjectRequest))
                 .build();
     }
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<SubjectResponse> acceptSubject(@PathVariable("id") int id) {
+        return ApiResponse.<SubjectResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Subject accepted successfully")
+                .data(subjectService.acceptSubject(id))
+                .build();
+    }
+
+    @PatchMapping("/reject/{id}")
+    public ApiResponse<SubjectResponse> rejectSubject(@PathVariable("id") int id) {
+        return ApiResponse.<SubjectResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Subject rejected successfully")
+                .data(subjectService.rejectSubject(id))
+                .build();
+    }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteSubject(@PathVariable("id") int id) {
@@ -118,7 +137,7 @@ public class SubjectController {
     }
 
     @GetMapping("/status")
-    public ApiResponse<List<SubjectStatus>> getLessonStatuses() {
+    public ApiResponse<List<SubjectStatus>> getSubjectStatus() {
         List<SubjectStatus> statuses = List.of(SubjectStatus.values());
         return ApiResponse.<List<SubjectStatus>>builder()
                 .code("200")

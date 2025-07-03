@@ -45,9 +45,11 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     Page<Subject> findAllByStatusAndProgressSubjectsIsEmpty(SubjectStatus status,String email ,Pageable pageable);
 
 
-    Page<Subject> findAllByStatus(SubjectStatus status, Pageable pageable);
+    Page<Subject> findAllByIsDeleted(Boolean isDeleted, Pageable pageable);
 
     List<Subject> findAllBySubjectIdIn(List<Integer> subjectIds);
 
     List<Subject> findAllByStatus(SubjectStatus status);
+
+    Page<Subject> findAllByStatusAndIsDeleted(SubjectStatus status, Boolean isDeleted, Pageable pageable);
 }

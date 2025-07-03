@@ -28,6 +28,8 @@ public class SubjectResponse {
 
     private int countUsers;
 
+    private Date createdAt;
+
     private Date updatedAt;
 
     private int countLessons;
@@ -37,7 +39,7 @@ public class SubjectResponse {
     public SubjectResponse(int subjectId, String subjectCode, String subjectName,
                            String description,SubjectStatus status, long countUsers,
                            Date updatedAt, int countLessons,
-                           String thumbnailUrl) {
+                           String thumbnailUrl, Date createdAt) {
         this.subjectId = subjectId;
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
@@ -47,6 +49,7 @@ public class SubjectResponse {
         this.updatedAt = updatedAt;
         this.countLessons = countLessons;
         this.thumbnailUrl = thumbnailUrl;
+        this.createdAt = createdAt;
     }
 
 }

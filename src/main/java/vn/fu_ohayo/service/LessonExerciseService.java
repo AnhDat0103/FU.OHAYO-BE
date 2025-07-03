@@ -19,6 +19,12 @@ public interface LessonExerciseService {
 
     Page<ExerciseQuestionResponse> getExerciseQuestionByExerciseLesson(int page, int size, int exerciseId);
 
+    Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size);
+
+    void handleSaveExerciseQuestionIntoLesson(Long lessonId, Long exerciseQuestionId);
+
+    void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId);
+
     LessonExercise getLessonExerciseById(int id);
 
 }

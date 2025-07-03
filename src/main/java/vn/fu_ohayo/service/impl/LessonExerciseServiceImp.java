@@ -32,14 +32,16 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     private final ExerciseQuestionRepository exerciseQuestionRepository;
     private final AnswerQuestionRepository answerQuestionRepository;
     private final LessonExerciseRepository lessonExerciseRepository;
+    private final ExerciseQuestionMapper exerciseQuestionMapper;
 
     public LessonExerciseServiceImp(LessonRepository lessonRepository, ExerciseQuestionRepository exerciseQuestionRepository,
                                     AnswerQuestionRepository answerQuestionRepository,
-                                    LessonExerciseRepository lessonExerciseRepository) {
+                                    LessonExerciseRepository lessonExerciseRepository, ExerciseQuestionMapper exerciseQuestionMapper) {
         this.lessonRepository = lessonRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.lessonExerciseRepository = lessonExerciseRepository;
+        this.exerciseQuestionMapper = exerciseQuestionMapper;
     }
 
 
@@ -228,6 +230,21 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     }
 
     @Override
+    public void handleSaveExerciseQuestionIntoLesson(Long lessonId, Long exerciseQuestionId) {
+        exerciseQuestionRepository.saveExerciseQuestionIntoLessonId(lessonId, exerciseQuestionId);
+    }
+
+    @Override
+    public void handleDeleteExerciseQuestionFromLesson(Long lessonId, Long exerciseQuestionId) {
+        exerciseQuestionRepository.removeExerciseQuestionInLessonId(exerciseQuestionId, lessonId);
+    }
+
+    @Override
+    public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size) {
+        Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllAvailableExerciseQuestions(lessonId, PageRequest.of(page, size));
+        return exerciseQuestions.map(exerciseQuestionMapper::toExerciseQuestionResponse);
+    }
+
     public LessonExercise getLessonExerciseById(int id) {
         return lessonExerciseRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
     }

@@ -8,7 +8,7 @@ import vn.fu_ohayo.entity.ExerciseResult;
 import java.util.List;
 
 @Repository
-public interface ExerciseResultRepository extends JpaRepository<ExerciseResult, Long> {
+public interface ExerciseResultRepository extends JpaRepository<ExerciseResult, Integer> {
     List<ExerciseResult> findAllByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
      int countByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
     @Query(value = "SELECT er FROM ExerciseResult er " +

@@ -22,5 +22,7 @@ public interface ExerciseQuestionService {
     List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(
     List<ExerciseQuestionRequest> ExerciseQuestionRequests);
     Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size);
+    ExerciseQuestionResponse acceptExerciseQuestion (int id);
+    ExerciseQuestionResponse rejectExerciseQuestion (int id);
 
 }

@@ -18,5 +18,7 @@ public interface SubjectService {
     Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size);
     Page<ProgressSubjectResponse> getAllByUserId(int page, int size, String email);
     Page<SubjectResponse> getAllActiveSubjects(int page, int size);
-    List<SubjectResponse> getAllListActiveSubjects();
+    List<SubjectResponse> getAllListActiveSubjectsByStatus();
+    List<SubjectResponse> getAllListSubjects();
+
 }

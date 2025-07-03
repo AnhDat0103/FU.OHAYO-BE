@@ -10,8 +10,10 @@ import vn.fu_ohayo.dto.request.LessonExerciseRequest;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
-import vn.fu_ohayo.dto.response.VocabularyResponse;
-import vn.fu_ohayo.entity.*;
+import vn.fu_ohayo.entity.AnswerQuestion;
+import vn.fu_ohayo.entity.ExerciseQuestion;
+import vn.fu_ohayo.entity.Lesson;
+import vn.fu_ohayo.entity.LessonExercise;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
@@ -53,22 +55,21 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     public Page<LessonExerciseResponse> getAllContentByLesson(int page, int size, int lessonId) {
         Lesson lesson = handleGetLessonById(lessonId);
         Page<LessonExercise> lessonExercises = lessonExerciseRepository.findAllByLesson(lesson, PageRequest.of(page, size));
-        return  lessonExercises.map(le-> {
-                    List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(le);
-                    if(exerciseQuestions.isEmpty()) {
-                        throw new AppException(ErrorEnum.EXERCISE_QUESTION_NOT_FOUND);
-                    }
-                    List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
-                    for (ExerciseQuestion exerciseQuestion : exerciseQuestions) {
-                        ExerciseQuestionResponse ex = ExerciseQuestionResponse.builder()
-                                .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
-                                .questionText(exerciseQuestion.getQuestionText())
-                                .updatedAt(exerciseQuestion.getUpdatedAt())
-                                .createdAt(exerciseQuestion.getCreatedAt())
-                                .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
-                                .build();
-                        exerciseQuestionResponses.add(ex);
-                    }
+        return lessonExercises.map(le -> {
+            List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(le);
+            List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
+            if (!exerciseQuestions.isEmpty()) {
+                for (ExerciseQuestion exerciseQuestion : exerciseQuestions) {
+                    ExerciseQuestionResponse ex = ExerciseQuestionResponse.builder()
+                            .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
+                            .questionText(exerciseQuestion.getQuestionText())
+                            .updatedAt(exerciseQuestion.getUpdatedAt())
+                            .createdAt(exerciseQuestion.getCreatedAt())
+                            .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
+                            .build();
+                    exerciseQuestionResponses.add(ex);
+                }
+            }
             return LessonExerciseResponse.builder()
                     .id(le.getExerciseId())
                     .title(le.getTitle())
@@ -154,6 +155,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                 .content(exerciseQuestionResponses)
                 .build();
     }
+
     @Override
     public LessonExerciseResponse createExerciseLesson(LessonExerciseRequest lessonExerciseRequest) {
         Lesson lesson = handleGetLessonById(lessonExerciseRequest.getLessonId());
@@ -239,12 +241,11 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     }
 
     @Override
-    public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size ) {
+    public Page<ExerciseQuestionResponse> getAllExerciseQuestions(Long lessonId, int page, int size) {
         Page<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllAvailableExerciseQuestions(lessonId, PageRequest.of(page, size));
         return exerciseQuestions.map(exerciseQuestionMapper::toExerciseQuestionResponse);
     }
 
-    @Override
     public LessonExercise getLessonExerciseById(int id) {
         return lessonExerciseRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
     }

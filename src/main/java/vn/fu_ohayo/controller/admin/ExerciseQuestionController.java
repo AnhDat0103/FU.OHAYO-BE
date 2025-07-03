@@ -5,19 +5,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
+import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.entity.ExerciseQuestion;
+import vn.fu_ohayo.service.ContentListeningService;
 import vn.fu_ohayo.service.ExerciseQuestionService;
+import vn.fu_ohayo.service.LessonExerciseService;
 
 import java.util.List;
+
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_CODE_RESPONSE;
+import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
 
 @RestController
 @RequestMapping("/question")
 public class ExerciseQuestionController {
 private final ExerciseQuestionService exerciseQuestionService;
+private final LessonExerciseService lessonExerciseService;
 
-    public ExerciseQuestionController(ExerciseQuestionService exerciseQuestionService) {
+    public ExerciseQuestionController(ExerciseQuestionService exerciseQuestionService, LessonExerciseService lessonExerciseService) {
         this.exerciseQuestionService = exerciseQuestionService;
+        this.lessonExerciseService = lessonExerciseService;
     }
 
     @GetMapping("/content_listening/{contentListeningId}")
@@ -33,7 +42,7 @@ private final ExerciseQuestionService exerciseQuestionService;
                 .build();
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionPage(
             @RequestParam(defaultValue="1" ) int page,
             @RequestParam(defaultValue = "5") int size ){
@@ -100,5 +109,30 @@ private final ExerciseQuestionService exerciseQuestionService;
                 .build();
     }
 
+    @PatchMapping("/{id}/accept")
+    public ApiResponse<ExerciseQuestionResponse> acceptExerciseQuestion(
+            @PathVariable Integer id
+    ) {
+        ExerciseQuestionResponse response = exerciseQuestionService.acceptExerciseQuestion(id);
+        return ApiResponse.<ExerciseQuestionResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
+
+    @PatchMapping("/{id}/reject")
+    public ApiResponse<ExerciseQuestionResponse> rejectExerciseQuestion(
+            @PathVariable Integer id
+    ) {
+        ExerciseQuestionResponse response = exerciseQuestionService.rejectExerciseQuestion(id);
+        return ApiResponse.<ExerciseQuestionResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
 
 }

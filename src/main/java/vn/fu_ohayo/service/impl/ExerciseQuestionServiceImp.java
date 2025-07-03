@@ -122,9 +122,11 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
         }
         if(exerciseQuestionRequest.getExerciseId() != null) {
             exerciseQuestion.setLessonExercise(lessonExerciseService.getLessonExerciseById(exerciseQuestionRequest.getExerciseId()));
+            exerciseQuestion.setContentListening(null);
         }
         if(exerciseQuestionRequest.getContentListeningId() != null) {
             exerciseQuestion.setContentListening(contentListeningService.getContentListeningById(exerciseQuestionRequest.getContentListeningId()));
+            exerciseQuestion.setLessonExercise(null);
         }
 //        exerciseQuestion.getAnswerQuestions().clear();
 

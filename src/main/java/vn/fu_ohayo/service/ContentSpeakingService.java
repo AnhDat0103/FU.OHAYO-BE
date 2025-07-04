@@ -2,9 +2,11 @@ package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
+import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentSpeaking;
+import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.List;
 
@@ -30,5 +32,6 @@ public interface ContentSpeakingService {
     ContentSpeakingResponse acceptContentSpeaking(long id);
 
     ContentSpeakingResponse rejectContentSpeaking(long id);
+    List<ContentSpeakingResponse> getListContentSpeakingBylever(JlptLevel jlptLevel);
 
 }

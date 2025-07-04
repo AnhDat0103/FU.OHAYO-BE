@@ -100,4 +100,10 @@ public class DialogueServiceImp implements DialogueService {
          List<Dialogue> dialogues = dialogueRepository.findByContentSpeaking(contentSpeaking);
         dialogueRepository.deleteAll(dialogues);
     }
+
+    @Override
+    public Page<Dialogue> getAllDialoguePage(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Dialogue> dialoguePage = dialogueRepository.findAll(pageable);
+        return dialoguePage;    }
 }

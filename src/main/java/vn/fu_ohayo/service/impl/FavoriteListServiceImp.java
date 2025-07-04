@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import vn.fu_ohayo.dto.request.AddFavoriteFolderRequest;
 import vn.fu_ohayo.dto.request.FavoriteListDetailRequest;
 import vn.fu_ohayo.dto.request.FavoriteListRequest;
@@ -16,9 +18,7 @@ import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.enums.PartOfSpeech;
 import vn.fu_ohayo.mapper.GrammarMapper;
 import vn.fu_ohayo.mapper.VocabularyMapper;
-import vn.fu_ohayo.repository.FavoriteListGrammarRepository;
-import vn.fu_ohayo.repository.FavoriteListRepository;
-import vn.fu_ohayo.repository.FavoriteListVocabularyRepository;
+import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.FavoriteListService;
 
 import java.util.ArrayList;
@@ -33,8 +33,59 @@ public class FavoriteListServiceImp implements FavoriteListService {
     private final FavoriteListRepository favoriteListRepository;
     private final FavoriteListVocabularyRepository favoriteListVocabularyRepository;
     private final FavoriteListGrammarRepository favoriteListGrammarRepository;
+    private final VocabularyRepository vocabularyRepository;
+    private final GrammarRepository grammarRepository;
     private final VocabularyMapper vocabularyMapper;
     private final GrammarMapper grammarMapper;
+
+    @Override
+    @Transactional
+    public void addItemToFavoriteList(long favoriteListId, String type, int itemId) {
+        FavoriteList favoriteList = favoriteListRepository.findById(favoriteListId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Favorite list not found with ID: " + favoriteListId));
+
+        if ("vocabulary".equalsIgnoreCase(type)) {
+            Vocabulary vocabulary = vocabularyRepository.findById(itemId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vocabulary not found with ID: " + itemId));
+
+            // Check if vocabulary already exists in the favorite list
+            if (favoriteListVocabularyRepository.findByFavoriteListIdAndVocabularyId(favoriteListId, itemId).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Vocabulary already exists in this favorite list.");
+            }
+
+            FavoriteListVocabulary favoriteListVocabulary = FavoriteListVocabulary.builder()
+                    .favoriteListId(favoriteList.getFavoriteId())
+                    .vocabularyId(vocabulary.getVocabularyId())
+                    .favoriteList(favoriteList)
+                    .vocabulary(vocabulary)
+                    .status(FlashcardEnum.NOT_LEARNED) // Default status for new items
+                    .lastReviewedAt(new Date())
+                    .build();
+            favoriteListVocabularyRepository.save(favoriteListVocabulary);
+
+        } else if ("grammar".equalsIgnoreCase(type)) {
+            Grammar grammar = grammarRepository.findById(itemId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Grammar not found with ID: " + itemId));
+
+            // Check if grammar already exists in the favorite list
+            if (favoriteListGrammarRepository.findByFavoriteListIdAndGrammarId(favoriteListId, itemId).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Grammar already exists in this favorite list.");
+            }
+
+            FavoriteListGrammar favoriteListGrammar = FavoriteListGrammar.builder()
+                    .favoriteListId(favoriteList.getFavoriteId())
+                    .grammarId(grammar.getGrammarId())
+                    .favoriteList(favoriteList)
+                    .grammar(grammar)
+                    .status(FlashcardEnum.NOT_LEARNED) // Default status for new items
+                    .lastReviewedAt(new Date())
+                    .build();
+            favoriteListGrammarRepository.save(favoriteListGrammar);
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid content type: " + type + ". Must be 'vocabulary' or 'grammar'.");
+        }
+    }
 
     @Override
     public List<FlashcardResponse> getAllFlashcards(String type, long favoriteListId) {
@@ -47,7 +98,7 @@ public class FavoriteListServiceImp implements FavoriteListService {
         if ("vocabulary".equalsIgnoreCase(type)) {
             // 2a. Lấy Vocabulary
             List<FavoriteListVocabulary> vocabs =
-                    favoriteListVocabularyRepository.findByFavoriteListId(favoriteListId);
+                    favoriteListVocabularyRepository.findByFavoriteListIdWithVocabulary(favoriteListId);
             for (FavoriteListVocabulary fv : vocabs) {
                 var v = fv.getVocabulary();
                 result.add(FlashcardResponse.builder()
@@ -66,7 +117,7 @@ public class FavoriteListServiceImp implements FavoriteListService {
         } else if ("grammar".equalsIgnoreCase(type)) {
             // 2b. Lấy Grammar
             List<FavoriteListGrammar> grams =
-                    favoriteListGrammarRepository.findByFavoriteListId(favoriteListId);
+                    favoriteListGrammarRepository.findByFavoriteListIdWithGrammar(favoriteListId);
             for (FavoriteListGrammar fg : grams) {
                 var g = fg.getGrammar();
                 result.add(FlashcardResponse.builder()
@@ -281,7 +332,7 @@ public class FavoriteListServiceImp implements FavoriteListService {
     }
 
     @Override
-    public FavoriteDetailResponse getFavoriteFolderById(Long folderId, FavoriteListDetailRequest request) {
+    public FavoriteDetailResponse getFavoriteFolderById(boolean exclude, Long folderId, FavoriteListDetailRequest request) {
         FavoriteList favoriteList = favoriteListRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("Folder not found"));
 
@@ -298,16 +349,28 @@ public class FavoriteListServiceImp implements FavoriteListService {
         Page<VocabularyResponse> vocabularyPage = Page.empty();
         Page<GrammarResponse> grammarPage = Page.empty();
 
-        if (type.equals("vocabulary")) {
-            vocabularyPage = favoriteListVocabularyRepository.searchVocabulariesByFolderId(
-                    folderId, keyword, part, jlpt, pageable
-            ).map(vocabularyMapper::toVocabularyResponse);
+        if ("vocabulary".equalsIgnoreCase(type)) {
+            if (exclude) {
+                vocabularyPage = favoriteListVocabularyRepository.searchVocabulariesNotInFolder(
+                        folderId, keyword, part, jlpt, pageable
+                ).map(vocabularyMapper::toVocabularyResponse);
+            } else {
+                vocabularyPage = favoriteListVocabularyRepository.searchVocabulariesByFolderId(
+                        folderId, keyword, part, jlpt, pageable
+                ).map(vocabularyMapper::toVocabularyResponse);
+            }
         }
 
-        if (type.equals("grammar")) {
-            grammarPage = favoriteListGrammarRepository.searchGrammarsByFolderId(
-                    folderId, keyword, jlpt, pageable
-            ).map(grammarMapper::toGrammarResponse);
+        if ("grammar".equalsIgnoreCase(type)) {
+            if (exclude) {
+                grammarPage = favoriteListGrammarRepository.searchGrammarsNotInFolder(
+                        folderId, keyword, jlpt, pageable
+                ).map(grammarMapper::toGrammarResponse);
+            } else {
+                grammarPage = favoriteListGrammarRepository.searchGrammarsByFolderId(
+                        folderId, keyword, jlpt, pageable
+                ).map(grammarMapper::toGrammarResponse);
+            }
         }
 
         return FavoriteDetailResponse.builder()

@@ -22,7 +22,8 @@ public interface FavoriteListService {
     void createFavoriteFolder(User username, AddFavoriteFolderRequest request);
     void updateFavoriteFolder(Long id, AddFavoriteFolderRequest request);
     void deleteFavoriteFolder(Long id);
-    FavoriteDetailResponse getFavoriteFolderById(Long folderId,
+    FavoriteDetailResponse getFavoriteFolderById(boolean exclude, Long folderId,
                                                  FavoriteListDetailRequest req);
     FlashCardStatusResponse getFlashCardStatus(int favoriteListId);
+    void addItemToFavoriteList(long favoriteListId, String type, int itemId);
 }

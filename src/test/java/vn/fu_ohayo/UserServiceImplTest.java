@@ -35,16 +35,16 @@ class UserServiceImplTest {
     @Test
     void deleteUser_whenUserExists_shouldMarkAsDeleted() {
         Long userId = 1L;
-        User mockUser = new User();
-        mockUser.setUserId(userId);
-        mockUser.setDeleted(false);
+        User inputUser = new User();
+        inputUser.setUserId(userId);
+        inputUser.setDeleted(false);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(inputUser));
 
         userService.deleteUser(userId);
 
-        assertTrue(mockUser.isDeleted());
-        verify(userRepository).save(mockUser);
+        assertTrue(inputUser.isDeleted());
+        verify(userRepository).save(inputUser);
     }
 
     @Test

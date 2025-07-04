@@ -21,7 +21,8 @@ public interface FavoriteListGrammarRepository
     @Query("SELECT g.grammarId FROM FavoriteListGrammar g WHERE g.favoriteListId = :listId AND g.status = :status")
     List<Integer> findGrammarIdsByFavoriteListIdAndStatus(@Param("listId") long listId,
                                                           @Param("status") FlashcardEnum status);
-    List<FavoriteListGrammar> findByFavoriteListId(long favoriteListId);
+    @Query("SELECT flg FROM FavoriteListGrammar flg JOIN FETCH flg.grammar g WHERE flg.favoriteList.favoriteId = :favoriteListId AND g.deleted = FALSE")
+    List<FavoriteListGrammar> findByFavoriteListIdWithGrammar(@Param("favoriteListId") long favoriteListId);
     long countByFavoriteListId(int favoriteListId);
     long countByFavoriteListIdAndStatus(int favoriteListId, FlashcardEnum status);
     Optional<FavoriteListGrammar>findByFavoriteListIdAndGrammarId(long listId, int gramId);
@@ -42,4 +43,25 @@ public interface FavoriteListGrammarRepository
             @Param("jlptLevel") JlptLevel jlptLevel,
             Pageable pageable
     );
+
+    @Query("SELECT g FROM Grammar g " +
+            "WHERE g.deleted = false " +
+            "AND (:kw IS NULL OR (" +
+            "   LOWER(g.titleJp) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+            "OR LOWER(g.meaning) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+            "OR LOWER(g.structure) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+            "OR LOWER(g.example) LIKE LOWER(CONCAT('%', :kw, '%')) " +
+            "OR LOWER(g.usage) LIKE LOWER(CONCAT('%', :kw, '%'))" +
+            ")) " +
+            "AND (:jlptLevel IS NULL OR g.jlptLevel = :jlptLevel) " +
+            "AND g.grammarId NOT IN (" +
+            "   SELECT fg.grammar.grammarId FROM FavoriteListGrammar fg WHERE fg.favoriteList.favoriteId = :folderId" +
+            ")")
+    Page<Grammar> searchGrammarsNotInFolder(
+            @Param("folderId") Long folderId,
+            @Param("kw") String keyword,
+            @Param("jlptLevel") JlptLevel jlptLevel,
+            Pageable pageable
+    );
+    Optional<FavoriteListGrammar> findByFavoriteListIdAndGrammarId(int favoriteListId, int grammarId);
 }

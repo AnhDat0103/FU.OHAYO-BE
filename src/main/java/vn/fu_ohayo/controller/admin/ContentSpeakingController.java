@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
+import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.service.ContentSpeakingService;
 
 import java.util.List;
@@ -126,6 +126,19 @@ public class ContentSpeakingController {
                 .status("success")
                 .message("Accept successfully")
                 .data(response)
+                .build();
+    }
+
+    @GetMapping("/jlptLevel")
+    public ApiResponse<List<ContentSpeakingResponse>> getContentSpeakingByLever(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam JlptLevel jlptLevel) {
+        return ApiResponse.<List<ContentSpeakingResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("success")
+                .data(contentSpeakingService.getListContentSpeakingBylever(jlptLevel))
                 .build();
     }
 }

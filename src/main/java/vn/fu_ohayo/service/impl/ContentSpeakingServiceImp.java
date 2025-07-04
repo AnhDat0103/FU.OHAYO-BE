@@ -11,6 +11,7 @@ import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentSpeakingRepository;
@@ -18,6 +19,7 @@ import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContentSpeakingServiceImp implements ContentSpeakingService {
@@ -134,6 +136,11 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
         contentSpeaking.setStatus(ContentStatus.REJECT);
         contentSpeakingRepository.save(contentSpeaking);
         return contentMapper.toContentSpeakingResponse(contentSpeaking);
+    }
+
+    @Override
+    public List<ContentSpeakingResponse> getListContentSpeakingBylever(JlptLevel jlptLevel) {
+        return contentSpeakingRepository.findAllByJlptLevel(jlptLevel).stream().map(contentMapper::toContentSpeakingResponse).collect(Collectors.toList());
     }
 
 }

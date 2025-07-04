@@ -17,4 +17,6 @@ public interface DialogueService {
     List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId);
     Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId);
     void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking);
+    Page<Dialogue> getAllDialoguePage(int page, int size);
+
 }

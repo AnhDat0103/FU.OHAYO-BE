@@ -1,5 +1,6 @@
 package vn.fu_ohayo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class Dialogue {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "content_speaking_id")
+    @JsonBackReference
     private ContentSpeaking contentSpeaking;
 
     @Column(name = "question_jp")

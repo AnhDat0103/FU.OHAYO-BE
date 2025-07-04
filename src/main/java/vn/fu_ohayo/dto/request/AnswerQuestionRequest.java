@@ -16,6 +16,8 @@ public class AnswerQuestionRequest {
 //    @NotNull(message = "Answer text cannot be null")
 //    @NotBlank(message = "Answer text cannot be blank")
     private int answerId;
+    @NotNull(message = "Answer not null")
+    @NotBlank(message = "Answer not null")
     private String answerText;
     @JsonProperty("correct")
     private Boolean isCorrect;

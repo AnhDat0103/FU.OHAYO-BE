@@ -22,7 +22,7 @@ public class ExerciseQuestionRequest {
     @NotBlank(message = "Question text cannot be blank")
     private String questionText;
     @NotNull(message = "The list must contain at least 2 answer")
-    @Size(min = 2, message = "The list must contain aßt least 2 answer")
+    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestionRequest> answerQuestions;
     private Long contentListeningId;
     private Integer exerciseId;

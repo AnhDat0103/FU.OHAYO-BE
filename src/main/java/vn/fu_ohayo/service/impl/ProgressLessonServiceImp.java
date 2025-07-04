@@ -48,9 +48,9 @@ public class ProgressLessonServiceImp  implements ProgressLessonService {
         ProgressLesson existedProgressLesson = progressLessonRepository.findByUserAndLesson(user, lesson);
         if (existedProgressLesson != null) {
             existedProgressLesson.setViewedAt(new Date());
-            if (existedProgressLesson.getStatus() == ProgressStatus.IN_PROGRESS) {
-                existedProgressLesson.setStatus(ProgressStatus.COMPLETED);
-            }
+//            if (existedProgressLesson.getStatus() == ProgressStatus.IN_PROGRESS) {
+//                existedProgressLesson.setStatus(ProgressStatus.COMPLETED);
+//            }
             progressLessonRepository.save(existedProgressLesson);
             return progressLessonMapper.toProgressLessonMapper(existedProgressLesson);
         }

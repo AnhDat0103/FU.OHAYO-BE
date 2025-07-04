@@ -1,4 +1,4 @@
-package vn.fu_ohayo;
+package vn.fu_ohayo.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +12,6 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.UserRepository;
-import vn.fu_ohayo.service.impl.UserServiceImp;
 
 import java.util.Optional;
 

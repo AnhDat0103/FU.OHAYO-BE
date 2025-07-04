@@ -27,6 +27,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Where(clause = "is_deleted = false")
+@ToString(onlyExplicitlyIncluded = true)
 public class Vocabulary {
 
     @Id @GeneratedValue(
@@ -106,4 +107,5 @@ public class Vocabulary {
     protected void onUpdate() {
         updatedAt = new java.util.Date();
     }
+
 }

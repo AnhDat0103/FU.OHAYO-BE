@@ -63,6 +63,9 @@ public class Subject {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProgressSubject> progressSubjects;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();

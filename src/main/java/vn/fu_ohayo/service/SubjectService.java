@@ -17,8 +17,11 @@ public interface SubjectService {
     SubjectResponse getSubjectById(int id);
     Page<SubjectResponse> getAllSubjectsForAdmin(int page, int size);
     Page<ProgressSubjectResponse> getAllByUserId(int page, int size, String email);
-    Page<SubjectResponse> getAllActiveSubjects(int page, int size);
+    Page<SubjectResponse> getAllPublicSubjects(int page, int size);
     List<SubjectResponse> getAllListActiveSubjectsByStatus();
     List<SubjectResponse> getAllListSubjects();
 
+    SubjectResponse acceptSubject(int id);
+
+    SubjectResponse rejectSubject(int id);
 }

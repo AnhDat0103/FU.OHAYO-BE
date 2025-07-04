@@ -69,8 +69,8 @@ public class DashboardAdminServiceImp implements DashboardAdminService {
         );
         int totalUserNow = userRepository.countAllByStatus(UserStatus.ACTIVE);
         int totalUserBeforeThisMonth = userRepository.countAllByStatusAndCreatedAtBefore(UserStatus.ACTIVE, dateStartOfThisMonth);
-        int totalSubjectNow = subjectRepository.countAllByStatus(SubjectStatus.ACTIVE);
-        int totalSubjectBeforeThisMonth = subjectRepository.countAllByStatusAndCreatedAtBefore(SubjectStatus.ACTIVE, dateStartOfThisMonth);
+        int totalSubjectNow = subjectRepository.countAllByStatus(SubjectStatus.PUBLIC);
+        int totalSubjectBeforeThisMonth = subjectRepository.countAllByStatusAndCreatedAtBefore(SubjectStatus.PUBLIC, dateStartOfThisMonth);
         int totalLessonNow = lessonRepository.countAllByStatus(LessonStatus.PUBLIC);
         int totalLessonBeforeThisMonth = lessonRepository.countAllByStatusAndCreatedAtBefore(LessonStatus.PUBLIC, dateStartOfThisMonth);
         int totalProgressSubjectComplete = progressSubjectRepository.countAllByProgressStatus(ProgressStatus.COMPLETED);

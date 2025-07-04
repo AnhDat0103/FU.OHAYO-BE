@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 public class ProgressContentResponse {
     private int progressId;
-    private Content content;
+    private ContentResponse content;
     private Date createdAt;
     private int totalQuestions;
     private int correctAnswers;

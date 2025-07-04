@@ -1,8 +1,8 @@
 package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import vn.fu_ohayo.enums.FlashcardEnum;
+        import lombok.*;
+        import vn.fu_ohayo.enums.FlashcardEnum;
 
 import java.util.Date;
 

@@ -10,12 +10,16 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.Provider;
 import vn.fu_ohayo.enums.TokenType;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.service.JwtService;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -76,19 +80,40 @@ public class JwtServiceImp implements JwtService {
 
     @Override
     public ExtractTokenResponse extractUserInformation(String token, TokenType type) {
-        log.info("Extracting username from token: {}", token);
-        Claims claims = extractAllClaims(token, type);
-        String email = claims.getSubject();
-        Long id = claims.get("id", Long.class);
-        List<String> scope = (List<String>) claims.get("scope");
-        return new ExtractTokenResponse(email, id, scope);
+        if(extractAllClaims(token, type) != null) {
+            Claims claims = extractAllClaims(token, type);
+            String email = claims.getSubject();
+            Long id = claims.get("id", Long.class);
+            List<String> scope = (List<String>) claims.get("scope");
+            return new ExtractTokenResponse(email, id, scope);
+        }
+        return null;
     }
 
     private Claims extractAllClaims(String token, TokenType type) {
+        if(extractToken(token, type)) {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getKey(type))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        }
+        return null;
+    }
+
+    public boolean extractToken(String token, TokenType type) {
         try {
-            return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
-        }catch (SignatureException | ExpiredJwtException e) {
-            throw new AccessDeniedException(e.getMessage());
+            Jwts.parserBuilder()
+                    .setSigningKey(getKey(type))
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            log.error("Token expired: {}", e.getMessage());
+            throw new AppException(ErrorEnum.UNAUTHORIZED);
+        } catch (SignatureException e) {
+            log.error("Invalid token signature: {}", e.getMessage());
+            throw new AppException(ErrorEnum.FORBIDDEN);
         }
     }
 

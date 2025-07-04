@@ -9,6 +9,7 @@ import vn.fu_ohayo.entity.Vocabulary;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProgressVocabularyRepository extends JpaRepository<ProgressVocabulary, Integer> {
@@ -22,4 +23,6 @@ public interface ProgressVocabularyRepository extends JpaRepository<ProgressVoca
             "ORDER BY pv.reviewedAt DESC " +
             "FETCH FIRST :size ROWS ONLY", nativeQuery = false)
     List<ProgressVocabulary> findAllByUserAndTopOnReviewAndVocabularyIn(User user,List<Vocabulary> vocabularies, int size);
+
+    ProgressVocabulary findByUserAndVocabulary(User user, Vocabulary vocabulary);
 }

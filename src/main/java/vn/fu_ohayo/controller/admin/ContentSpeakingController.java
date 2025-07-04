@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.service.ContentSpeakingService;
+
 import java.util.List;
 
 
@@ -23,7 +25,7 @@ public class ContentSpeakingController {
 
     @GetMapping("/all")
     public ApiResponse<List<ContentSpeaking>> getContentSpeakings() {
-        return ApiResponse .    <List<ContentSpeaking>>builder()
+        return ApiResponse.<List<ContentSpeaking>>builder()
                 .code("200")
                 .status("success")
                 .message("success")
@@ -33,9 +35,9 @@ public class ContentSpeakingController {
 
     @GetMapping()
     public ApiResponse<Page<ContentSpeakingResponse>> getContentSpeakingPage(
-            @RequestParam(defaultValue="1" ) int page,
-            @RequestParam(defaultValue = "5") int size                                                                             ) {
-        return ApiResponse .    <Page<ContentSpeakingResponse>>builder()
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ApiResponse.<Page<ContentSpeakingResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("success")
@@ -44,8 +46,8 @@ public class ContentSpeakingController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ContentSpeaking> getContentSpeaking(@PathVariable  long id) {
-        return  ApiResponse.<ContentSpeaking>builder()
+    public ApiResponse<ContentSpeaking> getContentSpeaking(@PathVariable long id) {
+        return ApiResponse.<ContentSpeaking>builder()
                 .code("200")
                 .status("success")
                 .message("Get contentSpeaking by id")
@@ -55,7 +57,7 @@ public class ContentSpeakingController {
 
     @PostMapping
     public ApiResponse<ContentSpeaking> createContentSpeaking(@Valid @RequestBody ContentSpeakingRequest request) {
-        ContentSpeaking newContentSpeaking =contentSpeakingService.handleCreateContentSpeaking(request);
+        ContentSpeaking newContentSpeaking = contentSpeakingService.handleCreateContentSpeaking(request);
         return ApiResponse.<ContentSpeaking>builder()
                 .code("201")
                 .status("success")
@@ -79,7 +81,7 @@ public class ContentSpeakingController {
     public ApiResponse<ContentSpeakingResponse> updateContentSpeaking(
             @PathVariable Long id,
             @Valid @RequestBody ContentSpeakingRequest request) {
-        ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePutContentSpeaking(id,request );
+        ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePutContentSpeaking(id, request);
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")
                 .status("success")
@@ -89,10 +91,10 @@ public class ContentSpeakingController {
     }
 
     @PatchMapping("/{id}")
-    public  ApiResponse<ContentSpeakingResponse> patchContentSpeaking(
+    public ApiResponse<ContentSpeakingResponse> patchContentSpeaking(
             @PathVariable Long id,
-            @Valid @RequestBody ContentSpeakingRequest request){
-        ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePatchContentSpeaking(id,request );
+            @Valid @RequestBody ContentSpeakingRequest request) {
+        ContentSpeakingResponse contentSpeakingResponse = contentSpeakingService.updatePatchContentSpeaking(id, request);
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")
                 .status("success")
@@ -106,6 +108,19 @@ public class ContentSpeakingController {
             @PathVariable Long id
     ) {
         ContentSpeakingResponse response = contentSpeakingService.acceptContentSpeaking(id);
+        return ApiResponse.<ContentSpeakingResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
+
+    @PatchMapping("/reject/{id}")
+    public ApiResponse<ContentSpeakingResponse> rejectContentSpeaking(
+            @PathVariable Long id
+    ) {
+        ContentSpeakingResponse response = contentSpeakingService.rejectContentSpeaking(id);
         return ApiResponse.<ContentSpeakingResponse>builder()
                 .code("200")
                 .status("success")

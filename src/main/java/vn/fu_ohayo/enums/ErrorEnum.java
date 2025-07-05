@@ -64,6 +64,9 @@ public enum ErrorEnum {
     LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
     EXIST_AT_LEAST_CONTENT_LISTENING_OR_EXERCISE("4029", "Question exist at least in content listening or exercise"),
     PROGRESS_VOCABULARY_NOT_FOUND("4029", "Progress not found" ),
+    DIALOGUE_NOT_FOUND ("4029","Dialogue not found"),
+    INVALID_TYPE("4030","Type is not invalid (Exercise or content Listening)" ),
+
 
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
@@ -118,7 +121,6 @@ public enum ErrorEnum {
     public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
     public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
     public static final String NOT_EMPTY_STATUS = "Status can not null";
-
     private final String code;
     private final String message;
 }

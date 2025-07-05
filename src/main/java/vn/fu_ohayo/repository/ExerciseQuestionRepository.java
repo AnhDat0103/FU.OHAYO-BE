@@ -52,4 +52,7 @@ public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuesti
     @Query("SELECT eq FROM ExerciseQuestion eq WHERE eq.exerciseQuestionId NOT IN"
     + " (SELECT eq2.exerciseId FROM Lesson le JOIN le.lessonExercises eq2 WHERE le.lessonId = :lessonId)")
     Page<ExerciseQuestion> findAllAvailableExerciseQuestions(Long lessonId, Pageable pageable);
+
+    Page<ExerciseQuestion> findAllByLessonExerciseIsNotNull(Pageable pageable);
+    Page<ExerciseQuestion> findAllByContentListeningIsNotNull(Pageable pageable);
 }

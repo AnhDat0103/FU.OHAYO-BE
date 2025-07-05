@@ -132,6 +132,13 @@ public class ContentListeningServiceImp implements ContentListeningService {
     }
 
     @Override
+    public ContentListeningResponse inActiveContentListening(long id) {
+        ContentListening contentListening = getContentListeningById(id);
+        contentListening.setStatus(ContentStatus.IN_ACTIVE);
+        contentListeningRepository.save(contentListening);
+        return contentMapper.toContentListeningResponse(contentListening);    }
+
+    @Override
     public List<ContentListeningResponse> getListContentListeningsBylever(JlptLevel jlptLevel) {
         return contentListeningRepository.findAllByJlptLevel(jlptLevel).stream().map(contentMapper::toContentListeningResponse).collect(Collectors.toList());
     }

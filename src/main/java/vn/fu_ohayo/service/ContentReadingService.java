@@ -27,5 +27,6 @@ public interface ContentReadingService {
     List<GrammarResponse> getGrammarsByContentReadingId(long contentReadingId);
     ContentReadingResponse acceptContentReading(long id);
     ContentReadingResponse rejectContentReading(long id);
+    ContentReadingResponse inActiveContentReading(long id);
 
 }

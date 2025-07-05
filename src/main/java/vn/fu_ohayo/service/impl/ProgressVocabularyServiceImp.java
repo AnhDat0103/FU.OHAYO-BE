@@ -17,6 +17,7 @@ import vn.fu_ohayo.repository.VocabularyRepository;
 import vn.fu_ohayo.service.ProgressVocabularyService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -43,8 +44,9 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
     }
     // lấy ds các vocabulary của tất cả subject đang học của user
     private List<Vocabulary> getVocabulariesOfSubjectsInProgress(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         return progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .map(Subject::getLessons)
@@ -55,8 +57,11 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
     }
     // lấy ds các vocabulary của subject đang học của user
     private List<Vocabulary> getVocabulariesEachSubjectInProgress(User user, Subject subject) {
+//        ProgressSubject progressSubjects = progressSubjectRepository
+//                .findBySubjectAndUserAndProgressStatus(subject,user, ProgressStatus.IN_PROGRESS);
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         ProgressSubject progressSubjects = progressSubjectRepository
-                .findBySubjectAndUserAndProgressStatus(subject,user, ProgressStatus.IN_PROGRESS);
+                .findBySubjectAndUserAndProgressStatusIn(subject, user, statuses);
         return progressSubjects.getSubject().getLessons()
                 .stream()
                 .map(Lesson::getVocabularies)
@@ -65,8 +70,9 @@ public class ProgressVocabularyServiceImp implements ProgressVocabularyService {
     }
     // lấy ds số vocabulary đã học theo từng subject của user
     private List<CountLearnBySubjectResponse> getListCountLearnBySubject(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         List<Subject> subjects = progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .toList();

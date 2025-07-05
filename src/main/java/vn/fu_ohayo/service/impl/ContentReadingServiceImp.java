@@ -214,4 +214,12 @@ public class ContentReadingServiceImp implements ContentReadingService {
         contentReadingRepository.save(contentReading);
         return contentMapper.toContentReadingResponse(contentReading);
     }
+
+    @Override
+    public ContentReadingResponse inActiveContentReading(long id) {
+        ContentReading contentReading = getContentReadingById(id);
+        contentReading.setStatus(ContentStatus.IN_ACTIVE);
+        contentReadingRepository.save(contentReading);
+        return contentMapper.toContentReadingResponse(contentReading);
+    }
 }

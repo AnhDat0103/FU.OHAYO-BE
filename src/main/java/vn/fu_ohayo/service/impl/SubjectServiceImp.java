@@ -7,6 +7,7 @@ import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ProgressSubjectResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
@@ -118,6 +119,14 @@ public class SubjectServiceImp implements SubjectService {
     public SubjectResponse acceptSubject(int id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+        if(subject.getLessons().isEmpty()) {
+            throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
+        }
+        for(Lesson lesson : subject.getLessons()) {
+            if(lesson.getGrammars().isEmpty() && lesson.getLessonExercises().isEmpty() && lesson.getVocabularies().isEmpty()) {
+                throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
+            }
+        }
         if (subject.getStatus() == SubjectStatus.DRAFT) {
             subject.setStatus(SubjectStatus.PUBLIC);
             Subject updatedSubject = subjectRepository.save(subject);
@@ -131,7 +140,7 @@ public class SubjectServiceImp implements SubjectService {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
         if (subject.getStatus() == SubjectStatus.DRAFT) {
-            subject.setStatus(SubjectStatus.REJECTED);
+            subject.setStatus(SubjectStatus.INACTIVE);
             Subject updatedSubject = subjectRepository.save(subject);
             return subjectMapper.toSubjectResponse(updatedSubject);
         }

@@ -140,7 +140,19 @@ public class SubjectServiceImp implements SubjectService {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
         if (subject.getStatus() == SubjectStatus.DRAFT) {
-            subject.setStatus(SubjectStatus.INACTIVE);
+            subject.setStatus(SubjectStatus.REJECTED);
+            Subject updatedSubject = subjectRepository.save(subject);
+            return subjectMapper.toSubjectResponse(updatedSubject);
+        }
+        return null;
+    }
+
+    @Override
+    public SubjectResponse inactiveSubject(int id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND));
+        if (subject.getStatus() == SubjectStatus.PUBLIC) {
+            subject.setStatus(SubjectStatus.IN_ACTIVE);
             Subject updatedSubject = subjectRepository.save(subject);
             return subjectMapper.toSubjectResponse(updatedSubject);
         }

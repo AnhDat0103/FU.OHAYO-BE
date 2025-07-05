@@ -50,6 +50,7 @@ public enum ErrorEnum {
     LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
     LESSON_IN_USE("4028", "Lesson is using with any user" ),
     SUBJECT_CONTENT_EMPTY("4030", "Can not accept with any content in the Subject not found." ),
+    LESSON_NOT_COMPLETE("4031", "Can not accept with any content in the Lesson not found." ),
 
 
     VOCABULARY_EXISTS("4017", "Vocabulary already exists"),
@@ -71,7 +72,7 @@ public enum ErrorEnum {
     // 6xxx - PaymentErrorCode
 
     REQUEST_PAYMENT("6001","You send request for payment over 3 times / a day" ),
-    AUTH_CODE_NOT_FOUND("6002", "Auth code not found." );
+    AUTH_CODE_NOT_FOUND("6002", "Auth code not found." ) ;
 
 
 

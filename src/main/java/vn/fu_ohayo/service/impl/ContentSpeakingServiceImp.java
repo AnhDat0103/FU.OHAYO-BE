@@ -139,6 +139,13 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     }
 
     @Override
+    public ContentSpeakingResponse inActiveContentSpeaking(long id) {
+        ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        contentSpeaking.setStatus(ContentStatus.IN_ACTIVE);
+        contentSpeakingRepository.save(contentSpeaking);
+        return contentMapper.toContentSpeakingResponse(contentSpeaking);    }
+
+    @Override
     public List<ContentSpeakingResponse> getListContentSpeakingBylever(JlptLevel jlptLevel) {
         return contentSpeakingRepository.findAllByJlptLevel(jlptLevel).stream().map(contentMapper::toContentSpeakingResponse).collect(Collectors.toList());
     }

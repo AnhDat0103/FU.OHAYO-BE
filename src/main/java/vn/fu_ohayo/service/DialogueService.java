@@ -2,6 +2,7 @@ package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
 import vn.fu_ohayo.dto.request.DialogueRequest;
+import vn.fu_ohayo.dto.response.DialogueResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
 
@@ -18,5 +19,8 @@ public interface DialogueService {
     Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId);
     void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking);
     Page<Dialogue> getAllDialoguePage(int page, int size);
+    DialogueResponse acceptDialogue (long id);
+    DialogueResponse rejectDialogue (long id);
+    DialogueResponse inActiveDialogue (long id);
 
 }

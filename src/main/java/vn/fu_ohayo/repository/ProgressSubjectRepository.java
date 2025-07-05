@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import vn.fu_ohayo.entity.ProgressLesson;
 import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.User;
@@ -21,7 +22,7 @@ import vn.fu_ohayo.enums.SubjectStatus;
 public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject, Integer> {
     boolean existsBySubjectAndUser(Subject subject, User user);
 
-    List<ProgressSubject> findAllByUserAndProgressStatus(User user, ProgressStatus progressStatus);
+    List<ProgressSubject> findAllByUserAndProgressStatusIn(User user, List<ProgressStatus> statuses);
 
     ProgressSubject findProgressSubjectBySubjectAndUser(Subject subject, User user);
 
@@ -46,4 +47,6 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
 
     int countAllByProgressStatusAndSubject(ProgressStatus progressStatus, Subject subject);
     int countAllBySubject(Subject subject);
+    ProgressSubject findBySubjectAndUserAndProgressStatusIn(Subject subject,User user, List<ProgressStatus> statuses);
+
 }

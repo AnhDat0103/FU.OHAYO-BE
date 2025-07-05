@@ -22,4 +22,5 @@ public class ExerciseQuestionResponse {
     private Date updatedAt;
     private List<AnswerQuestionRequest> answerQuestions;
     private ContentStatus status;
+    ContentListeningResponse contentListening;
 }

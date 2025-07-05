@@ -16,6 +16,7 @@ import vn.fu_ohayo.repository.ProgressSubjectRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.ExerciseResultService;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -34,8 +35,9 @@ public class ExerciseResultServiceImp implements ExerciseResultService {
     }
 
     private List<LessonExercise> getLessonExercisesOfSubjectsInProgress(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         return progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .map(Subject::getLessons)
@@ -46,8 +48,9 @@ public class ExerciseResultServiceImp implements ExerciseResultService {
     }
 
     private List<LessonExercise> getExercisesEachSubjectInProgress(User user, Subject subject) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         ProgressSubject progressSubjects = progressSubjectRepository
-                .findBySubjectAndUserAndProgressStatus(subject,user, ProgressStatus.IN_PROGRESS);
+                .findBySubjectAndUserAndProgressStatusIn(subject, user, statuses);
         return progressSubjects.getSubject().getLessons()
                 .stream()
                 .map(Lesson::getLessonExercises)
@@ -65,8 +68,9 @@ public class ExerciseResultServiceImp implements ExerciseResultService {
     }
     // lấy ds số exercise đã học theo từng subject của user
     private List<CountLearnBySubjectResponse> getListCountLearnBySubject(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         List<Subject> subjects = progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .toList();

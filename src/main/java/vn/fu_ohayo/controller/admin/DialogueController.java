@@ -1,9 +1,11 @@
 package vn.fu_ohayo.controller.admin;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.dto.response.DialogueResponse;
 import vn.fu_ohayo.entity.Dialogue;
 import vn.fu_ohayo.service.DialogueService;
 
@@ -29,7 +31,7 @@ public class DialogueController {
     }
 
     @PostMapping()
-    public ApiResponse<Dialogue> createDialogue(@RequestBody DialogueRequest dialogueRequest) {
+    public ApiResponse<Dialogue> createDialogue(@Valid @RequestBody DialogueRequest dialogueRequest) {
         Dialogue newDialogue = dialogueService.handleSaveDialogue(dialogueRequest);
         return ApiResponse.<Dialogue>builder()
                 .code("201")
@@ -105,6 +107,45 @@ public class DialogueController {
                 .code("200")
                 .status("success")
                 .message("Deleted dialogue successfully")
+                .build();
+    }
+
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<DialogueResponse> acceptDialogue(
+            @PathVariable Integer id
+    ) {
+        DialogueResponse response = dialogueService.acceptDialogue(id);
+        return ApiResponse.<DialogueResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
+
+    @PatchMapping("/reject/{id}")
+    public ApiResponse<DialogueResponse> rejectDialogue(
+            @PathVariable Integer id
+    ) {
+        DialogueResponse response = dialogueService.rejectDialogue(id);
+        return ApiResponse.<DialogueResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<DialogueResponse> inActiveDialogue(
+            @PathVariable Integer id
+    ) {
+        DialogueResponse response = dialogueService.inActiveDialogue(id);
+        return ApiResponse.<DialogueResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Inactive successfully")
+                .data(response)
                 .build();
     }
 }

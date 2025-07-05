@@ -10,7 +10,8 @@ import vn.fu_ohayo.enums.JlptLevel;
 
 import java.util.List;
 
-public interface ContentSpeakingService {
+public interface
+ContentSpeakingService {
     List<ContentSpeaking> getAllContentSpeakings();
 
     ContentSpeaking getContentSpeakingById(long id);
@@ -32,6 +33,9 @@ public interface ContentSpeakingService {
     ContentSpeakingResponse acceptContentSpeaking(long id);
 
     ContentSpeakingResponse rejectContentSpeaking(long id);
+
+    ContentSpeakingResponse inActiveContentSpeaking(long id);
+
     List<ContentSpeakingResponse> getListContentSpeakingBylever(JlptLevel jlptLevel);
 
 }

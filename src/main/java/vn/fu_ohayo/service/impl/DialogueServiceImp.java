@@ -6,8 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.DialogueRequest;
+import vn.fu_ohayo.dto.response.DialogueResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
+import vn.fu_ohayo.entity.Dialogue;
+import vn.fu_ohayo.enums.ContentStatus;
+import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.exception.AppException;
+import vn.fu_ohayo.mapper.DialogueMapper;
 import vn.fu_ohayo.repository.DialogueRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
@@ -19,10 +25,12 @@ public class DialogueServiceImp implements DialogueService {
 
     private final DialogueRepository dialogueRepository;
     private final ContentSpeakingService contentSpeakingService;
+    private final DialogueMapper dialogueMapper;
 //    @Lazy khiến Spring chỉ khởi tạo ContentSpeakingService khi thật sự cần, tránh lỗi vòng tròn.
-    public DialogueServiceImp( DialogueRepository dialogueRepository,@Lazy ContentSpeakingService contentSpeakingService) {
+    public DialogueServiceImp(DialogueRepository dialogueRepository, @Lazy ContentSpeakingService contentSpeakingService, DialogueMapper dialogueMapper) {
         this.dialogueRepository = dialogueRepository;
         this.contentSpeakingService = contentSpeakingService;
+        this.dialogueMapper = dialogueMapper;
     }
 
 
@@ -44,6 +52,7 @@ public class DialogueServiceImp implements DialogueService {
                 .answerVn(dialogueRequest.getAnswerVn())
                 .questionJp(dialogueRequest.getQuestionJp())
                 .questionVn(dialogueRequest.getQuestionVn())
+                .status(ContentStatus.DRAFT) // Mặc định trạng thái là DRAFT
                 .build();
         return dialogueRepository.save(newDialogue);
     }
@@ -64,18 +73,26 @@ public class DialogueServiceImp implements DialogueService {
     @Override
     public Dialogue updatePatchDialogue(long id, Dialogue dialogueRequest) {
         Dialogue dialogue = dialogueRepository.findById(id).orElse(null);
+        boolean isUpdated = false;
         if (dialogue != null) {
             if (dialogueRequest.getAnswerJp() != null) {
                 dialogue.setAnswerJp(dialogueRequest.getAnswerJp());
+                isUpdated = true;
             }
             if (dialogueRequest.getAnswerVn() != null) {
                 dialogue.setAnswerVn(dialogueRequest.getAnswerVn());
+                isUpdated = true;
             }
             if (dialogueRequest.getQuestionJp() != null) {
                 dialogue.setQuestionJp(dialogueRequest.getQuestionJp());
+                isUpdated = true;
             }
             if (dialogueRequest.getQuestionVn() != null) {
                 dialogue.setQuestionVn(dialogueRequest.getQuestionVn());
+                isUpdated = true;
+            }
+            if(isUpdated){
+                dialogue.setStatus(ContentStatus.DRAFT); // Trạng thái sẽ được đặt lại là DRAFT khi có thay đổi
             }
         }
         return dialogueRepository.save(dialogue);
@@ -106,4 +123,27 @@ public class DialogueServiceImp implements DialogueService {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Dialogue> dialoguePage = dialogueRepository.findAll(pageable);
         return dialoguePage;    }
+
+    @Override
+    public DialogueResponse acceptDialogue(long id) {
+        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
+        dialogue.setStatus(ContentStatus.PUBLIC);
+        dialogueRepository.save(dialogue);
+        return dialogueMapper.toDialogueResponse(dialogue);
+    }
+
+    @Override
+    public DialogueResponse rejectDialogue(long id) {
+        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
+        dialogue.setStatus(ContentStatus.REJECT);
+        dialogueRepository.save(dialogue);
+        return dialogueMapper.toDialogueResponse(dialogue);
+    }
+
+    @Override
+    public DialogueResponse inActiveDialogue(long id) {
+        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
+        dialogue.setStatus(ContentStatus.IN_ACTIVE);
+        dialogueRepository.save(dialogue);
+        return dialogueMapper.toDialogueResponse(dialogue);    }
 }

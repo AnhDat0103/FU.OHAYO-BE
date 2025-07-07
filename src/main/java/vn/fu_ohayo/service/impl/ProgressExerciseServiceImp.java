@@ -91,8 +91,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
 
         LessonExercise lessonExercise = lessonExerciseRepository.findById(userResponseRequest.getExerciseId())
                 .orElseThrow(() -> new AppException(ErrorEnum.EXERCISE_NOT_FOUND));
-
-
+        
         List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
 
         List<ExerciseQuestionResponse> exerciseQuestionResponse = exerciseQuestions.stream().map(

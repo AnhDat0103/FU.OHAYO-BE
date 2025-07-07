@@ -87,4 +87,37 @@ public class LessonController {
                 .data(lesson)
                 .build();
     }
+
+    @PatchMapping("/accept/{id}")
+    public ApiResponse<LessonResponse> acceptLesson(@PathVariable("id") int id) {
+        LessonResponse acceptedLesson = lessonService.acceptLesson(id);
+        return ApiResponse.<LessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Lesson accepted successfully")
+                .data(acceptedLesson)
+                .build();
+    }
+
+    @PatchMapping("/reject/{id}")
+    public ApiResponse<LessonResponse> rejectLesson(@PathVariable("id") int id) {
+        LessonResponse rejectedLesson = lessonService.rejectLesson(id);
+        return ApiResponse.<LessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Lesson rejected successfully")
+                .data(rejectedLesson)
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<LessonResponse> inactiveLesson(@PathVariable("id") int id) {
+        LessonResponse inactiveLesson = lessonService.inactiveLesson(id);
+        return ApiResponse.<LessonResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Lesson inactive successfully")
+                .data(inactiveLesson)
+                .build();
+    }
 }

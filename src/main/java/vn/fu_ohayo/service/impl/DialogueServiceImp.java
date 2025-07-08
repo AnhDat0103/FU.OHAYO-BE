@@ -26,7 +26,8 @@ public class DialogueServiceImp implements DialogueService {
     private final DialogueRepository dialogueRepository;
     private final ContentSpeakingService contentSpeakingService;
     private final DialogueMapper dialogueMapper;
-//    @Lazy khiến Spring chỉ khởi tạo ContentSpeakingService khi thật sự cần, tránh lỗi vòng tròn.
+
+    //    @Lazy khiến Spring chỉ khởi tạo ContentSpeakingService khi thật sự cần, tránh lỗi vòng tròn.
     public DialogueServiceImp(DialogueRepository dialogueRepository, @Lazy ContentSpeakingService contentSpeakingService, DialogueMapper dialogueMapper) {
         this.dialogueRepository = dialogueRepository;
         this.contentSpeakingService = contentSpeakingService;
@@ -59,7 +60,7 @@ public class DialogueServiceImp implements DialogueService {
 
     @Override
     public void deleteDialogueById(long id) {
-      dialogueRepository.deleteById(id);
+        dialogueRepository.deleteById(id);
     }
 
 //    @Override
@@ -91,7 +92,7 @@ public class DialogueServiceImp implements DialogueService {
                 dialogue.setQuestionVn(dialogueRequest.getQuestionVn());
                 isUpdated = true;
             }
-            if(isUpdated){
+            if (isUpdated) {
                 dialogue.setStatus(ContentStatus.DRAFT); // Trạng thái sẽ được đặt lại là DRAFT khi có thay đổi
             }
         }
@@ -105,7 +106,7 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId) {
+    public Page<Dialogue> getDialoguePage(int page, int size, long contentSpeakingId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
         Page<Dialogue> dialoguePage = dialogueRepository.findAllByContentSpeaking(contentSpeaking, pageable);
@@ -114,7 +115,7 @@ public class DialogueServiceImp implements DialogueService {
 
     @Override
     public void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking) {
-         List<Dialogue> dialogues = dialogueRepository.findByContentSpeaking(contentSpeaking);
+        List<Dialogue> dialogues = dialogueRepository.findByContentSpeaking(contentSpeaking);
         dialogueRepository.deleteAll(dialogues);
     }
 
@@ -122,7 +123,8 @@ public class DialogueServiceImp implements DialogueService {
     public Page<Dialogue> getAllDialoguePage(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Dialogue> dialoguePage = dialogueRepository.findAll(pageable);
-        return dialoguePage;    }
+        return dialoguePage;
+    }
 
     @Override
     public DialogueResponse acceptDialogue(long id) {
@@ -145,5 +147,16 @@ public class DialogueServiceImp implements DialogueService {
         Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
         dialogue.setStatus(ContentStatus.IN_ACTIVE);
         dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);    }
+        return dialogueMapper.toDialogueResponse(dialogue);
+    }
+
+    @Override
+    public List<DialogueResponse> getDialoguesPublicByContentSpeakingId(long contentSpeakingId) {
+        ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
+        return dialogueRepository.findByContentSpeakingAndStatus(contentSpeaking, ContentStatus.PUBLIC)
+                .stream()
+                .map(dialogueMapper::toDialogueResponse)
+                .toList();
+    }
+
 }

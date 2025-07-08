@@ -2,9 +2,9 @@ package vn.fu_ohayo.enums;
 
 public enum LessonStatus {
     PUBLIC,
-    PRIVATE,
+    IN_ACTIVE,
     DRAFT,
-    INACTIVE;
+    REJECTED;
 
     public static LessonStatus fromString(String status) {
         for (LessonStatus lessonStatus : LessonStatus.values()) {

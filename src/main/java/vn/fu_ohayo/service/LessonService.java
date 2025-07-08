@@ -21,5 +21,9 @@ public interface LessonService {
 
     List<LessonResponse> getLessonBySubjectId(int subjectId);
 
-    Page<LessonResponse> getAllLessonsIsDeletedAndStatus_INACTICE(int subjectId, int page, int size);
+    LessonResponse acceptLesson(int id);
+
+    LessonResponse rejectLesson(int id);
+
+    LessonResponse inactiveLesson(int id);
 }

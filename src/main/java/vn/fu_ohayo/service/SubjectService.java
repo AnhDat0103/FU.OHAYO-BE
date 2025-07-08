@@ -24,4 +24,6 @@ public interface SubjectService {
     SubjectResponse acceptSubject(int id);
 
     SubjectResponse rejectSubject(int id);
+
+    SubjectResponse inactiveSubject(int id);
 }

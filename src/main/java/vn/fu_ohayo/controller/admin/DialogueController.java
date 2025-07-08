@@ -68,8 +68,8 @@ public class DialogueController {
     @GetMapping("/page/all")
     public ApiResponse<Page<Dialogue>> getDialoguesAllPage(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size){
-            Page<Dialogue> dialogues = dialogueService.getAllDialoguePage(page, size);
+            @RequestParam(defaultValue = "5") int size) {
+        Page<Dialogue> dialogues = dialogueService.getAllDialoguePage(page, size);
         return ApiResponse.<Page<Dialogue>>builder()
                 .code("200")
                 .status("success")

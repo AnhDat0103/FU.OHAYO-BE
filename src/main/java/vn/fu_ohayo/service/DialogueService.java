@@ -22,5 +22,5 @@ public interface DialogueService {
     DialogueResponse acceptDialogue (long id);
     DialogueResponse rejectDialogue (long id);
     DialogueResponse inActiveDialogue (long id);
-
+    List<DialogueResponse> getDialoguesPublicByContentSpeakingId( long contentSpeakingId);
 }

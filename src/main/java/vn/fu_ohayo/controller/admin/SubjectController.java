@@ -129,6 +129,16 @@ public class SubjectController {
                 .build();
     }
 
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<SubjectResponse> inactiveSubject(@PathVariable("id") int id) {
+        return ApiResponse.<SubjectResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Subject inactive successfully")
+                .data(subjectService.inactiveSubject(id))
+                .build();
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteSubject(@PathVariable("id") int id) {
         subjectService.deleteSubject(id);

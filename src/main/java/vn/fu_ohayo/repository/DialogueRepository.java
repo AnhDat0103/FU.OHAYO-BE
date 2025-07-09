@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.entity.Dialogue;
+import vn.fu_ohayo.enums.ContentStatus;
+import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.List;
 
@@ -16,4 +18,7 @@ public interface DialogueRepository extends JpaRepository<Dialogue, Long> {
     Page<Dialogue> findAllByContentSpeaking(ContentSpeaking contentSpeaking, Pageable pageable);
 
     void deleteDialogueByContentSpeaking(ContentSpeaking contentSpeaking);
+
+    List<Dialogue> findByContentSpeakingAndStatus(ContentSpeaking contentSpeaking, ContentStatus status);
+
 }

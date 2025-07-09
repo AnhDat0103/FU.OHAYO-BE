@@ -14,6 +14,7 @@ import vn.fu_ohayo.repository.ProgressSubjectRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.ProgressGrammarService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +33,9 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
     }
 
     private List<Grammar> getGrammarsOfSubjectsInProgress(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         return progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .map(Subject::getLessons)
@@ -45,8 +47,9 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
 
     // lấy ds các Grammar của subject đang học của user
     private List<Grammar> getGrammarsEachSubjectInProgress(User user, Subject subject) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         ProgressSubject progressSubjects = progressSubjectRepository
-                .findBySubjectAndUserAndProgressStatus(subject,user, ProgressStatus.IN_PROGRESS);
+                .findBySubjectAndUserAndProgressStatusIn(subject, user, statuses);
         return progressSubjects.getSubject().getLessons()
                 .stream()
                 .map(Lesson::getGrammars)
@@ -56,8 +59,9 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
 
     // lấy ds số Grammar đã học theo từng subject của user
     private List<CountLearnBySubjectResponse> getListCountLearnBySubject(User user) {
+        List<ProgressStatus> statuses = Arrays.asList(ProgressStatus.IN_PROGRESS, ProgressStatus.COMPLETED);
         List<ProgressSubject> progressSubjects = progressSubjectRepository
-                .findAllByUserAndProgressStatus(user, ProgressStatus.IN_PROGRESS);
+                .findAllByUserAndProgressStatusIn(user, statuses);
         List<Subject> subjects = progressSubjects.stream()
                 .map(ProgressSubject::getSubject)
                 .toList();
@@ -76,6 +80,7 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
                 })
                 .toList();
     }
+
     // lấy ds Grammar đã học gần đây của user
     private List<RecentlyLearnGrammarResponse> getRecentlyLearnWordsByUserId(User user, int size) {
         List<Grammar> Grammars = getGrammarsOfSubjectsInProgress(user);
@@ -86,7 +91,7 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
 
     @Override
     public int countGrammarLearnSubjectInProgressByUserId(long userId) {
-        User user = userRepository.findById(userId).orElseThrow( () -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         List<Grammar> grammars = getGrammarsOfSubjectsInProgress(user);
 
         List<ProgressGrammar> progressGrammars = progressGrammarRepository
@@ -96,14 +101,14 @@ public class ProgressGrammarServiceImp implements ProgressGrammarService {
 
     @Override
     public int countAllGrammarSubjectInProgressByUserId(long userId) {
-        User user = userRepository.findById(userId).orElseThrow( () -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         List<Grammar> grammars = getGrammarsOfSubjectsInProgress(user);
         return grammars.size();
     }
 
     @Override
     public ProgressGrammarResponse getProgressEachSubjectByUserId(long userId) {
-        User user = userRepository.findById(userId).orElseThrow( () -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         return ProgressGrammarResponse.builder()
                 .countLearnBySubjectResponses(getListCountLearnBySubject(user))
                 .recentlyLearnGrammarResponses(getRecentlyLearnWordsByUserId(user, 5))

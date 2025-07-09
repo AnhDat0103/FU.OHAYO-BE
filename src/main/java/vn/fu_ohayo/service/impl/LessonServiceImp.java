@@ -105,12 +105,44 @@ public class LessonServiceImp implements LessonService {
     }
 
     @Override
-    public Page<LessonResponse> getAllLessonsIsDeletedAndStatus_INACTICE(int subjectId, int page, int size) {
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new AppException(ErrorEnum.SUBJECT_NOT_FOUND
-        ));
-        Page<Lesson> lessons = lessonRepository.findAllBySubjectAndDeletedAndStatus(subject,false, LessonStatus.INACTIVE, PageRequest.of(page, size));
-        return lessons.map(lessonMapper::toLessonResponse);
+    public LessonResponse acceptLesson(int id) {
+        Lesson lesson = lessonRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+
+        if(lesson.getLessonExercises().isEmpty() || lesson.getVocabularies().isEmpty() || lesson.getGrammars().isEmpty()) {
+            throw new AppException(ErrorEnum.LESSON_NOT_COMPLETE);
+        }
+
+        if (lesson.getStatus() == LessonStatus.DRAFT) {
+            lesson.setStatus(LessonStatus.PUBLIC);
+            return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
+        }
+        return null;
+    }
+
+    @Override
+    public LessonResponse rejectLesson(int id) {
+        Lesson lesson = lessonRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+        if (lesson.getStatus() == LessonStatus.DRAFT) {
+            lesson.setStatus(LessonStatus.REJECTED);
+            return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
+        }
+        return null;
+    }
+
+    @Override
+    public LessonResponse inactiveLesson(int id) {
+        Lesson lesson = lessonRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorEnum.LESSON_NOT_FOUND)
+        );
+        if (lesson.getStatus() == LessonStatus.PUBLIC) {
+            lesson.setStatus(LessonStatus.IN_ACTIVE);
+            return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
+        }
+        return null;
     }
 
     @Override

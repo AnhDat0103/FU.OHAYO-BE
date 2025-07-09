@@ -17,4 +17,6 @@ public interface ContentSpeakingRepository extends JpaRepository<ContentSpeaking
     ContentSpeaking findByContent(Content content);
     Page<ContentSpeaking> findAllByDeleted(Pageable pageable, boolean deleted);
     List<ContentSpeaking> findAllByJlptLevel(JlptLevel jlptLevel);
+    Page<ContentSpeaking> findAllByDeletedAndStatus(Pageable pageable, boolean deleted, ContentStatus status);
+
 }

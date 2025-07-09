@@ -49,6 +49,9 @@ public enum ErrorEnum {
     LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
     LESSON_HAS_GRAMMAR("4016","Lesson has grammars, cannot be deleted" ),
     LESSON_IN_USE("4028", "Lesson is using with any user" ),
+    SUBJECT_CONTENT_EMPTY("4030", "Can not accept with any content in the Subject not found." ),
+    LESSON_NOT_COMPLETE("4031", "Can not accept with any content in the Lesson not found." ),
+
 
     VOCABULARY_EXISTS("4017", "Vocabulary already exists"),
     VOCABULARY_NOT_FOUND("4018", "Vocabulary not found with this kanji." ),
@@ -64,12 +67,15 @@ public enum ErrorEnum {
     LIST_SUBJECT_NULL("4028", "List subject have at least 1 subject"),
     EXIST_AT_LEAST_CONTENT_LISTENING_OR_EXERCISE("4029", "Question exist at least in content listening or exercise"),
     PROGRESS_VOCABULARY_NOT_FOUND("4029", "Progress not found" ),
+    DIALOGUE_NOT_FOUND ("4029","Dialogue not found"),
+    INVALID_TYPE("4030","Type is not invalid (Exercise or content Listening)" ),
+
 
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 
     REQUEST_PAYMENT("6001","You send request for payment over 3 times / a day" ),
-    AUTH_CODE_NOT_FOUND("6002", "Auth code not found." );
+    AUTH_CODE_NOT_FOUND("6002", "Auth code not found." ) ;
 
 
 
@@ -118,7 +124,6 @@ public enum ErrorEnum {
     public static final String INVALID_THUMBNAIL_URL = "Thumbnail URL must be less than 255 characters";
     public static final String INVALID_VIDEO_URL = "Video URL must be less than 255 characters";
     public static final String NOT_EMPTY_STATUS = "Status can not null";
-
     private final String code;
     private final String message;
 }

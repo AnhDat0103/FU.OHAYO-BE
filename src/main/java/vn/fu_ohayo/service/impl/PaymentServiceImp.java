@@ -54,11 +54,8 @@ public class PaymentServiceImp implements PaymentService {
     public void sendRequestToParent(PaymentRequest paymentRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        log.info(String.valueOf(user.getUserId()));
-        log.info(String.valueOf(paymentRequest.getAmount()));
 
         List<ParentStudent> list = parentStudentRepository.findByStudentEmail(email).stream().filter(parentStudent ->parentStudent.getParentCodeStatus()!= null && parentStudent.getParentCodeStatus().equals(ParentCodeStatus.CONFIRM)).toList();
-        log.info(String.valueOf(list.get(0)));
         Long count = notificationRepository.countTodayPaymentRequests(user.getUserId());
         log.info(String.valueOf(count));
         if(count >= 3) {

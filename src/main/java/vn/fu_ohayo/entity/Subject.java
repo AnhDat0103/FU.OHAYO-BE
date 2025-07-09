@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.SubjectStatus;
 
@@ -26,6 +27,7 @@ indexes = {
     @Index(name = "idx_subject_id", columnList = "subject_id"),
     @Index(name = "idx_subject_name", columnList = "subject_name")
 })
+
 public class Subject {
 
     @Id

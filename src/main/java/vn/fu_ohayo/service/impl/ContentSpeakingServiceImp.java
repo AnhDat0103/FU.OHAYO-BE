@@ -153,6 +153,13 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     @Override
     public ContentSpeakingResponse acceptContentSpeaking(long id) {
         ContentSpeaking contentSpeaking = getContentSpeakingById(id);
+        boolean hasPublicDialogue = contentSpeaking.getDialogues()
+                .stream()
+                .anyMatch(d -> ContentStatus.PUBLIC.equals(d.getStatus()));
+
+        if (!hasPublicDialogue) {
+            throw new AppException(ErrorEnum.CAN_NOT_ACCEPT);
+        }
         contentSpeaking.setStatus(ContentStatus.PUBLIC);
         contentSpeakingRepository.save(contentSpeaking);
         return contentMapper.toContentSpeakingResponse(contentSpeaking);

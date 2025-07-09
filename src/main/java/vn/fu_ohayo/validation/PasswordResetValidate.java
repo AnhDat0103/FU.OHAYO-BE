@@ -1,4 +1,4 @@
-package vn.fu_ohayo.Validate;
+package vn.fu_ohayo.validation;
 
 import vn.fu_ohayo.service.impl.PasswordForgotImp.TokenInfo;
 

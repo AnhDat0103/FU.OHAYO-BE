@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.Validate.PasswordResetValidate;
+import vn.fu_ohayo.validation.PasswordResetValidate;
 import vn.fu_ohayo.service.impl.PasswordForgotImp;
 
 import java.time.LocalDateTime;

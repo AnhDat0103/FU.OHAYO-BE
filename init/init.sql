@@ -857,3 +857,14 @@ INSERT INTO Roles (name, description) VALUES
                                           ('USER_MANAGER', 'Quản lý người dùng'),
                                           ('SUPER_ADMIN', 'Quản trị viên cấp cao'),
                                           ('STAFF', 'Nhân viên');
+-- ADMIN
+INSERT INTO admins (username, password) VALUES
+('superadmin', '$2a$10$tlxYMRLv8RGohvhwpCmiJei.AqFQpctpYOh0eqTHjegZzb3g2GXnC'),
+('staff', '$2a$10$tlxYMRLv8RGohvhwpCmiJei.AqFQpctpYOh0eqTHjegZzb3g2GXnC'),
+('contentadmin', '$2a$10$tlxYMRLv8RGohvhwpCmiJei.AqFQpctpYOh0eqTHjegZzb3g2GXnC'),
+('useradmin', '$2a$10$tlxYMRLv8RGohvhwpCmiJei.AqFQpctpYOh0eqTHjegZzb3g2GXnC');
+
+INSERT INTO admin_roles(admin_id, role_id) VALUES
+                                               (3,3),
+                                               (4,4),
+                                               (2,6);

@@ -51,10 +51,10 @@ public class ContentListening {
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AVATAR)
     private String image;
 
-    @Column(name = "script_jp")
+    @Column(name = "script_jp", columnDefinition = "TEXT")
     private String scriptJp;
 
-    @Column(name = "script_vn")
+    @Column(name = "script_vn", columnDefinition = "TEXT")
     private String scriptVn;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_CATEGORY)

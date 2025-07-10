@@ -848,3 +848,12 @@ INSERT INTO `fu-ohayo`.`vocabularies` (`is_deleted`, `description`, `example`, `
                                                                                                                                                          (0, 'Từ to có nghĩa là và, với', '友達と行きます。', 'N5', 'と', 'と', 'và, với', 'PARTICLE', 'to'),
                                                                                                                                                          (0, 'Từ itadakimasu có nghĩa là mời ăn', 'いただきます、と言って食べました。', 'N5', 'いただきます', 'いただきます', 'mời ăn', 'INTERJECTION', 'itadakimasu'),
                                                                                                                                                          (0, 'Từ hirugohan có nghĩa là bữa trưa', '昼ごはんを食べました。', 'N5', 'ひるごはん', '昼ごはん', 'bữa trưa', 'NOUN', 'hirugohan');
+
+-- role
+INSERT INTO Roles (name, description) VALUES
+                                          ('USER', 'Người dùng thông thường'),
+                                          ('PARENT', 'Phụ huynh'),
+                                          ('CONTENT_MANAGER', 'Quản lý nội dung'),
+                                          ('USER_MANAGER', 'Quản lý người dùng'),
+                                          ('SUPER_ADMIN', 'Quản trị viên cấp cao'),
+                                          ('STAFF', 'Nhân viên');

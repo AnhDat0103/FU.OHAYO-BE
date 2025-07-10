@@ -37,3 +37,5 @@ build/
 
 ### client_serest file ###
 client_serest.json
+
+tokens/StoredCredential

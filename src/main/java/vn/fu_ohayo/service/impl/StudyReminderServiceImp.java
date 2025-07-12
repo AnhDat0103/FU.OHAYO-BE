@@ -108,8 +108,9 @@ public class StudyReminderServiceImp implements StudyReminderService {
                         && matchesTime(r.getTime(), now)
                         && isReminderToday(r.getDaysOfWeek())
                 ).toList();
+
         for(StudyReminder studyReminder : upComingReminders) {
-            messagingTemplate.convertAndSend("/topic/reminders/" + studyReminder.getUser().getUserId(), studyReminder);
+            messagingTemplate.convertAndSend("/topic/reminders/" + studyReminder.getUser().getUserId(),studyReminderMapper.toStudyReminderResponse(studyReminder));
         }
     }
 

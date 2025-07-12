@@ -47,4 +47,7 @@ public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
             value= "INSERT INTO lesson_grammar (lesson_id, grammar_id) VALUES (:lessonId, :grammarId)", nativeQuery = true
     )
     void saveGrammarIntoLesson(int lessonId, int grammarId);
+
+    @Query("SELECT g FROM Grammar g JOIN g.lessons l WHERE l.lessonId = :lessonId")
+    List<Grammar> findAllByLessonId(int lessonId);
 }

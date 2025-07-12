@@ -123,7 +123,7 @@ public class SubjectServiceImp implements SubjectService {
             throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
         }
         for(Lesson lesson : subject.getLessons()) {
-            if(lesson.getGrammars().isEmpty() && lesson.getLessonExercises().isEmpty() && lesson.getVocabularies().isEmpty()) {
+            if(lesson.getGrammars().isEmpty() || lesson.getLessonExercises().isEmpty() || lesson.getVocabularies().isEmpty()) {
                 throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
             }
         }

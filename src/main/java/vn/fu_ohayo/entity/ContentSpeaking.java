@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "dialogues")
-@ToString(exclude = "dialogues")
+@ToString(exclude = {"dialogues", "content"})
 @Builder
 public class ContentSpeaking {
     @Id

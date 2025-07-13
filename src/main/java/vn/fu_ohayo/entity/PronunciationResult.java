@@ -1,10 +1,7 @@
 package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @Builder
 @Table(name =  "pronunciation_result")
 @Entity
+@ToString(exclude = {"progressDialogue"})
 public class PronunciationResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

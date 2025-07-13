@@ -184,6 +184,4 @@ public class ContentReadingController {
                 .data(response)
                 .build();
     }
-
-
 }

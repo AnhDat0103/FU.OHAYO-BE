@@ -16,6 +16,7 @@ import vn.fu_ohayo.service.ProgressContentService;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +60,9 @@ public class ContentReadingProgressserviceImp implements ContentReadingProgressS
         return progressContentRepository.findByUser_UserIdAndContent_ContentId(userId, content.getContentId())
                 .map(pc -> pc.getProgressStatus() == ProgressStatus.COMPLETED)
                 .orElse(false);
+    }
+    @Override
+    public List<ProgressContent> getCompletedReadings(int userId) {
+        return progressContentRepository.findByUser_UserIdAndProgressStatus(userId, ProgressStatus.COMPLETED);
     }
 }

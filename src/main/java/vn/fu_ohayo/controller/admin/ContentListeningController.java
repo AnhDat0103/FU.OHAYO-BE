@@ -30,7 +30,7 @@ public class ContentListeningController {
     @GetMapping()
     public ApiResponse<Page<ContentListeningResponse>> getContentListeningPage(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "6") int size) {
         return ApiResponse.<Page<ContentListeningResponse>>builder()
                 .code("200")
                 .status("success")

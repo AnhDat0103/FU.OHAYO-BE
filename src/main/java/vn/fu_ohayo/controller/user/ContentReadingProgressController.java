@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.response.ApiResponse;
+import vn.fu_ohayo.entity.ProgressContent;
+import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.service.ContentReadingProgressService;
 
 import java.util.List;
@@ -38,5 +40,15 @@ public class ContentReadingProgressController {
                 .data(isDone)
                 .build();
     }
-
+    @GetMapping("/completed")
+    public ApiResponse<List<ProgressContent>> getCompletedArticles(
+            @RequestParam int userId) {
+        List<ProgressContent> completed = contentReadingProgressService.getCompletedReadings(userId);
+        return ApiResponse.<List<ProgressContent>>builder()
+                .code("200")
+                .status("success")
+                .message("List of completed readings")
+                .data(completed)
+                .build();
+    }
 }

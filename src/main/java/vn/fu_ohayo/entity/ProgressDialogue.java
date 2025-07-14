@@ -1,10 +1,7 @@
 package vn.fu_ohayo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.Date;
@@ -15,6 +12,7 @@ import java.util.Date;
 @Builder
 @Table(name =  "progress_dialogue")
 @Entity
+@ToString(exclude = {"user", "dialogue", "pronunciationResult"})
 public class ProgressDialogue {
 
     @Id

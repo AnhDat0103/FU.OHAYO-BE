@@ -1,66 +1,97 @@
 package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.dto.request.AddUserRequest;
-import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.request.AdminSearchUserRequest;
-import vn.fu_ohayo.dto.response.AdminSearchUserResponse;
+import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
+import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.service.UserService;
 
-import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_CODE_RESPONSE;
-import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
+import static vn.fu_ohayo.constant.ConstantGolbal.*;
 
-@RestController()
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/users")
 public class AdminUserController {
+
     private final UserService userService;
 
     @GetMapping
-    public ApiResponse<Page<AdminSearchUserResponse>> filterUsers(@Valid @ModelAttribute AdminSearchUserRequest request) {
-        return ApiResponse.<Page<AdminSearchUserResponse>>builder()
-                .code(HTTP_SUCCESS_CODE_RESPONSE)
-                .status(HTTP_SUCCESS_RESPONSE)
-                .message("Get user by name successfully")
-                .data(userService.filterUsers(request))
+    public ApiResponse<Page<AdminFilterUserResponse>> filterUsers(
+            @Valid @ModelAttribute AdminFilterUserRequest request
+    ) {
+        return ApiResponse.<Page<AdminFilterUserResponse>>builder()
+                .code(READ_SUCCESS_CODE)
+                .status(READ_SUCCESS_MESSAGE)
+                .message("Get user by filter success")
+                .data(userService.filterUsersForAdmin(request))
                 .build();
     }
 
     @DeleteMapping("/{userId}")
-    public ApiResponse<Void> deleteUser(@PathVariable("userId") Long userId) {
+    public ApiResponse<Void> deleteUser(
+            @PathVariable Long userId
+    ) {
         userService.deleteUser(userId);
         return ApiResponse.<Void>builder()
-                .code("204")
-                .status("success no return")
-                .message("Delete user successfully")
+                .code(DELETE_SUCCESS_CODE)
+                .status(DELETE_SUCCESS_MESSAGE)
+                .message("Delete user success")
                 .build();
     }
 
     @PatchMapping("/{userId}")
-    public ApiResponse<UserResponse> updateUser(@PathVariable("userId") Long userId,
-                                                @RequestBody @Valid AdminUpdateUserRequest adminUpdateUserRequest) {
+    public ApiResponse<UserResponse> updateUser(
+            @PathVariable("userId") Long userId,
+            @RequestBody @Valid AdminUpdateUserRequest request
+    ) {
         return ApiResponse.<UserResponse>builder()
-                .code(HTTP_SUCCESS_CODE_RESPONSE)
-                .status(HTTP_SUCCESS_RESPONSE)
-                .message("Update user successfully")
-                .data(userService.updateUser(userId, adminUpdateUserRequest))
+                .code(UPDATE_SUCCESS_CODE)
+                .status(UPDATE_SUCCESS_MESSAGE)
+                .message("Update user success")
+                .data(userService.updateUser(userId, request))
+                .build();
+    }
+
+    @PatchMapping("/{userId}/recover")
+    public ApiResponse<UserResponse> recoverUser(
+            @PathVariable Long userId
+    ) {
+        userService.recoverUser(userId);
+        return ApiResponse.<UserResponse>builder()
+                .code(RECOVER_SUCCESS_CODE)
+                .status(RECOVER_SUCCESS_MESSAGE)
+                .message("Recover user success")
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<UserResponse> addUser(@RequestBody @Valid AddUserRequest addUserRequest) {
+    public ApiResponse<UserResponse> createUser(
+            @RequestBody @Valid AdminCreateUserRequest request
+    ) {
         return ApiResponse.<UserResponse>builder()
-                .code("201")
-                .status("success")
-                .message("Create user successfully")
-                .data(userService.addUser(addUserRequest))
+                .code(CREATE_SUCCESS_CODE)
+                .status(CREATE_SUCCESS_MESSAGE)
+                .message("Create user success")
+                .data(userService.createUser(request))
+                .build();
+    }
+
+    @GetMapping("/check-email")
+    public ApiResponse<AdminCheckEmailUserResponse> checkEmail(
+            @RequestParam String email
+    ) {
+        return ApiResponse.<AdminCheckEmailUserResponse>builder()
+                .code(READ_SUCCESS_CODE)
+                .status(READ_SUCCESS_MESSAGE)
+                .message("Check email success")
+                .data(userService.checkEmailExists(email))
                 .build();
     }
 }

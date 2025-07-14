@@ -22,20 +22,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByFullName(String fullName);
 
     boolean existsByEmail(String email);
-
-    boolean existsByEmailAndProvider(String email, Provider provider);
-
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmailIncludingDeleted(@Param("email") String email);
     Optional<User> findByEmailAndProvider(String email, Provider provider);
 
     boolean existsByPhone(String phone);
-    @Query("""
-        SELECT u FROM User u
-        WHERE (:fullName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%')))
-        AND (:membershipLevel IS NULL OR u.membershipLevel = :membershipLevel)
-        AND (:status IS NULL OR u.status = :status)
-        AND (:registeredFrom IS NULL OR u.createdAt >= :registeredFrom)
-        AND (:registeredTo IS NULL OR u.createdAt <= :registeredTo)
-        """)
+    @Query("SELECT u FROM User u WHERE " +
+            "u.isDeleted = false AND " +
+            "(:fullName IS NULL OR u.fullName LIKE %:fullName%) AND " +
+            "(:membershipLevel IS NULL OR u.membershipLevel = :membershipLevel) AND " +
+            "(:status IS NULL OR u.status = :status) AND " +
+            "(:registeredFrom IS NULL OR u.createdAt >= :registeredFrom) AND " +
+            "(:registeredTo IS NULL OR u.createdAt <= :registeredTo)")
     Page<User> filterUsers(
             @Param("fullName") String fullName,
             @Param("membershipLevel") MembershipLevel membershipLevel,

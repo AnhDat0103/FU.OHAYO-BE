@@ -36,8 +36,6 @@ public class ContentUserListeningController {
         List<AnswerListeningResponse> list = contentListeningProgressService.getListAnser(
                  contentListeningId, userAnswers );
         log.info("User answers submitted for content listening ID: {}", list);
-        return ResponseEntity.ok(
-                list
-        );
+        return ResponseEntity.ok(list);
     }
 }

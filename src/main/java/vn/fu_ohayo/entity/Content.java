@@ -16,7 +16,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@ToString(exclude = "contents")
+@ToString(exclude ={ "contents", "contentListening", "ContentReading", "contentSpeaking"})
 public class Content {
     @Id @GeneratedValue(
             strategy = GenerationType.IDENTITY

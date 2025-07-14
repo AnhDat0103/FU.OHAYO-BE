@@ -2,7 +2,11 @@ package vn.fu_ohayo.mapper;
 
 import org.mapstruct.*;
 import vn.fu_ohayo.dto.request.*;
+import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
 import vn.fu_ohayo.dto.response.AdminDTO;
+import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.Admin;
 import vn.fu_ohayo.entity.ParentStudent;
@@ -13,17 +17,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toUser(UserRegister userRegister);
     @Mapping(target = "user", source = "student")
-    StudentDTO toStudent(ParentStudent ps);
+    List<StudentDTO> toStudentOnlyDtoList(List<ParentStudent> psList);
 
     @Mapping(target = "user", source = "parent")
-    ParentStudentDTO toParent(ParentStudent ps);
-
-    List<StudentDTO> toStudentOnlyDtoList(List<ParentStudent> psList);
     List<ParentStudentDTO> toParentOnlyDtoList(List<ParentStudent> psList);
-
-    SimpleUserDTO toDto(User user);
 
     @Mapping(source = "role.name", target = "roleName")
     UserResponse toUserResponse(User user);
@@ -31,6 +29,17 @@ public interface UserMapper {
     @Mapping(source = "roles", target = "roles")
     AdminDTO toAdmin(Admin admin);
 
-    User toUser(AddUserRequest addUserRequest);
-    User toUser(UserResponse userResponse);
+    User toUser(AdminCreateUserRequest addUserRequest);
+
+    AdminFilterUserResponse toAdminFilterUserResponse(User user);
+
+    void updateUserFromAdminRequest(@MappingTarget User user, AdminUpdateUserRequest request);
+
+    AdminCheckEmailUserResponse toAdminCheckEmailUserResponseWithoutExist(User user);
+    default AdminCheckEmailUserResponse toAdminCheckEmailUserResponse(User user) {
+        AdminCheckEmailUserResponse res = toAdminCheckEmailUserResponseWithoutExist(user);
+        res.setEmailExists(true);
+        res.setDeleted(user.isDeleted());
+        return res;
+    }
 }

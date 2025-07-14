@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import jdk.jshell.Snippet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +36,8 @@ public class ContentListeningServiceImp implements ContentListeningService {
 
     @Override
     public ContentListening getContentListeningById(Long id) {
-        ContentListening l = contentListeningRepository.findBycontentListeningId(id);
-        return l;
+        ContentListening contentListening = contentListeningRepository.findBycontentListeningId(id);
+        return contentListening;
     }
 
     @Override

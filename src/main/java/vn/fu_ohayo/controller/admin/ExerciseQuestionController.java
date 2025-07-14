@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
-import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.ContentListeningResponse;
-import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
-import vn.fu_ohayo.dto.response.LessonExerciseResponse;
+import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.ExerciseQuestion;
 import vn.fu_ohayo.service.ContentListeningService;
 import vn.fu_ohayo.service.ExerciseQuestionService;
@@ -15,14 +12,11 @@ import vn.fu_ohayo.service.LessonExerciseService;
 
 import java.util.List;
 
-import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_CODE_RESPONSE;
-import static vn.fu_ohayo.constant.ConstantGolbal.HTTP_SUCCESS_RESPONSE;
-
 @RestController
 @RequestMapping("/question")
 public class ExerciseQuestionController {
-private final ExerciseQuestionService exerciseQuestionService;
-private final LessonExerciseService lessonExerciseService;
+    private final ExerciseQuestionService exerciseQuestionService;
+    private final LessonExerciseService lessonExerciseService;
 
     public ExerciseQuestionController(ExerciseQuestionService exerciseQuestionService, LessonExerciseService lessonExerciseService) {
         this.exerciseQuestionService = exerciseQuestionService;
@@ -31,7 +25,7 @@ private final LessonExerciseService lessonExerciseService;
 
     @GetMapping("/content_listening/{contentListeningId}")
     public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionByContentListeningPage(
-            @RequestParam(defaultValue="1" ) int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @PathVariable long contentListeningId) {
         return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
@@ -44,8 +38,8 @@ private final LessonExerciseService lessonExerciseService;
 
     @GetMapping()
     public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionPage(
-            @RequestParam(defaultValue="1" ) int page,
-            @RequestParam(defaultValue = "5") int size ){
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
         return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
                 .code("200")
                 .status("success")
@@ -54,9 +48,23 @@ private final LessonExerciseService lessonExerciseService;
                 .build();
     }
 
+    @GetMapping("/type")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionPageByType(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam String type
+    ) {
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("get page of exercise questions")
+                .data(exerciseQuestionService.getExerciseQuestionPageByType(page - 1, size, type))
+                .build();
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<ExerciseQuestionResponse> getExerciseQuestion(@PathVariable int id) {
-        return  ApiResponse.<ExerciseQuestionResponse>builder()
+        return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")
                 .status("success")
                 .message("Get exerciseQuestion by id")
@@ -66,7 +74,7 @@ private final LessonExerciseService lessonExerciseService;
 
     @PostMapping
     public ApiResponse<ExerciseQuestionResponse> createExerciseQuestion(@Valid @RequestBody ExerciseQuestionRequest request) {
-        ExerciseQuestionResponse newExerciseQuestion =exerciseQuestionService.handleCreateExerciseQuestion(request);
+        ExerciseQuestionResponse newExerciseQuestion = exerciseQuestionService.handleCreateExerciseQuestion(request);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("201")
                 .status("success")
@@ -77,7 +85,7 @@ private final LessonExerciseService lessonExerciseService;
 
     @PostMapping("/many")
     public ApiResponse<List<ExerciseQuestionResponse>> createManyExerciseQuestion(@Valid @RequestBody List<ExerciseQuestionRequest> requests) {
-        List<ExerciseQuestionResponse> newExerciseQuestion =exerciseQuestionService.handleCreateAllExerciseQuestion(requests);
+        List<ExerciseQuestionResponse> newExerciseQuestion = exerciseQuestionService.handleCreateAllExerciseQuestion(requests);
         return ApiResponse.<List<ExerciseQuestionResponse>>builder()
                 .code("201")
                 .status("success")
@@ -97,10 +105,10 @@ private final LessonExerciseService lessonExerciseService;
     }
 
     @PatchMapping("/{id}")
-    public  ApiResponse<ExerciseQuestionResponse> patchExerciseQuestion(
+    public ApiResponse<ExerciseQuestionResponse> patchExerciseQuestion(
             @PathVariable int id,
-            @Valid @RequestBody ExerciseQuestionRequest request){
-        ExerciseQuestionResponse ExerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id,request );
+            @Valid @RequestBody ExerciseQuestionRequest request) {
+        ExerciseQuestionResponse ExerciseQuestionResponse = exerciseQuestionService.updatePatchExerciseQuestion(id, request);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")
                 .status("success")
@@ -131,6 +139,19 @@ private final LessonExerciseService lessonExerciseService;
                 .code("200")
                 .status("success")
                 .message("Accept successfully")
+                .data(response)
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<ExerciseQuestionResponse> inActiveExerciseQuestion(
+            @PathVariable Integer id
+    ) {
+        ExerciseQuestionResponse response = exerciseQuestionService.inActiveExerciseQuestion(id);
+        return ApiResponse.<ExerciseQuestionResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Inactive successfully")
                 .data(response)
                 .build();
     }

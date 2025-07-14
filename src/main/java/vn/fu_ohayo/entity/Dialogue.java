@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
 
@@ -45,6 +46,9 @@ public class Dialogue {
 
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status = ContentStatus.DRAFT;
 
     @PrePersist
     protected void onCreate() {

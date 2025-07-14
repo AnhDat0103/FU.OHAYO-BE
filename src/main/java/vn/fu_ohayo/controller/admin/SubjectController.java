@@ -1,6 +1,7 @@
 package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/subjects")
+@Slf4j(topic = "SubjectController")
 public class SubjectController {
     
     private final SubjectService subjectService;
@@ -47,6 +49,7 @@ public class SubjectController {
     ) {
         Authentication  auth = SecurityContextHolder.getContext().getAuthentication();
         String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        log.info(email);
         return ApiResponse.<Page<SubjectResponse>>builder()
                 .code("200")
                 .status("success")
@@ -123,6 +126,16 @@ public class SubjectController {
                 .status("success")
                 .message("Subject rejected successfully")
                 .data(subjectService.rejectSubject(id))
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<SubjectResponse> inactiveSubject(@PathVariable("id") int id) {
+        return ApiResponse.<SubjectResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Subject inactive successfully")
+                .data(subjectService.inactiveSubject(id))
                 .build();
     }
 

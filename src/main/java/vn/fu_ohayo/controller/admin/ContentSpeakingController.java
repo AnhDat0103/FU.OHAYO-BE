@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentSpeakingRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
+import vn.fu_ohayo.dto.response.ContentSpeakingResponse;
 import vn.fu_ohayo.entity.ContentSpeaking;
 import vn.fu_ohayo.enums.JlptLevel;
 import vn.fu_ohayo.service.ContentSpeakingService;
@@ -139,6 +140,19 @@ public class ContentSpeakingController {
                 .status("success")
                 .message("success")
                 .data(contentSpeakingService.getListContentSpeakingBylever(jlptLevel))
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<ContentSpeakingResponse> inActiveContentSpeaking(
+            @PathVariable Long id
+    ) {
+        ContentSpeakingResponse response = contentSpeakingService.inActiveContentSpeaking(id);
+        return ApiResponse.<ContentSpeakingResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Accept successfully")
+                .data(response)
                 .build();
     }
 }

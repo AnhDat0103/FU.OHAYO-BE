@@ -38,7 +38,6 @@ public class ContentListeningRequest {
     @Size(max = 255, message = ErrorEnum.INVALID_URL_AUDIO)
     private String audioFile;
 
-    @Enumerated(EnumType.STRING)
     private JlptLevel jlptLevel;
 
 }

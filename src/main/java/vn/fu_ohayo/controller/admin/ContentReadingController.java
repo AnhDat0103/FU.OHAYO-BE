@@ -160,7 +160,7 @@ public class ContentReadingController {
     }
 
     @PatchMapping("/reject/{id}")
-    public ApiResponse<ContentReadingResponse> rejectContentListening(
+    public ApiResponse<ContentReadingResponse> rejectContentReading(
             @PathVariable Long id
     ) {
         ContentReadingResponse response = contentReadingService.rejectContentReading(id);
@@ -171,4 +171,19 @@ public class ContentReadingController {
                 .data(response)
                 .build();
     }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<ContentReadingResponse> inActiveContentReading(
+            @PathVariable Long id
+    ) {
+        ContentReadingResponse response = contentReadingService.inActiveContentReading(id);
+        return ApiResponse.<ContentReadingResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Inactive successfully")
+                .data(response)
+                .build();
+    }
+
+
 }

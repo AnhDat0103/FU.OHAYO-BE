@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.repository.UserRepository;
-import vn.fu_ohayo.Validate.PasswordResetValidate;
+import vn.fu_ohayo.validation.PasswordResetValidate;
 import vn.fu_ohayo.service.PasswordForgotService;
 
 import java.time.LocalDateTime;

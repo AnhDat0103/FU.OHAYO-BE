@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
+import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.dto.response.LessonExerciseResponse;
 import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.enums.JlptLevel;
@@ -120,6 +121,19 @@ public class ContentListeningController {
                 .status("success")
                 .message("success")
                 .data(contentListeningService.getListContentListeningsBylever(jlptLevel))
+                .build();
+    }
+
+    @PatchMapping("/inactive/{id}")
+    public ApiResponse<ContentListeningResponse> inActiveContentListening(
+            @PathVariable Long id
+    ) {
+        ContentListeningResponse response = contentListeningService.inActiveContentListening(id);
+        return ApiResponse.<ContentListeningResponse>builder()
+                .code("200")
+                .status("success")
+                .message("Inactive successfully")
+                .data(response)
                 .build();
     }
 

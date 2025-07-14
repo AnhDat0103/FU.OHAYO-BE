@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import vn.fu_ohayo.dto.response.AdminResponse;
-import vn.fu_ohayo.dto.response.AdminSearchUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.service.AdminService;
 

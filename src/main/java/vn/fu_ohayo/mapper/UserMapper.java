@@ -2,7 +2,10 @@ package vn.fu_ohayo.mapper;
 
 import org.mapstruct.*;
 import vn.fu_ohayo.dto.request.*;
+import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
 import vn.fu_ohayo.dto.response.AdminDTO;
+import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.Admin;
 import vn.fu_ohayo.entity.ParentStudent;
@@ -31,6 +34,8 @@ public interface UserMapper {
     @Mapping(source = "roles", target = "roles")
     AdminDTO toAdmin(Admin admin);
 
-    User toUser(AddUserRequest addUserRequest);
+    User toUser(AdminCreateUserRequest addUserRequest);
     User toUser(UserResponse userResponse);
-}
+
+    AdminFilterUserResponse toAdminFilterUserResponse(User user);
+    AdminCheckEmailUserResponse toAdminCheckEmailUserResponse(User user);}

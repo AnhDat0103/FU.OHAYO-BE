@@ -87,28 +87,16 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-        if (request.getFullName() != null) {
-            user.setFullName(request.getFullName());
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
 
-        if (request.getEmail() != null) {
-            if (!request.getEmail().equals(user.getEmail())
-                    && userRepository.existsByEmail(request.getEmail())) {
-                throw new AppException(ErrorEnum.EMAIL_EXIST);
-            }
-            user.setEmail(request.getEmail());
-        }
-
-        if (request.getStatus() != null) {
-            user.setStatus(request.getStatus());
-        }
-
-        if (request.getMembershipLevel() != null) {
-            user.setMembershipLevel(request.getMembershipLevel());
-        }
+        userMapper.updateUserFromAdminRequest(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
+
 
     @Override
     public UserResponse createUser(AdminCreateUserRequest request) {
@@ -138,13 +126,9 @@ public class UserServiceImp implements UserService {
 
         if (optionalUser.isPresent()) {
             return userMapper.toAdminCheckEmailUserResponse(optionalUser.get());
-        } else {
-            return AdminCheckEmailUserResponse.builder()
-                    .emailExists(false)
-                    .isDeleted(false)
-                    .userId(null)
-                    .build();
         }
+
+        return new AdminCheckEmailUserResponse();
     }
 
     @Override

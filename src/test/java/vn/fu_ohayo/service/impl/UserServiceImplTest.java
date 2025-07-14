@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import vn.fu_ohayo.dto.request.AddUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -60,7 +60,7 @@ class UserServiceImplTest {
     // ========== Test addUser ==========
     @Test
     void addUser_whenEmailExists_shouldThrowException() {
-        AddUserRequest request = AddUserRequest.builder()
+        AdminCreateUserRequest request = AdminCreateUserRequest.builder()
                 .email("test@example.com")
                 .phone("0123456789")
                 .build();
@@ -68,14 +68,14 @@ class UserServiceImplTest {
         when(userRepository.existsByEmail("test@example.com")).thenReturn(true);
 
         AppException exception = assertThrows(AppException.class, () ->
-                userService.addUser(request));
+                userService.createUser(request));
         assertEquals(ErrorEnum.EMAIL_EXIST.getMessage(), exception.getMessage());
         assertEquals(ErrorEnum.EMAIL_EXIST.getCode(), exception.getCode());
     }
 
     @Test
     void addUser_whenPhoneExists_shouldThrowException() {
-        AddUserRequest request = AddUserRequest.builder()
+        AdminCreateUserRequest request = AdminCreateUserRequest.builder()
                 .email("test@example.com")
                 .phone("0123456789")
                 .build();
@@ -84,14 +84,14 @@ class UserServiceImplTest {
         when(userRepository.existsByPhone("0123456789")).thenReturn(true);
 
         AppException exception = assertThrows(AppException.class, () ->
-                userService.addUser(request));
+                userService.createUser(request));
         assertEquals(ErrorEnum.PHONE_EXIST.getMessage(), exception.getMessage());
         assertEquals(ErrorEnum.PHONE_EXIST.getCode(), exception.getCode());
     }
 
     @Test
     void addUser_whenValid_shouldReturnUserResponse() {
-        AddUserRequest request = AddUserRequest.builder()
+        AdminCreateUserRequest request = AdminCreateUserRequest.builder()
                 .email("test@example.com")
                 .phone("0123456789")
                 .build();
@@ -105,7 +105,7 @@ class UserServiceImplTest {
         when(userRepository.save(userEntity)).thenReturn(userEntity);
         when(userMapper.toUserResponse(userEntity)).thenReturn(userResponse);
 
-        UserResponse result = userService.addUser(request);
+        UserResponse result = userService.createUser(request);
 
         assertEquals(userResponse, result);
     }

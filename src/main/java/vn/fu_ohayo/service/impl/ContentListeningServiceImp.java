@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import jdk.jshell.Snippet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,10 +37,6 @@ public class ContentListeningServiceImp implements ContentListeningService {
     @Override
     public ContentListening getContentListeningById(Long id) {
         ContentListening contentListening = contentListeningRepository.findBycontentListeningId(id);
-        if (contentListening.getStatus() != ContentStatus.PUBLIC) {
-            throw new IllegalStateException(
-                    "(Status: " + contentListening.getStatus() + ")");
-        }
         return contentListening;
     }
 

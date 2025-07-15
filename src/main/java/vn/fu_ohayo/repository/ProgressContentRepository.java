@@ -15,7 +15,7 @@ public interface ProgressContentRepository extends JpaRepository<ProgressContent
     Optional<ProgressContent> findByUser_UserIdAndContent_ContentId(Long userId, Long contentId);
     Optional<ProgressContent> findByUserAndContent(User user, Content content);
 //    Optional<ProgressContent> findByUser_UserAndContent_Content(Long userId, Long contentId);
-    List<ProgressContent> findByUser_UserIdAndProgressStatus(int userId, ProgressStatus progressStatus);
+    List<ProgressContent> findAllByUserAndProgressStatus(User user, ProgressStatus progressStatus);
 
     User user(User user);
 }

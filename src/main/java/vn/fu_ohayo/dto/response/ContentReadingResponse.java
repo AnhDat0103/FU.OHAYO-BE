@@ -31,5 +31,5 @@ public class ContentReadingResponse {
     private String audioFile;
     private JlptLevel jlptLevel;
     private ContentStatus status;
-
+    private ContentResponse content;
 }

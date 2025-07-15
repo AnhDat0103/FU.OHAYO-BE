@@ -245,5 +245,4 @@ class VocabularyServiceImpTest {
 
     }
 
-
 }

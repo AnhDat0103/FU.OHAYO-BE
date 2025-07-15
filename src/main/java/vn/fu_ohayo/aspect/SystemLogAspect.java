@@ -27,7 +27,7 @@ import java.util.Collection;
 public class SystemLogAspect {
     SystemLogRepository systemLogRepository;
 
-    @Pointcut("execution(* vn.fu_ohayo.controller..*(..)) || execution(* vn.fu_ohayo.service..*(..))")
+    @Pointcut("execution(* vn.fu_ohayo.controller..*(..))")
     public void appPackagePointcut() {}
 
     @AfterReturning(pointcut = "appPackagePointcut()", returning = "result")

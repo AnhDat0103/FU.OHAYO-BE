@@ -1,10 +1,9 @@
-package vn.fu_ohayo.dto.request;
+package vn.fu_ohayo.dto.request.Admin.User;
 
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.dto.request.PagingRequest;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.enums.UserStatus;
 
@@ -12,11 +11,12 @@ import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AdminSearchUserRequest {
-    @Size(max = 50, message = ErrorEnum.INVALID_NAME)
+public class AdminFilterUserRequest extends PagingRequest {
+
     String fullName;
 
     MembershipLevel membershipLevel;
@@ -29,6 +29,4 @@ public class AdminSearchUserRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date registeredTo;
 
-    private Integer currentPage = 0;
-    private Integer pageSize = 10;
 }

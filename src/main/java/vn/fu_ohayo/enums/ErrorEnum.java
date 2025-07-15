@@ -43,7 +43,6 @@ public enum ErrorEnum {
     SUBJECT_IN_USE("4011", "Subject is in use, cannot be deleted"),
     INVALID_PAGE("4012","Page is not exist" ),
     ACCOUNT_INACTIVE("4001","YOUR ACCOUNT IS IN ACTIVE"),
-
     LESSON_NOT_FOUND("4013",  "Lesson not found"),
     LESSON_NAME_EXIST( "4014", "Lesson is exited with this name." ),
     LESSON_HAS_VOCABULARY("4015", "Lesson has vocabularies, cannot be deleted"),
@@ -70,7 +69,6 @@ public enum ErrorEnum {
     DIALOGUE_NOT_FOUND ("4029","Dialogue not found"),
     INVALID_TYPE("4030","Type is not invalid (Exercise or content Listening)" ),
     CAN_NOT_ACCEPT("4031","Can not accept due to lack of internal content" ),
-
     // 5xxx - server error
     // 6xxx - PaymentErrorCode
 

@@ -16,9 +16,9 @@ public interface DialogueService {
 //    Dialogue updatePutDialogue(Dialogue dialogue, long id);
     Dialogue updatePatchDialogue(long id, Dialogue dialogue);
     List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId);
-    Page<Dialogue> getDialoguePage(int page, int size,long contentSpeakingId);
+    Page<DialogueResponse> getDialoguePage(int page, int size,long contentSpeakingId);
     void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking);
-    Page<Dialogue> getAllDialoguePage(int page, int size);
+    Page<DialogueResponse> getAllDialoguePage(int page, int size);
     DialogueResponse acceptDialogue (long id);
     DialogueResponse rejectDialogue (long id);
     DialogueResponse inActiveDialogue (long id);

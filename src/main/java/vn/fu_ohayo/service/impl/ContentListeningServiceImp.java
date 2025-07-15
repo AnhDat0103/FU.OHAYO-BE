@@ -36,10 +36,6 @@ public class ContentListeningServiceImp implements ContentListeningService {
     @Override
     public ContentListening getContentListeningById(Long id) {
         ContentListening contentListening = contentListeningRepository.findBycontentListeningId(id);
-        if (contentListening.getStatus() != ContentStatus.PUBLIC) {
-            throw new IllegalStateException(
-                    "(Status: " + contentListening.getStatus() + ")");
-        }
         return contentListening;
     }
 

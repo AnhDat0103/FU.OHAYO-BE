@@ -106,11 +106,11 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public Page<Dialogue> getDialoguePage(int page, int size, long contentSpeakingId) {
+    public Page<DialogueResponse> getDialoguePage(int page, int size, long contentSpeakingId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
         Page<Dialogue> dialoguePage = dialogueRepository.findAllByContentSpeaking(contentSpeaking, pageable);
-        return dialoguePage;
+        return dialoguePage.map(dialogueMapper::toDialogueResponse);
     }
 
     @Override
@@ -120,10 +120,10 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public Page<Dialogue> getAllDialoguePage(int page, int size) {
+    public Page<DialogueResponse> getAllDialoguePage(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Dialogue> dialoguePage = dialogueRepository.findAll(pageable);
-        return dialoguePage;
+        return dialoguePage.map(dialogueMapper::toDialogueResponse);
     }
 
     @Override

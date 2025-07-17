@@ -27,6 +27,7 @@ public enum ErrorEnum {
     UNAUTHORIZED("401", "Access token expired"),
     FORBIDDEN("403", "Invalid token signature"),
     // 4xxx - not found
+    ADMIN_NOT_FOUND("4000","Admin not found"),
     USER_NOT_FOUND("4001","User not found"),
     ROLE_NOT_FOUND("4002","Role not found"),
     INVALID_TOKEN("4003", "Invalid token"),
@@ -92,7 +93,7 @@ public enum ErrorEnum {
     public static final String INVALID_ADDRESS = "Address must be less than 255 characters";
     public static final String INVALID_URL_AVATAR = "Avatar URL must be less than 255 characters";
     public static final String INVALID_URL_AUDIO = "File audio must be less than 255 characters";
-
+    public static final String INVALID_ROLE = "Role must not be empty";
     public static final String NOT_EMPTY_USER = "User cannot be null";
     public static final String MAX_LENGTH_IMAGE = "Image URL must be less than 255 characters";
     public static final String NOT_EMPTY_CONTENT_TYPE = "Content type cannot be null";

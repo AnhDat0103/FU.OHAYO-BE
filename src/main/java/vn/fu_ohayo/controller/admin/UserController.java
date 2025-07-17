@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.service.AuthenticationService;
 import vn.fu_ohayo.service.UserService;
 

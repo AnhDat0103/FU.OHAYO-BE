@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.response.Admin.User;
+package vn.fu_ohayo.dto.response.admin.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +15,7 @@ import vn.fu_ohayo.enums.UserStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCheckEmailUserResponse {
-    boolean emailExists;
+    Boolean emailExists;
     @JsonProperty("isDeleted")
     boolean isDeleted;
     Long userId;

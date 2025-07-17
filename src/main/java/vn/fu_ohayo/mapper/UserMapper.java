@@ -1,13 +1,14 @@
 package vn.fu_ohayo.mapper;
 
 import org.mapstruct.*;
-import vn.fu_ohayo.dto.request.*;
-import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
-import vn.fu_ohayo.dto.response.AdminDTO;
-import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.DTO.ParentStudentDTO;
+import vn.fu_ohayo.dto.DTO.StudentDTO;
+import vn.fu_ohayo.dto.request.admin.user.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.response.admin.user.AdminCheckEmailUserResponse;
+import vn.fu_ohayo.dto.DTO.AdminDTO;
+import vn.fu_ohayo.dto.response.admin.user.AdminFilterUserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.entity.Admin;
 import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.entity.User;

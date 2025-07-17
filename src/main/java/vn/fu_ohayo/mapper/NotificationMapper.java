@@ -3,7 +3,7 @@ package vn.fu_ohayo.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import vn.fu_ohayo.dto.response.NotificationDTO;
+import vn.fu_ohayo.dto.DTO.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 
 @Mapper(componentModel = "spring")

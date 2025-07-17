@@ -5,21 +5,22 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.fu_ohayo.config.AuthConfig;
-import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminFilterUserRequest;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.request.UserRegister;
-import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
+import vn.fu_ohayo.dto.request.admin.user.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.request.user.UserRegister;
+import vn.fu_ohayo.dto.response.admin.user.AdminCheckEmailUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.response.admin.user.AdminFilterUserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.enums.MembershipLevel;
@@ -63,14 +64,23 @@ public class UserServiceImp implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AdminFilterUserResponse> filterUsersForAdmin(AdminFilterUserRequest request) {
+    public Page<AdminFilterUserResponse> filterUsersForAdmin(
+            AdminFilterUserRequest request
+    ) {
         return userRepository.filterUsers(
                 request.getFullName(),
                 request.getMembershipLevel(),
                 request.getStatus(),
                 request.getRegisteredFrom(),
                 request.getRegisteredTo(),
-                PageRequest.of(request.getCurrentPage(), request.getPageSize())
+                PageRequest.of(
+                        request.getCurrentPage(),
+                        request.getPageSize(),
+                        Sort.by(
+                                Sort.Order.desc("createdAt"),
+                                Sort.Order.desc("updatedAt")
+                        )
+                )
         ).map(userMapper::toAdminFilterUserResponse);
     }
 
@@ -108,12 +118,17 @@ public class UserServiceImp implements UserService {
             throw new AppException(ErrorEnum.PHONE_EXIST);
         }
 
-        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(request)));
+        User user = userMapper.toUser(request);
+
+        user.setRole(roleRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new AppException(ErrorEnum.ROLE_NOT_FOUND)));
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
     public void recoverUser(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdIncludingDeleted(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         user.setDeleted(false);
         user.setUpdatedAt(new Date());

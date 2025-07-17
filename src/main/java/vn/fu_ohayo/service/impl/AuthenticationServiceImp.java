@@ -2,7 +2,6 @@ package vn.fu_ohayo.service.impl;
 
 
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +20,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import vn.fu_ohayo.dto.request.AdminLoginRequest;
+import vn.fu_ohayo.dto.request.admin.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
 import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
-import vn.fu_ohayo.dto.response.UserFromProvider;
+import vn.fu_ohayo.dto.response.user.UserFromProvider;
 import vn.fu_ohayo.entity.Admin;
-import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;

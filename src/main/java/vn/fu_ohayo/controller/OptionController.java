@@ -3,10 +3,7 @@ package vn.fu_ohayo.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.fu_ohayo.enums.JlptLevel;
-import vn.fu_ohayo.enums.MembershipLevel;
-import vn.fu_ohayo.enums.PartOfSpeech;
-import vn.fu_ohayo.enums.UserStatus;
+import vn.fu_ohayo.enums.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,5 +29,10 @@ public class OptionController {
     @GetMapping("/part-of-speech")
     public List<PartOfSpeech> getPartOfSpeech() {
         return Arrays.asList(PartOfSpeech.values());
+    }
+
+    @GetMapping("/roles")
+    public List<RoleEnum> getRoles() {
+        return Arrays.asList(RoleEnum.values());
     }
 }

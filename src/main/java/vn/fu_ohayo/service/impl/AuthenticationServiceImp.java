@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -71,12 +72,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
     final JwtService jwtService;
     final  AdminRepository adminRepository;
     final AuthenticationManager authenticationManager;
+    final SimpMessagingTemplate messagingTemplate;
 
-    public AuthenticationServiceImp(UserRepository userRepository, JwtService jwtService, AdminRepository adminRepository, AuthenticationManager authenticationManager) {
+    public AuthenticationServiceImp(UserRepository userRepository, JwtService jwtService, AdminRepository adminRepository, AuthenticationManager authenticationManager, SimpMessagingTemplate messagingTemplate) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.adminRepository = adminRepository;
         this.authenticationManager = authenticationManager;
+        this.messagingTemplate = messagingTemplate;
     }
 
 
@@ -176,6 +179,11 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 User user = userRepository.findByEmail(response.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setStatus(UserStatus.ACTIVE);
                 userRepository.save(user);
+                String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
+                messagingTemplate.convertAndSend(
+                        "/topic/confirm." + encodedEmail,
+                        Map.of("email", user.getEmail(), "status", "Registered")
+                );
                 return true;
             } else {
                 throw new UsernameNotFoundException("User not found");

@@ -10,12 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.fu_ohayo.config.AuthConfig;
+import vn.fu_ohayo.dto.request.*;
 import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
 import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
-import vn.fu_ohayo.dto.request.CompleteProfileRequest;
-import vn.fu_ohayo.dto.request.InitialRegisterRequest;
 import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.request.UserRegister;
 import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
@@ -32,6 +30,7 @@ import vn.fu_ohayo.service.UserService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -245,12 +244,21 @@ public class UserServiceImp implements UserService {
             List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
             List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
             if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
-                userResponse.setParents(userMapper.toParentOnlyDtoList(filterParent));
-
+                List<ParentStudentDTO> list = new ArrayList<>();
+                filterParent.forEach(parentStudent -> {list.add(ParentStudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
+                        .userId(parentStudent.getParent().getUserId())
+                        .fullName(parentStudent.getParent().getFullName()).build()).build());});
+                userResponse.setParents(list);
             } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
-                userResponse.setChildren(userMapper.toStudentOnlyDtoList(filteredChildren));
-
-            }        return userResponse;
+                List<StudentDTO> list = new ArrayList<>();
+                filteredChildren.forEach(parentStudent -> {list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
+                        .userId(parentStudent.getStudent().getUserId())
+                        .fullName(parentStudent.getStudent().getFullName())
+                        .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel())
+                        .build()).build());});
+                userResponse.setChildren(list);
+            }
+            return userResponse;
 
     }
 

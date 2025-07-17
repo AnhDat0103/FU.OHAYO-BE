@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.request.Admin.User;
+package vn.fu_ohayo.dto.request.admin.user;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,4 +29,5 @@ public class AdminFilterUserRequest extends PagingRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date registeredTo;
 
+    Boolean isDeleted;
 }

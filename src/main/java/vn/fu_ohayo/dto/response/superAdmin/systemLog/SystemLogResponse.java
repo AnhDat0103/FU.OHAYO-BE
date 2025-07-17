@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.response;
+package vn.fu_ohayo.dto.response.superAdmin.systemLog;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

@@ -1,11 +1,9 @@
 package vn.fu_ohayo.service;
 
-import vn.fu_ohayo.dto.request.SystemLogRequest;
-import vn.fu_ohayo.dto.response.SystemLogResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import vn.fu_ohayo.dto.request.superAdmin.systemLog.SystemLogRequest;
+import vn.fu_ohayo.dto.response.superAdmin.systemLog.SystemLogResponse;
 
 public interface SystemLogService {
-    List<SystemLogResponse> getAllLogs();
-    List<SystemLogResponse> searchSystemLog(SystemLogRequest request);
+    Page<SystemLogResponse> filterSystemLogsForAdmin(SystemLogRequest request);
 }

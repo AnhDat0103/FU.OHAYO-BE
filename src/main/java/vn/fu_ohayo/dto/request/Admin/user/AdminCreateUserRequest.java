@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.request.Admin.User;
+package vn.fu_ohayo.dto.request.admin.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import vn.fu_ohayo.enums.*;
+
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,4 +44,9 @@ public class AdminCreateUserRequest {
     UserStatus status = UserStatus.ACTIVE;
 
     Provider provider = Provider.LOCAL;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date dob;
+
+    int roleId = 5;
 }

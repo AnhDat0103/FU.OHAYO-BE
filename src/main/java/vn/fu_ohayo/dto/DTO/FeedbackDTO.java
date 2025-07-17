@@ -1,7 +1,7 @@
-package vn.fu_ohayo.dto;
+package vn.fu_ohayo.dto.DTO;
 
 import lombok.Data;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 
 import java.util.Date;
 

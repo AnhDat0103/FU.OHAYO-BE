@@ -1,8 +1,7 @@
 package vn.fu_ohayo.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import vn.fu_ohayo.enums.LessonStatus;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.Date;

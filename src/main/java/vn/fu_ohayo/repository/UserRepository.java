@@ -22,13 +22,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByFullName(String fullName);
 
     boolean existsByEmail(String email);
-    @Query("SELECT u FROM User u WHERE u.email = :email")
+
+    @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
     Optional<User> findByEmailIncludingDeleted(@Param("email") String email);
+
     Optional<User> findByEmailAndProvider(String email, Provider provider);
+    @Query(value = "SELECT * FROM users WHERE user_id = :userId", nativeQuery = true)
+    Optional<User> findByIdIncludingDeleted(@Param("userId") Long userId);
 
     boolean existsByPhone(String phone);
+
     @Query("SELECT u FROM User u WHERE " +
-            "u.isDeleted = false AND " +
             "(:fullName IS NULL OR u.fullName LIKE %:fullName%) AND " +
             "(:membershipLevel IS NULL OR u.membershipLevel = :membershipLevel) AND " +
             "(:status IS NULL OR u.status = :status) AND " +
@@ -42,6 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("registeredTo") Date registeredTo,
             Pageable pageable
     );
+
     int countAllByStatus(UserStatus status);
 
     int countAllByStatusAndCreatedAtBefore(UserStatus status, Date createdAt);

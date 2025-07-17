@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.SubjectRequest;
 import vn.fu_ohayo.dto.response.ProgressSubjectResponse;
 import vn.fu_ohayo.dto.response.SubjectResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
@@ -24,7 +23,6 @@ import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.SubjectService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service

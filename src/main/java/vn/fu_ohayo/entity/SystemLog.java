@@ -25,8 +25,7 @@ public class SystemLog {
 
     private String action;
 
-    @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(length = 2000)
     private String details;
 
     @Enumerated(EnumType.STRING)
@@ -39,4 +38,3 @@ public class SystemLog {
     }
 
 }
-

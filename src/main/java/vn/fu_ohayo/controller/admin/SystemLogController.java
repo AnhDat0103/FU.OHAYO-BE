@@ -1,45 +1,35 @@
 package vn.fu_ohayo.controller.admin;
 
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.fu_ohayo.dto.request.SystemLogRequest;
+import vn.fu_ohayo.dto.request.superAdmin.systemLog.SystemLogRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.SystemLogResponse;
+import vn.fu_ohayo.dto.response.superAdmin.systemLog.SystemLogResponse;
 import vn.fu_ohayo.service.SystemLogService;
 
-import java.util.List;
+import static vn.fu_ohayo.constant.ConstantGolbal.READ_SUCCESS_CODE;
+import static vn.fu_ohayo.constant.ConstantGolbal.READ_SUCCESS_MESSAGE;
 
-@RestController()
+@RestController
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/admin/system-logs")
 public class SystemLogController {
 
-    SystemLogService systemLogService;
+    private final SystemLogService systemLogService;
 
     @GetMapping
-    public ApiResponse<List<SystemLogResponse>> getSystemLog() {
-        return ApiResponse.<List<SystemLogResponse>>builder()
-                .code("200")
-                .status("success")
-                .message("Get all system log successfully")
-                .data(systemLogService.getAllLogs())
-                .build();
-    }
-
-    @GetMapping("/search")
-    public ApiResponse<List<SystemLogResponse>> searchSystemLog(@Valid @ModelAttribute SystemLogRequest request) {
-        return ApiResponse.<List<SystemLogResponse>>builder()
-                .code("200")
-                .status("success")
-                .message("Get system by timestamp, action, user successfully")
-                .data(systemLogService.searchSystemLog(request))
+    public ApiResponse<Page<SystemLogResponse>> filterSystemLogs(
+            @Valid @ModelAttribute SystemLogRequest request) {
+        return ApiResponse.<Page<SystemLogResponse>>builder()
+                .code(READ_SUCCESS_CODE)
+                .status(READ_SUCCESS_MESSAGE)
+                .message("Get system log by filter success")
+                .data(systemLogService.filterSystemLogsForAdmin(request))
                 .build();
     }
 }

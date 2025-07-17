@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.request.Admin.User;
+package vn.fu_ohayo.dto.request.admin.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

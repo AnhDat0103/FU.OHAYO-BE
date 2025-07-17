@@ -1,6 +1,7 @@
-package vn.fu_ohayo.dto.response.Admin.User;
+package vn.fu_ohayo.dto.response.admin.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.fu_ohayo.enums.MembershipLevel;
@@ -25,5 +26,6 @@ public class AdminFilterUserResponse {
     Date updatedAt;
     Provider provider;
     MembershipLevel membershipLevel;
+    @JsonProperty("isDeleted")
+    boolean isDeleted;
 }
-

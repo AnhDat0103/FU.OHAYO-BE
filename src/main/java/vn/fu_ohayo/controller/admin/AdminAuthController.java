@@ -7,32 +7,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.config.AuthConfig;
-import vn.fu_ohayo.dto.request.AdminLoginRequest;
-import vn.fu_ohayo.dto.response.AdminDTO;
+import vn.fu_ohayo.dto.request.admin.AdminLoginRequest;
+import vn.fu_ohayo.dto.DTO.AdminDTO;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.ExtractTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;
 import vn.fu_ohayo.entity.Admin;
-import vn.fu_ohayo.entity.Role;
 import vn.fu_ohayo.enums.ErrorEnum;
-import vn.fu_ohayo.enums.RoleEnum;
 import vn.fu_ohayo.enums.TokenType;
-import vn.fu_ohayo.enums.UserStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.AdminRepository;
 import vn.fu_ohayo.repository.RoleRepository;
 import vn.fu_ohayo.repository.UserRepository;
-import vn.fu_ohayo.service.AuthenticationService;
 import vn.fu_ohayo.service.JwtService;
 import vn.fu_ohayo.service.impl.AuthenticationServiceImp;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j(topic = "ADMIN_CONTROLLER")
 @RestController

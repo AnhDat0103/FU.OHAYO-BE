@@ -5,19 +5,25 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.fu_ohayo.config.AuthConfig;
-import vn.fu_ohayo.dto.request.*;
-import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
+import vn.fu_ohayo.dto.DTO.ParentStudentDTO;
+import vn.fu_ohayo.dto.DTO.SimpleUserDTO;
+import vn.fu_ohayo.dto.DTO.StudentDTO;
+import vn.fu_ohayo.dto.request.admin.user.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminFilterUserRequest;
+import vn.fu_ohayo.dto.request.CompleteProfileRequest;
+import vn.fu_ohayo.dto.request.InitialRegisterRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.request.user.UserRegister;
+import vn.fu_ohayo.dto.response.admin.user.*;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.response.admin.user.AdminFilterUserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.enums.MembershipLevel;
@@ -62,14 +68,23 @@ public class UserServiceImp implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AdminFilterUserResponse> filterUsersForAdmin(AdminFilterUserRequest request) {
+    public Page<AdminFilterUserResponse> filterUsersForAdmin(
+            AdminFilterUserRequest request
+    ) {
         return userRepository.filterUsers(
                 request.getFullName(),
                 request.getMembershipLevel(),
                 request.getStatus(),
                 request.getRegisteredFrom(),
                 request.getRegisteredTo(),
-                PageRequest.of(request.getCurrentPage(), request.getPageSize())
+                PageRequest.of(
+                        request.getCurrentPage(),
+                        request.getPageSize(),
+                        Sort.by(
+                                Sort.Order.desc("createdAt"),
+                                Sort.Order.desc("updatedAt")
+                        )
+                )
         ).map(userMapper::toAdminFilterUserResponse);
     }
 
@@ -107,12 +122,17 @@ public class UserServiceImp implements UserService {
             throw new AppException(ErrorEnum.PHONE_EXIST);
         }
 
-        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(request)));
+        User user = userMapper.toUser(request);
+
+        user.setRole(roleRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new AppException(ErrorEnum.ROLE_NOT_FOUND)));
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
     public void recoverUser(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdIncludingDeleted(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         user.setDeleted(false);
         user.setUpdatedAt(new Date());
@@ -139,7 +159,7 @@ public class UserServiceImp implements UserService {
     @Override
     public ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if(userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.ACTIVE) || userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.BANNED)) {
+        if (userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.ACTIVE) || userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.BANNED)) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -147,11 +167,10 @@ public class UserServiceImp implements UserService {
             throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
-            User user = null;
-        if(!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-             user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).role(roleRepository.findByName(RoleEnum.USER)).provider(Provider.LOCAL).password(password).build());
-        }
-        else {
+        User user = null;
+        if (!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
+            user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).role(roleRepository.findByName(RoleEnum.USER)).provider(Provider.LOCAL).password(password).build());
+        } else {
             user = userRepository.findByEmail(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         }
         if (!emailParent.equals("anonymousUser")) {
@@ -240,25 +259,29 @@ public class UserServiceImp implements UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
-            UserResponse userResponse = userMapper.toUserResponse(user);
-            List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
-            List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
-            if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
-                List<ParentStudentDTO> list = new ArrayList<>();
-                filterParent.forEach(parentStudent -> {list.add(ParentStudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
+        UserResponse userResponse = userMapper.toUserResponse(user);
+        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+        List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+        if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
+            List<ParentStudentDTO> list = new ArrayList<>();
+            filterParent.forEach(parentStudent -> {
+                list.add(ParentStudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
                         .userId(parentStudent.getParent().getUserId())
-                        .fullName(parentStudent.getParent().getFullName()).build()).build());});
-                userResponse.setParents(list);
-            } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
-                List<StudentDTO> list = new ArrayList<>();
-                filteredChildren.forEach(parentStudent -> {list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
+                        .fullName(parentStudent.getParent().getFullName()).build()).build());
+            });
+            userResponse.setParents(list);
+        } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
+            List<StudentDTO> list = new ArrayList<>();
+            filteredChildren.forEach(parentStudent -> {
+                list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
                         .userId(parentStudent.getStudent().getUserId())
                         .fullName(parentStudent.getStudent().getFullName())
                         .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel())
-                        .build()).build());});
-                userResponse.setChildren(list);
-            }
-            return userResponse;
+                        .build()).build());
+            });
+            userResponse.setChildren(list);
+        }
+        return userResponse;
 
     }
 

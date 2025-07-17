@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.dto.FeedbackDTO;
+import vn.fu_ohayo.dto.DTO.FeedbackDTO;
 import vn.fu_ohayo.entity.Feedback;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.mapper.FeedbackMapper;

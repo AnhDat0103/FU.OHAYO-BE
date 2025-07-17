@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "Users",
         uniqueConstraints = {
@@ -42,6 +41,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@Where(clause = "is_deleted = false")
+@SuppressWarnings("deprecation")
 public class User implements UserDetails, Serializable {
     @Id @GeneratedValue(
              strategy = GenerationType.IDENTITY
@@ -52,7 +53,7 @@ public class User implements UserDetails, Serializable {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    @Email()
+    @Email
     @NotNull(message = ErrorEnum.NOT_EMPTY_EMAIL)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = ErrorEnum.INVALID_EMAIL_MS)
     private String email;
@@ -73,7 +74,7 @@ public class User implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^0[0-9]{9,10}$", message = ErrorEnum.INVALID_PHONE)
+    @Pattern(regexp = "^0\\d{9,10}$", message = ErrorEnum.INVALID_PHONE)
     @Column(unique = true)
     private String phone;
 

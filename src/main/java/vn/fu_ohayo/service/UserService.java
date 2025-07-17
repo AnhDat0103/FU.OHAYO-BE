@@ -1,16 +1,16 @@
 package vn.fu_ohayo.service;
 
 import org.springframework.data.domain.Page;
-import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.admin.user.AdminUpdateUserRequest;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
-import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
-import vn.fu_ohayo.dto.request.UserRegister;
-import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
-import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
+import vn.fu_ohayo.dto.request.admin.user.AdminFilterUserRequest;
+import vn.fu_ohayo.dto.request.user.UserRegister;
+import vn.fu_ohayo.dto.response.admin.user.AdminCheckEmailUserResponse;
+import vn.fu_ohayo.dto.response.admin.user.AdminFilterUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.UserResponse;
+import vn.fu_ohayo.dto.response.user.UserResponse;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.entity.UserProfileDTO;
 

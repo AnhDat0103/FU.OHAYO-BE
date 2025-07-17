@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import vn.fu_ohayo.dto.response.NotificationDTO;
+import vn.fu_ohayo.dto.DTO.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.entity.ParentStudent;
 import vn.fu_ohayo.enums.NotificationEnum;
@@ -19,7 +19,6 @@ import vn.fu_ohayo.service.NotificationService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

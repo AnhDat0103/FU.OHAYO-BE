@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.fu_ohayo.dto.request.NotificationReq;
-import vn.fu_ohayo.dto.response.NotificationDTO;
+import vn.fu_ohayo.dto.DTO.NotificationDTO;
 import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.service.NotificationService;
 

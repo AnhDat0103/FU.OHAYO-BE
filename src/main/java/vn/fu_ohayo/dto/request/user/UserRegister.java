@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.request;
+package vn.fu_ohayo.dto.request.user;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

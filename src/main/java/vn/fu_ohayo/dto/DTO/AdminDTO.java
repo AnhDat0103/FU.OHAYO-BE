@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.response;
+package vn.fu_ohayo.dto.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

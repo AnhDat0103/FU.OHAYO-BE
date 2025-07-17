@@ -1,18 +1,20 @@
-package vn.fu_ohayo.dto.response;
+package vn.fu_ohayo.dto.response.superAdmin.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import vn.fu_ohayo.enums.RoleEnum;
+import vn.fu_ohayo.dto.response.RoleResponse;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RoleResponse {
-    int roleId;
-    RoleEnum name;
-    String description;
+public class SuperAdminFilterAdminResponse {
+    Long adminId;
+    String username;
+    Set<RoleResponse> roles;
 }

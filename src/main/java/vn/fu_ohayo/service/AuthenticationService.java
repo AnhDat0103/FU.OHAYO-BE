@@ -1,6 +1,6 @@
 package vn.fu_ohayo.service;
 
-import vn.fu_ohayo.dto.request.AdminLoginRequest;
+import vn.fu_ohayo.dto.request.admin.AdminLoginRequest;
 import vn.fu_ohayo.dto.request.SignInRequest;
 import vn.fu_ohayo.dto.response.GoogleTokenResponse;
 import vn.fu_ohayo.dto.response.TokenResponse;

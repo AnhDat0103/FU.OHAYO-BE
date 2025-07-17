@@ -1,4 +1,4 @@
-package vn.fu_ohayo.dto.request;
+package vn.fu_ohayo.dto.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ParentStudentDTO {
+public class StudentDTO {
     private Integer id;
     private SimpleUserDTO user;
 }

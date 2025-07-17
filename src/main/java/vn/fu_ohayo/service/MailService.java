@@ -61,7 +61,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(studyReminder.getUser().getEmail());
         message.setSubject("⏰ Nhắc học bài!");
-        message.setText("Bạn có lười nhắc học vào lúc " + studyReminder.getTime() +"\nGhi chú: " + studyReminder.getNote());
+        message.setText("Bạn có lời nhắc học vào lúc " + studyReminder.getTime() +"\nGhi chú: " + studyReminder.getNote());
         mailSender.send(message);
     }
 

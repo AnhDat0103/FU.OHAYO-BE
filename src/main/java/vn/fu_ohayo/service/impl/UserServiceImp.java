@@ -85,7 +85,7 @@ public class UserServiceImp implements UserService {
     @Override
     public ApiResponse<?> registerInitial(InitialRegisterRequest initialRegisterRequest) {
 
-        if(userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.INACTIVE)) {
+        if(userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.ACTIVE) || userRepository.existsByEmailAndStatus(initialRegisterRequest.getEmail(), UserStatus.BANNED)) {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -95,7 +95,7 @@ public class UserServiceImp implements UserService {
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
             User user = null;
         if(!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-             user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).provider(Provider.LOCAL).password(password).build());
+             user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).role(roleRepository.findByName(RoleEnum.USER)).provider(Provider.LOCAL).password(password).build());
         }
         else {
             user = userRepository.findByEmail(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
@@ -123,6 +123,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserResponse completeProfile(CompleteProfileRequest completeProfileRequest, String email) {
+        log.info(email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         log.info(String.valueOf(completeProfileRequest.getRole()));

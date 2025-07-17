@@ -52,12 +52,12 @@ public class DialogueController {
     }
 
     @GetMapping("/content_speaking/{contentSpeakingId}")
-    public ApiResponse<Page<Dialogue>> getDialoguesByContentSpeakingIdPage(
+    public ApiResponse<Page<DialogueResponse>> getDialoguesByContentSpeakingIdPage(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @PathVariable long contentSpeakingId) {
-        Page<Dialogue> dialogues = dialogueService.getDialoguePage(page, size, contentSpeakingId);
-        return ApiResponse.<Page<Dialogue>>builder()
+        Page<DialogueResponse> dialogues = dialogueService.getDialoguePage(page, size, contentSpeakingId);
+        return ApiResponse.<Page<DialogueResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get dialogues by content speaking id successfully")
@@ -66,11 +66,11 @@ public class DialogueController {
     }
 
     @GetMapping("/page/all")
-    public ApiResponse<Page<Dialogue>> getDialoguesAllPage(
+    public ApiResponse<Page<DialogueResponse>> getDialoguesAllPage(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<Dialogue> dialogues = dialogueService.getAllDialoguePage(page, size);
-        return ApiResponse.<Page<Dialogue>>builder()
+        Page<DialogueResponse> dialogues = dialogueService.getAllDialoguePage(page, size);
+        return ApiResponse.<Page<DialogueResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get dialogues all page successfully")

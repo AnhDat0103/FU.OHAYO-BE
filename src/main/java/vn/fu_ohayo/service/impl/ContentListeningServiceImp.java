@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import jdk.jshell.Snippet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,14 +9,18 @@ import vn.fu_ohayo.dto.request.ContentListeningRequest;
 import vn.fu_ohayo.dto.response.ContentListeningResponse;
 import vn.fu_ohayo.entity.Content;
 import vn.fu_ohayo.entity.ContentListening;
+import vn.fu_ohayo.entity.ExerciseQuestion;
 import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ContentTypeEnum;
+import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.JlptLevel;
+import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ContentMapper;
 import vn.fu_ohayo.repository.ContentListeningRepository;
 import vn.fu_ohayo.service.ContentListeningService;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +36,8 @@ public class ContentListeningServiceImp implements ContentListeningService {
 
     @Override
     public ContentListening getContentListeningById(Long id) {
-        ContentListening l = contentListeningRepository.findBycontentListeningId(id);
-        return l;
+        ContentListening contentListening = contentListeningRepository.findBycontentListeningId(id);
+        return contentListening;
     }
 
     @Override
@@ -95,7 +100,7 @@ public class ContentListeningServiceImp implements ContentListeningService {
                 contentListening.setScriptVn(request.getScriptVn());
                 isUpdated = true;
             }
-            if(request.getJlptLevel() != null && !request.getJlptLevel().equals(contentListening.getJlptLevel())) {
+            if (request.getJlptLevel() != null && !request.getJlptLevel().equals(contentListening.getJlptLevel())) {
                 contentListening.setJlptLevel(request.getJlptLevel());
                 isUpdated = true;
             }
@@ -118,7 +123,14 @@ public class ContentListeningServiceImp implements ContentListeningService {
     @Override
     public ContentListeningResponse acceptContentListening(long id) {
         ContentListening contentListening = getContentListeningById(id);
-        contentListening.setStatus(ContentStatus.PUBLIC);
+        Set<ExerciseQuestion> exerciseQuestions = contentListening.getExerciseQuestions();
+        boolean hasPublicQuestion = contentListening.getExerciseQuestions()
+                .stream()
+                .anyMatch(q -> q.getStatus().equals(ContentStatus.PUBLIC));
+        if (!hasPublicQuestion) {
+            throw new AppException(ErrorEnum.CAN_NOT_ACCEPT);
+        }
+            contentListening.setStatus(ContentStatus.PUBLIC);
         contentListeningRepository.save(contentListening);
         return contentMapper.toContentListeningResponse(contentListening);
     }
@@ -136,7 +148,8 @@ public class ContentListeningServiceImp implements ContentListeningService {
         ContentListening contentListening = getContentListeningById(id);
         contentListening.setStatus(ContentStatus.IN_ACTIVE);
         contentListeningRepository.save(contentListening);
-        return contentMapper.toContentListeningResponse(contentListening);    }
+        return contentMapper.toContentListeningResponse(contentListening);
+    }
 
     @Override
     public List<ContentListeningResponse> getListContentListeningsBylever(JlptLevel jlptLevel) {

@@ -8,22 +8,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.fu_ohayo.config.AuthConfig;
+import vn.fu_ohayo.dto.request.Admin.User.AdminCreateUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminFilterUserRequest;
 import vn.fu_ohayo.dto.request.CompleteProfileRequest;
 import vn.fu_ohayo.dto.request.InitialRegisterRequest;
-import vn.fu_ohayo.dto.request.AddUserRequest;
-import vn.fu_ohayo.dto.request.AdminUpdateUserRequest;
-import vn.fu_ohayo.dto.request.AdminSearchUserRequest;
+import vn.fu_ohayo.dto.request.Admin.User.AdminUpdateUserRequest;
 import vn.fu_ohayo.dto.request.UserRegister;
+import vn.fu_ohayo.dto.response.Admin.User.AdminCheckEmailUserResponse;
 import vn.fu_ohayo.dto.response.ApiResponse;
-import vn.fu_ohayo.dto.response.AdminSearchUserResponse;
+import vn.fu_ohayo.dto.response.Admin.User.AdminFilterUserResponse;
 import vn.fu_ohayo.dto.response.UserResponse;
 import vn.fu_ohayo.entity.*;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.enums.MembershipLevel;
 import vn.fu_ohayo.exception.AppException;
-import vn.fu_ohayo.mapper.AdminUpdateUserMapper;
-import vn.fu_ohayo.mapper.SearchUserMapper;
 import vn.fu_ohayo.mapper.UserMapper;
 import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.JwtService;
@@ -32,12 +32,15 @@ import vn.fu_ohayo.service.UserService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
+@Transactional
 @Slf4j(topic = "UserService")
 public class UserServiceImp implements UserService {
 
@@ -46,12 +49,9 @@ public class UserServiceImp implements UserService {
     AuthConfig configuration;
     MailService mailService;
     JwtService jwtService;
-    AdminUpdateUserMapper adminUpdateUserMapper;
     RoleRepository roleRepository;
-    SearchUserMapper searchUserMapper;
     ParentStudentRepository parentStudentRepository;
     MemberShipLevelOfUserRepository memberShipLevelOfUserRepository;
-
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -62,19 +62,74 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public Page<AdminSearchUserResponse> filterUsers(AdminSearchUserRequest request) {
-        Page<User> users = userRepository.filterUsers(
+    @Transactional(readOnly = true)
+    public Page<AdminFilterUserResponse> filterUsersForAdmin(AdminFilterUserRequest request) {
+        return userRepository.filterUsers(
                 request.getFullName(),
                 request.getMembershipLevel(),
                 request.getStatus(),
                 request.getRegisteredFrom(),
                 request.getRegisteredTo(),
                 PageRequest.of(request.getCurrentPage(), request.getPageSize())
-        );
-
-        return users.map(searchUserMapper::toSearchUserResponse);
+        ).map(userMapper::toAdminFilterUserResponse);
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        user.setDeleted(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse updateUser(Long userId, AdminUpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorEnum.EMAIL_EXIST);
+        }
+
+        userMapper.updateUserFromAdminRequest(user, request);
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+
+    @Override
+    public UserResponse createUser(AdminCreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorEnum.EMAIL_EXIST);
+        }
+
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new AppException(ErrorEnum.PHONE_EXIST);
+        }
+
+        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(request)));
+    }
+
+    @Override
+    public void recoverUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        user.setDeleted(false);
+        user.setUpdatedAt(new Date());
+        userRepository.save(user);
+    }
+
+    @Override
+    public AdminCheckEmailUserResponse checkEmailExists(String email) {
+        Optional<User> optionalUser = userRepository.findByEmailIncludingDeleted(email);
+
+        if (optionalUser.isPresent()) {
+            return userMapper.toAdminCheckEmailUserResponse(optionalUser.get());
+        }
+
+        return new AdminCheckEmailUserResponse();
+    }
 
     @Override
     public UserResponse registerUser(UserRegister userRegister) {
@@ -162,48 +217,6 @@ public class UserServiceImp implements UserService {
         }
         dto.setHasSettingsAccsees(true);
         return dto;
-    }
-
-
-    @Override
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        user.setDeleted(true);
-        userRepository.save(user);
-    }
-
-    @Override
-    public UserResponse updateUser(Long userId, AdminUpdateUserRequest adminUpdateUserRequest) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-
-        if (adminUpdateUserRequest.getFullName() != null)
-            user.setFullName(adminUpdateUserRequest.getFullName());
-
-        if (adminUpdateUserRequest.getEmail() != null)
-            user.setEmail(adminUpdateUserRequest.getEmail());
-
-        if (adminUpdateUserRequest.getStatus() != null)
-            user.setStatus(UserStatus.valueOf(adminUpdateUserRequest.getStatus()));
-
-        if (adminUpdateUserRequest.getMembershipLevel() != null)
-            user.setMembershipLevel(MembershipLevel.valueOf(adminUpdateUserRequest.getMembershipLevel()));
-
-        return adminUpdateUserMapper.toUserResponse(userRepository.save(user));
-    }
-
-    @Override
-    public UserResponse addUser(AddUserRequest addUserRequest) {
-        if (userRepository.existsByEmail(addUserRequest.getEmail())) {
-            throw new AppException(ErrorEnum.EMAIL_EXIST);
-        }
-
-        if (userRepository.existsByPhone(addUserRequest.getPhone())) {
-            throw new AppException(ErrorEnum.PHONE_EXIST);
-        }
-
-        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(addUserRequest)));
     }
 
     @Override

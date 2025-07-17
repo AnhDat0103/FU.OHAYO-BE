@@ -2,10 +2,7 @@ package vn.fu_ohayo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
@@ -16,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
+@ToString(exclude = {"contentSpeaking"})
 public class Dialogue {
     @Id
     @GeneratedValue(

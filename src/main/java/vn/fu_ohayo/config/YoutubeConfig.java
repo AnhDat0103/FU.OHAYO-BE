@@ -11,13 +11,11 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
@@ -28,12 +26,34 @@ public class YoutubeConfig {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = List.of("https://www.googleapis.com/auth/youtube.upload");
 
+    @Value("${youtube-data-v3.client_id}")
+    private String clientId;
+
+    @Value("${youtube-data-v3.client_secret}")
+    private String clientSecret;
+
+    @Value("${youtube-data-v3.redirect_uri}")
+    private String redirectUri;
+
+    @Value("${youtube-data-v3.auth_uri}")
+    private String authUri;
+
+    @Value("${youtube-data-v3.token_uri}")
+    private String tokenUri;
+
     @Bean
     public YouTube youtubeService() throws GeneralSecurityException, IOException {
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-        InputStream in = new ClassPathResource("client_secret.json").getInputStream();
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        GoogleClientSecrets.Details details = new GoogleClientSecrets.Details();
+        details.setClientId(clientId);
+        details.setClientSecret(clientSecret);
+        details.setAuthUri(authUri);
+        details.setTokenUri(tokenUri);
+        details.setRedirectUris(List.of(redirectUri));
+
+        GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
+        clientSecrets.setWeb(details);
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, SCOPES)

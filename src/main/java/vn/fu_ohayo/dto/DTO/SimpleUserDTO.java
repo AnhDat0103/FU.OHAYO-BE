@@ -1,6 +1,7 @@
 package vn.fu_ohayo.dto.DTO;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.fu_ohayo.enums.Gender;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class SimpleUserDTO {
     private Long userId;
     private String email;

@@ -224,7 +224,6 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
                     .questionText(e.getQuestionText())
                     .createdAt(e.getCreatedAt())
                     .updatedAt(e.getUpdatedAt())
-                    .status(e.getStatus())
                     .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(e))
                     .build();
         });

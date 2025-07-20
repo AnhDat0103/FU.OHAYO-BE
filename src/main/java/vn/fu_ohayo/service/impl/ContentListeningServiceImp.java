@@ -124,10 +124,8 @@ public class ContentListeningServiceImp implements ContentListeningService {
     public ContentListeningResponse acceptContentListening(long id) {
         ContentListening contentListening = getContentListeningById(id);
         Set<ExerciseQuestion> exerciseQuestions = contentListening.getExerciseQuestions();
-        boolean hasPublicQuestion = contentListening.getExerciseQuestions()
-                .stream()
-                .anyMatch(q -> q.getStatus().equals(ContentStatus.PUBLIC));
-        if (!hasPublicQuestion) {
+        boolean hasQuestion = contentListening.getExerciseQuestions() != null && !exerciseQuestions.isEmpty();
+        if (!hasQuestion) {
             throw new AppException(ErrorEnum.CAN_NOT_ACCEPT);
         }
             contentListening.setStatus(ContentStatus.PUBLIC);

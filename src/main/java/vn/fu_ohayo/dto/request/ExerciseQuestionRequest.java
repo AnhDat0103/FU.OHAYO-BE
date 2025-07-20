@@ -26,5 +26,8 @@ public class ExerciseQuestionRequest {
     private List<AnswerQuestionRequest> answerQuestions;
     private Long contentListeningId;
     private Integer exerciseId;
+    @NotNull(message = "Type cannot be null or blank")
+    @NotBlank(message = "Type cannot be null or blank")
+    private String type;
 
 }

@@ -14,17 +14,17 @@ import java.util.Set;
 public interface ExerciseQuestionService {
 
 
-    Page<ExerciseQuestionResponse> getExerciseQuestionByContentListeingPage(int page,int size, long contentListeningId);
+    List<ExerciseQuestionResponse> getExerciseQuestionByContentListening(long contentListeningId);
     ExerciseQuestionResponse getExerciseQuestionById(int id);
     ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest ExerciseQuestionRequest);
     void deleteExerciseQuestionById(int id);
     ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequest ExerciseQuestionRequest);
-    List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(
-    List<ExerciseQuestionRequest> ExerciseQuestionRequests);
+    List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(List<ExerciseQuestionRequest> ExerciseQuestionRequests);
     Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size);
     Page<ExerciseQuestionResponse> getExerciseQuestionPageByType(int page,int size, String type);
-    ExerciseQuestionResponse acceptExerciseQuestion (int id);
-    ExerciseQuestionResponse rejectExerciseQuestion (int id);
-    ExerciseQuestionResponse inActiveExerciseQuestion (int id);
-
+    Page<ExerciseQuestionResponse> getExerciseQuestionEmptyPageByType(int page,int size, String type);
+    ExerciseQuestionResponse addQuestionIntoExercise(int questionId, int exerciseId);
+    void removeQuestionFromExercise(int questionId);
+    ExerciseQuestionResponse addQuestionIntoContentListening(int questionId, long contentListeningId);
+    void removeQuestionFromContentListening(int questionId);
 }

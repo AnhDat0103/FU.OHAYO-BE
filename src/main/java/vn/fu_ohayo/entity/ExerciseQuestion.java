@@ -39,13 +39,12 @@ public class ExerciseQuestion {
 //    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestion> answerQuestions;
 
-    @Enumerated(EnumType.STRING)
-    private ContentStatus status = ContentStatus.DRAFT;
-
     @Column(name = "created_at")
     private Date createdAt;
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    private String type;
 
     @PrePersist
     public void onCreate() {

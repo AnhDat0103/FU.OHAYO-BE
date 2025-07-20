@@ -53,6 +53,7 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
 
         if (existingProgress != null) {
                 existingProgress.setViewedAt(new Date());
+            progressSubjectRepository.save(existingProgress);
                 return;
         }
 

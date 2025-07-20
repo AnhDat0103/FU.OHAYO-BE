@@ -9,9 +9,7 @@ import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.enums.ProgressStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ProgressLessonMapper;
-import vn.fu_ohayo.repository.LessonRepository;
-import vn.fu_ohayo.repository.ProgressLessonRepository;
-import vn.fu_ohayo.repository.UserRepository;
+import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.ProgressLessonService;
 
 import java.util.Date;
@@ -23,15 +21,21 @@ public class ProgressLessonServiceImp  implements ProgressLessonService {
     private final UserRepository userRepository;
     private final LessonRepository lessonRepository;
     private final ProgressLessonMapper progressLessonMapper;
+    private final ExerciseResultRepository exerciseResultRepository;
+    private final LessonExerciseRepository lessonExerciseRepository;
 
     public ProgressLessonServiceImp(ProgressLessonRepository progressLessonRepository,
                                     UserRepository userRepository,
                                     LessonRepository lessonRepository,
-                                    ProgressLessonMapper progressLessonMapper) {
+                                    ProgressLessonMapper progressLessonMapper,
+                                    ExerciseResultRepository exerciseResultRepository,
+                                    LessonExerciseRepository lessonExerciseRepository) {
         this.progressLessonRepository = progressLessonRepository;
         this.userRepository = userRepository;
         this.lessonRepository = lessonRepository;
         this.progressLessonMapper = progressLessonMapper;
+        this.exerciseResultRepository = exerciseResultRepository;
+        this.lessonExerciseRepository = lessonExerciseRepository;
     }
     @Override
     public ProgressLessonResponse getProgressLessons(String email, int lessonId) {
@@ -82,5 +86,26 @@ public class ProgressLessonServiceImp  implements ProgressLessonService {
             );
         }
         return null;
+    }
+
+    @Override
+    public void markLessonAsCompleted(long userId, int lessonId) {
+        int countLessonExercise =lessonExerciseRepository.countAllByLesson_LessonId(lessonId);
+        int countExerciseResult = exerciseResultRepository.countAllResultsByUserAndLessonExerciseGroupByLessonExerciseId(userId, lessonId);
+        if(countLessonExercise ==  countExerciseResult) {
+            String username = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND)).getEmail();
+            updateProgressLesson(username, lessonId, true);
+        }
+    }
+
+    @Override
+    public boolean isAllLessonsCompleted(long userId, int subjectId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        int countLesson = lessonRepository.countAllBySubject_SubjectId(subjectId);
+        int countProgressLesson = progressLessonRepository.countAllByUserAndLesson_Subject_SubjectIdAndStatus(
+                user, subjectId, ProgressStatus.COMPLETED);
+        return countLesson == countProgressLesson;
     }
 }

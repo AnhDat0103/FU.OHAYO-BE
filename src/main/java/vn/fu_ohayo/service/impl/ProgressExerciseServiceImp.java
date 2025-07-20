@@ -1,5 +1,6 @@
 package vn.fu_ohayo.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.dto.request.ExerciseResultRequest;
 import vn.fu_ohayo.dto.request.UserQuestionResponseRequest;
@@ -13,6 +14,7 @@ import vn.fu_ohayo.mapper.LessonExerciseMapper;
 import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.ProgressExerciseService;
 import vn.fu_ohayo.service.ProgressLessonService;
+import vn.fu_ohayo.service.ProgressSubjectService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +31,9 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
     private final AnswerQuestionRepository answerQuestionRepository;
     private final ExerciseResultRepository exerciseResultRepository;
     private final ProgressLessonService progressLessonService;
+    private final ProgressLessonServiceImp progressLessonServiceImp;
+    private final ProgressSubjectService progressSubjectService;
+
     public ProgressExerciseServiceImp(UserResponseQuestionRepository userResponseQuestionRepository,
                                       ExerciseQuestionRepository exerciseQuestionRepository,
                                       UserRepository userRepository,
@@ -36,8 +41,9 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
                                       LessonExerciseRepository lessonExerciseRepository,
                                       AnswerQuestionRepository answerQuestionRepository,
                                       ExerciseResultRepository exerciseResultRepository,
-                                      ProgressLessonService progressLessonService
-                                     )  {
+                                      ProgressLessonService progressLessonService,
+                                      ProgressLessonServiceImp progressLessonServiceImp,
+                                      ProgressSubjectService progressSubjectService)  {
         this.userResponseQuestionRepository = userResponseQuestionRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.userRepository = userRepository;
@@ -46,6 +52,8 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseResultRepository = exerciseResultRepository;
         this.progressLessonService = progressLessonService;
+        this.progressLessonServiceImp = progressLessonServiceImp;
+        this.progressSubjectService = progressSubjectService;
     }
 
 
@@ -85,6 +93,7 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
 
 
     @Override
+    @Transactional
     public ExerciseResultResponse submitExercise(UserResponseRequest userResponseRequest) {
         User user = userRepository.findById(userResponseRequest.getUserId())
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
@@ -112,7 +121,11 @@ public class ProgressExerciseServiceImp implements ProgressExerciseService {
                 .build();
 
         saveUserResponses(questionResultResponse, exerciseQuestionResponse, user);
-        progressLessonService.updateProgressLesson(user.getEmail(), lessonExercise.getLesson().getLessonId(), true);
+        progressLessonServiceImp.markLessonAsCompleted(user.getUserId(), lessonExercise.getLesson().getLessonId());
+        int subjectId = lessonExercise.getLesson().getSubject().getSubjectId();
+        if(progressLessonService.isAllLessonsCompleted(user.getUserId(), subjectId)) {
+            progressSubjectService.markSubjectComplete(user.getEmail(), subjectId);
+        }
 
          return  response;
     }

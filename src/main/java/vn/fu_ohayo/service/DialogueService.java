@@ -15,12 +15,9 @@ public interface DialogueService {
     void deleteDialogueById(long id);
 //    Dialogue updatePutDialogue(Dialogue dialogue, long id);
     Dialogue updatePatchDialogue(long id, Dialogue dialogue);
-    List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId);
+    List<DialogueResponse> getDialoguesByContentSpeakingId(long contentSpeakingId);
     Page<DialogueResponse> getDialoguePage(int page, int size,long contentSpeakingId);
     void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking);
     Page<DialogueResponse> getAllDialoguePage(int page, int size);
-    DialogueResponse acceptDialogue (long id);
-    DialogueResponse rejectDialogue (long id);
-    DialogueResponse inActiveDialogue (long id);
-    List<DialogueResponse> getDialoguesPublicByContentSpeakingId( long contentSpeakingId);
+
 }

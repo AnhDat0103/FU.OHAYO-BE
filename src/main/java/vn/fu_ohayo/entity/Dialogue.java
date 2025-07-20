@@ -45,9 +45,6 @@ public class Dialogue {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    private ContentStatus status = ContentStatus.DRAFT;
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();

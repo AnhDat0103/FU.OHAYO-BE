@@ -79,9 +79,9 @@ public class DialogueController {
     }
 
     @GetMapping("/content_speakingAll/{contentSpeakingId}")
-    public ApiResponse<List<Dialogue>> getDialoguesByContentSpeakingId(@PathVariable long contentSpeakingId) {
-        List<Dialogue> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentSpeakingId);
-        return ApiResponse.<List<Dialogue>>builder()
+    public ApiResponse<List<DialogueResponse>> getDialoguesByContentSpeakingId(@PathVariable long contentSpeakingId) {
+        List<DialogueResponse> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentSpeakingId);
+        return ApiResponse.<List<DialogueResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get dialogues by content speaking id successfully")
@@ -110,42 +110,4 @@ public class DialogueController {
                 .build();
     }
 
-    @PatchMapping("/accept/{id}")
-    public ApiResponse<DialogueResponse> acceptDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.acceptDialogue(id);
-        return ApiResponse.<DialogueResponse>builder()
-                .code("200")
-                .status("success")
-                .message("Accept successfully")
-                .data(response)
-                .build();
-    }
-
-    @PatchMapping("/reject/{id}")
-    public ApiResponse<DialogueResponse> rejectDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.rejectDialogue(id);
-        return ApiResponse.<DialogueResponse>builder()
-                .code("200")
-                .status("success")
-                .message("Accept successfully")
-                .data(response)
-                .build();
-    }
-
-    @PatchMapping("/inactive/{id}")
-    public ApiResponse<DialogueResponse> inActiveDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.inActiveDialogue(id);
-        return ApiResponse.<DialogueResponse>builder()
-                .code("200")
-                .status("success")
-                .message("Inactive successfully")
-                .data(response)
-                .build();
-    }
 }

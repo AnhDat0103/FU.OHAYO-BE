@@ -10,11 +10,22 @@ import java.util.List;
 @Repository
 public interface ExerciseResultRepository extends JpaRepository<ExerciseResult, Integer> {
     List<ExerciseResult> findAllByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
+
      int countByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
+
     @Query(value = "SELECT er FROM ExerciseResult er " +
             "WHERE er.user = :user " +
             "AND er.lessonExercise IN :lessonExercises " +
             "ORDER BY er.submissionTime DESC " +
             "FETCH FIRST :size ROWS ONLY", nativeQuery = false)
     List<ExerciseResult> findAllByUserAndTopOnReviewAndExerciseIn(User user,List<LessonExercise> lessonExercises, int size);
+
+
+    @Query(
+            value = "SELECT COUNT(DISTINCT er.exercise_id) " +
+                    "FROM exercise_results er " +
+                    "JOIN lesson_exercises le ON er.exercise_id = le.exercise_id " +
+                    "WHERE er.user_id = :userId AND le.lesson_id = :lessonId",
+            nativeQuery = true)
+    int countAllResultsByUserAndLessonExerciseGroupByLessonExerciseId(long userId, int lessonId);
 }

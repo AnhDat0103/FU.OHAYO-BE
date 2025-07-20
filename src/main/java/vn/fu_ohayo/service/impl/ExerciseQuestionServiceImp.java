@@ -15,6 +15,7 @@ import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
 import vn.fu_ohayo.repository.AnswerQuestionRepository;
 import vn.fu_ohayo.repository.ExerciseQuestionRepository;
+import vn.fu_ohayo.repository.LessonExerciseRepository;
 import vn.fu_ohayo.service.ContentListeningService;
 import vn.fu_ohayo.service.ExerciseQuestionService;
 import vn.fu_ohayo.service.LessonExerciseService;
@@ -30,14 +31,16 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final ContentListeningService contentListeningService;
     private final LessonExerciseService lessonExerciseService;
+    private final LessonExerciseRepository lessonExerciseRepository;
 
     public ExerciseQuestionServiceImp(ExerciseQuestionRepository exerciseQuestionRepository,
-                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService) {
+                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService, LessonExerciseRepository lessonExerciseRepository) {
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;
         this.contentListeningService = contentListeningService;
         this.lessonExerciseService = lessonExerciseService;
+        this.lessonExerciseRepository = lessonExerciseRepository;
     }
 
     @Override
@@ -47,6 +50,13 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
         List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
         return responsePage;
     }
+
+    @Override
+    public List<ExerciseQuestionResponse> getExerciseQuestionByExercise(int exerciseId) {
+        LessonExercise lessonExercise = lessonExerciseRepository.findById(exerciseId).get();
+        List<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
+        List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
+        return responsePage;    }
 
     @Override
     public ExerciseQuestionResponse getExerciseQuestionById(int id) {

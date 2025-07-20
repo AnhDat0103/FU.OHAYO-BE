@@ -15,6 +15,7 @@ public interface ExerciseQuestionService {
 
 
     List<ExerciseQuestionResponse> getExerciseQuestionByContentListening(long contentListeningId);
+    List<ExerciseQuestionResponse> getExerciseQuestionByExercise(int exerciseId);
     ExerciseQuestionResponse getExerciseQuestionById(int id);
     ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest ExerciseQuestionRequest);
     void deleteExerciseQuestionById(int id);

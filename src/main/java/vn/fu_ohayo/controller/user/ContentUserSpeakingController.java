@@ -29,7 +29,7 @@ public class ContentUserSpeakingController {
     @GetMapping("/{contentId}/dialogues")
     public ApiResponse<List<DialogueResponse>> getDialogueByContentSpeaking(
             @PathVariable Long contentId){
-        List<DialogueResponse> dialogues = dialogueService.getDialoguesPublicByContentSpeakingId(contentId);
+        List<DialogueResponse> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentId);
         return ApiResponse.<List<DialogueResponse>>builder()
                 .code("200")
                 .status("success")

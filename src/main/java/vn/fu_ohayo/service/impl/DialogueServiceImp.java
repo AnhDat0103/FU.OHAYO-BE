@@ -19,6 +19,7 @@ import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DialogueServiceImp implements DialogueService {
@@ -53,7 +54,6 @@ public class DialogueServiceImp implements DialogueService {
                 .answerVn(dialogueRequest.getAnswerVn())
                 .questionJp(dialogueRequest.getQuestionJp())
                 .questionVn(dialogueRequest.getQuestionVn())
-                .status(ContentStatus.DRAFT) // Mặc định trạng thái là DRAFT
                 .build();
         return dialogueRepository.save(newDialogue);
     }
@@ -92,17 +92,14 @@ public class DialogueServiceImp implements DialogueService {
                 dialogue.setQuestionVn(dialogueRequest.getQuestionVn());
                 isUpdated = true;
             }
-            if (isUpdated) {
-                dialogue.setStatus(ContentStatus.DRAFT); // Trạng thái sẽ được đặt lại là DRAFT khi có thay đổi
-            }
         }
         return dialogueRepository.save(dialogue);
     }
 
     @Override
-    public List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId) {
+    public List<DialogueResponse> getDialoguesByContentSpeakingId(long contentSpeakingId) {
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
-        return dialogueRepository.findByContentSpeaking(contentSpeaking);
+        return dialogueRepository.findByContentSpeaking(contentSpeaking).stream().map(dialogueMapper::toDialogueResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -124,39 +121,6 @@ public class DialogueServiceImp implements DialogueService {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Dialogue> dialoguePage = dialogueRepository.findAll(pageable);
         return dialoguePage.map(dialogueMapper::toDialogueResponse);
-    }
-
-    @Override
-    public DialogueResponse acceptDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.PUBLIC);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
-    }
-
-    @Override
-    public DialogueResponse rejectDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.REJECT);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
-    }
-
-    @Override
-    public DialogueResponse inActiveDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.IN_ACTIVE);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
-    }
-
-    @Override
-    public List<DialogueResponse> getDialoguesPublicByContentSpeakingId(long contentSpeakingId) {
-        ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
-        return dialogueRepository.findByContentSpeakingAndStatus(contentSpeaking, ContentStatus.PUBLIC)
-                .stream()
-                .map(dialogueMapper::toDialogueResponse)
-                .toList();
     }
 
 }

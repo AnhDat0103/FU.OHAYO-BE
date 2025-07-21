@@ -18,7 +18,8 @@ public interface ExerciseQuestionService {
     List<ExerciseQuestionResponse> getExerciseQuestionByExercise(int exerciseId);
     ExerciseQuestionResponse getExerciseQuestionById(int id);
     ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest ExerciseQuestionRequest);
-    void deleteExerciseQuestionById(int id);
+    void softDeleteExerciseQuestionById(int id);
+    void hardDeleteExerciseQuestionById(int id);
     ExerciseQuestionResponse updatePatchExerciseQuestion(int id, ExerciseQuestionRequest ExerciseQuestionRequest);
     List<ExerciseQuestionResponse> handleCreateAllExerciseQuestion(List<ExerciseQuestionRequest> ExerciseQuestionRequests);
     Page<ExerciseQuestionResponse> getExerciseQuestionPage(int page,int size);

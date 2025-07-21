@@ -116,7 +116,7 @@ public class DialogueController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Dialogue> deleteDialogue(@PathVariable int id) {
-        dialogueService.deleteDialogueById(id);
+        dialogueService.softDeleteDialogueById(id);
         return ApiResponse.<Dialogue>builder()
                 .code("200")
                 .status("success")

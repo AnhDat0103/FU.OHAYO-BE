@@ -104,7 +104,14 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     }
 
     @Override
-    public void deleteExerciseQuestionById(int id) {
+    public void softDeleteExerciseQuestionById(int id) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setDeleted(true);
+        exerciseQuestionRepository.save(exerciseQuestion);
+    }
+
+    @Override
+    public void hardDeleteExerciseQuestionById(int id) {
         exerciseQuestionRepository.deleteById(id);
     }
 

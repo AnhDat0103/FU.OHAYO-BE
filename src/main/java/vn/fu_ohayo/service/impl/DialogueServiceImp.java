@@ -65,7 +65,14 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public void deleteDialogueById(long id) {
+    public void softDeleteDialogueById(long id) {
+        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
+        dialogue.setDeleted(true);
+        dialogueRepository.save(dialogue);
+    }
+
+    @Override
+    public void hardDeleteDialogueById(long id) {
         dialogueRepository.deleteById(id);
     }
 

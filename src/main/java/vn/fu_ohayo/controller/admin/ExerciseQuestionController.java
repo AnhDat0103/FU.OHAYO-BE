@@ -119,7 +119,7 @@ public class ExerciseQuestionController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<ExerciseQuestion> deleteExerciseQuestion(@PathVariable int id) {
-        exerciseQuestionService.deleteExerciseQuestionById(id);
+        exerciseQuestionService.softDeleteExerciseQuestionById(id);
         return ApiResponse.<ExerciseQuestion>builder()
                 .code("200")
                 .status("success")

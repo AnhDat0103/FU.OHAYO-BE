@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import vn.fu_ohayo.enums.ErrorEnum;
 
 import java.util.Date;
@@ -17,7 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
 @Table(name = "Lesson_Exercises")
 public class LessonExercise {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

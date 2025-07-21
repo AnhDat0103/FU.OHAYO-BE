@@ -110,7 +110,7 @@ public class LessonExerciseController {
                 .code(HTTP_SUCCESS_CODE_RESPONSE)
                 .data(null)
                 .build();
-    }
+    }// sua cai nay
 
     @DeleteMapping("/{lessonId}/remove-exercise-question/{exerciseQuestionId}")
     public ApiResponse<Void> removeExerciseQuestionFromLesson(

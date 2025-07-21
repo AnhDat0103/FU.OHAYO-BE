@@ -17,4 +17,6 @@ public interface LessonExerciseRepository extends JpaRepository<LessonExercise, 
     Optional<LessonExercise> findByLesson_LessonId(int lessonLessonId);
 
     int countAllByLesson_LessonId(int lessonLessonId);
+
+    LessonExercise findByLesson_LessonIdAndExerciseId(int lessonLessonId, int exerciseId);
 }

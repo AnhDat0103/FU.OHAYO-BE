@@ -18,8 +18,6 @@ import vn.fu_ohayo.repository.ExerciseQuestionRepository;
 import vn.fu_ohayo.repository.LessonExerciseRepository;
 import vn.fu_ohayo.service.ContentListeningService;
 import vn.fu_ohayo.service.ExerciseQuestionService;
-import vn.fu_ohayo.service.LessonExerciseService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,16 +28,14 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     private final AnswerQuestionRepository answerQuestionRepository;
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final ContentListeningService contentListeningService;
-    private final LessonExerciseService lessonExerciseService;
     private final LessonExerciseRepository lessonExerciseRepository;
 
     public ExerciseQuestionServiceImp(ExerciseQuestionRepository exerciseQuestionRepository,
-                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService, LessonExerciseRepository lessonExerciseRepository) {
+                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseRepository lessonExerciseRepository) {
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;
         this.contentListeningService = contentListeningService;
-        this.lessonExerciseService = lessonExerciseService;
         this.lessonExerciseRepository = lessonExerciseRepository;
     }
 
@@ -87,7 +83,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
                 .ifPresent(id -> builder.contentListening(contentListeningService.getContentListeningById(id)));
 
         Optional.ofNullable(exerciseQuestionRequest.getExerciseId())
-                .ifPresent(id -> builder.lessonExercise(lessonExerciseService.getLessonExerciseById(id)));
+                .ifPresent(id -> builder.lessonExercise(lessonExerciseRepository.findById(id).get()));
 
         ExerciseQuestion exerciseQuestion = builder.build();
 
@@ -137,7 +133,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
             exerciseQuestion.setQuestionText(exerciseQuestionRequest.getQuestionText());
         }
         if (exerciseQuestionRequest.getExerciseId() != null) {
-            exerciseQuestion.setLessonExercise(lessonExerciseService.getLessonExerciseById(exerciseQuestionRequest.getExerciseId()));
+            exerciseQuestion.setLessonExercise(lessonExerciseRepository.findById((exerciseQuestionRequest.getExerciseId())).get());
             exerciseQuestion.setContentListening(null);
         }
         if (exerciseQuestionRequest.getContentListeningId() != null) {
@@ -183,7 +179,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
             ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
                     .questionText(exerciseQuestionRequest.getQuestionText())
                     .contentListening(contentListeningService.getContentListeningById(exerciseQuestionRequest.getContentListeningId()))
-                    .lessonExercise(lessonExerciseService.getLessonExerciseById(exerciseQuestionRequest.getExerciseId()))
+                    .lessonExercise(lessonExerciseRepository.findById((exerciseQuestionRequest.getExerciseId())).get())
 
                     .answerQuestions(answerQuestionSet)
                     .build();
@@ -218,7 +214,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     public ExerciseQuestionResponse addQuestionIntoExercise(int questionId, int exerciseId) {
         ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
-        exerciseQuestion.setLessonExercise(lessonExerciseService.getLessonExerciseById(exerciseId));
+        exerciseQuestion.setLessonExercise(lessonExerciseRepository.findById(exerciseId).get());
         exerciseQuestionRepository.save(exerciseQuestion);
         return exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
     }

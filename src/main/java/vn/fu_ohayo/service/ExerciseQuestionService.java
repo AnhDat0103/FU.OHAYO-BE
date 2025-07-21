@@ -5,6 +5,7 @@ import vn.fu_ohayo.dto.request.ExerciseQuestionRequest;
 import vn.fu_ohayo.dto.response.AnswerQuestionResponse;
 import vn.fu_ohayo.dto.response.ExerciseQuestionResponse;
 import vn.fu_ohayo.entity.ExerciseQuestion;
+import vn.fu_ohayo.entity.LessonExercise;
 import vn.fu_ohayo.repository.AnswerQuestionRepository;
 import vn.fu_ohayo.repository.ExerciseQuestionRepository;
 

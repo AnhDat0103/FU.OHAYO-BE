@@ -12,7 +12,8 @@ public interface DialogueService {
     List<Dialogue> getAllDialogues();
     Dialogue getDialogueById(long id);
     Dialogue handleSaveDialogue(DialogueRequest dialogueRequest);
-    void deleteDialogueById(long id);
+    void softDeleteDialogueById(long id);
+    void hardDeleteDialogueById(long id);
     Dialogue updatePatchDialogue(long id, Dialogue dialogue);
     List<DialogueResponse> getDialoguesByContentSpeakingId(long contentSpeakingId);
     Page<DialogueResponse> getDialoguePage(int page, int size,long contentSpeakingId);

@@ -21,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 public class ContentReading {
     @Id
     @GeneratedValue(

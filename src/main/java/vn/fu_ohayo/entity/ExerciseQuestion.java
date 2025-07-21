@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 @Table(name = "Exercise_Questions")
 public class ExerciseQuestion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,5 +57,8 @@ public class ExerciseQuestion {
     public void onUpdate() {
         this.updatedAt = new Date();
     }
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
 }

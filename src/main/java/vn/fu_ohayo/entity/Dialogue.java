@@ -3,6 +3,7 @@ package vn.fu_ohayo.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 @ToString(exclude = {"contentSpeaking"})
 public class Dialogue {
     @Id
@@ -54,5 +56,8 @@ public class Dialogue {
     protected void onUpdate() {
         this.updatedAt = new Date();
     }
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
 }

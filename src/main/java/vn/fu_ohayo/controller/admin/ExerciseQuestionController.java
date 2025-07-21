@@ -24,13 +24,24 @@ public class ExerciseQuestionController {
     }
 
     @GetMapping("/content_listening/{contentListeningId}")
-    public ApiResponse<List<ExerciseQuestionResponse>> getExerciseQuestionByContentListeningPage(
+    public ApiResponse<List<ExerciseQuestionResponse>> getExerciseQuestionByContentListening(
             @PathVariable long contentListeningId) {
         return ApiResponse.<List<ExerciseQuestionResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("get page of exercise questions by content listening id")
                 .data(exerciseQuestionService.getExerciseQuestionByContentListening(contentListeningId))
+                .build();
+    }
+
+    @GetMapping("/exercise/{exerciseId}")
+    public ApiResponse<List<ExerciseQuestionResponse>> getExerciseQuestionByExercise(
+            @PathVariable int exerciseId) {
+        return ApiResponse.<List<ExerciseQuestionResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("get page of exercise questions by exercise id")
+                .data(exerciseQuestionService.getExerciseQuestionByExercise(exerciseId))
                 .build();
     }
 
@@ -108,7 +119,7 @@ public class ExerciseQuestionController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<ExerciseQuestion> deleteExerciseQuestion(@PathVariable int id) {
-        exerciseQuestionService.deleteExerciseQuestionById(id);
+        exerciseQuestionService.softDeleteExerciseQuestionById(id);
         return ApiResponse.<ExerciseQuestion>builder()
                 .code("200")
                 .status("success")

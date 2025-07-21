@@ -31,7 +31,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     private final LessonExerciseRepository lessonExerciseRepository;
 
     public ExerciseQuestionServiceImp(ExerciseQuestionRepository exerciseQuestionRepository,
-                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseRepository lessonExerciseRepository) {
+                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService, LessonExerciseRepository lessonExerciseRepository) {
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;
@@ -46,6 +46,13 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
         List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
         return responsePage;
     }
+
+    @Override
+    public List<ExerciseQuestionResponse> getExerciseQuestionByExercise(int exerciseId) {
+        LessonExercise lessonExercise = lessonExerciseRepository.findById(exerciseId).get();
+        List<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
+        List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
+        return responsePage;    }
 
     @Override
     public ExerciseQuestionResponse getExerciseQuestionById(int id) {
@@ -93,7 +100,14 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     }
 
     @Override
-    public void deleteExerciseQuestionById(int id) {
+    public void softDeleteExerciseQuestionById(int id) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setDeleted(true);
+        exerciseQuestionRepository.save(exerciseQuestion);
+    }
+
+    @Override
+    public void hardDeleteExerciseQuestionById(int id) {
         exerciseQuestionRepository.deleteById(id);
     }
 

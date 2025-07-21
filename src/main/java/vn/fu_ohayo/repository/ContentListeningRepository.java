@@ -16,4 +16,6 @@ public interface ContentListeningRepository extends JpaRepository<ContentListeni
     ContentListening findBycontentListeningId(long id);
     Page<ContentListening> findAllByDeleted(Pageable pageable, boolean deleted);
     List<ContentListening> findAllByJlptLevel(JlptLevel jlptLevel);
+        Page<ContentListening> findAllByStatusAndDeleted(ContentStatus status, boolean deleted, Pageable pageable);
+
 }

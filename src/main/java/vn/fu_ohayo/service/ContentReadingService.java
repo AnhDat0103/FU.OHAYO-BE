@@ -6,6 +6,7 @@ import vn.fu_ohayo.dto.response.*;
 import vn.fu_ohayo.entity.ContentReading;
 import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Vocabulary;
+import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.List;
 
@@ -28,5 +29,5 @@ public interface ContentReadingService {
     ContentReadingResponse acceptContentReading(long id);
     ContentReadingResponse rejectContentReading(long id);
     ContentReadingResponse inActiveContentReading(long id);
-
+    Page<ContentReadingResponse> getContentReadingPublicPage(int page, int size);
 }

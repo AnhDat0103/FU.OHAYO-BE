@@ -12,4 +12,5 @@ import vn.fu_ohayo.enums.ContentStatus;
 public interface ContentReadingRepository extends JpaRepository<ContentReading, Long> {
     ContentReading findByContent(Content content);
     Page<ContentReading> findAllByDeleted(Pageable pageable, boolean deleted);
+    Page<ContentReading> findAllByStatusAndDeleted(ContentStatus status,Boolean deteled , Pageable pageable);
 }

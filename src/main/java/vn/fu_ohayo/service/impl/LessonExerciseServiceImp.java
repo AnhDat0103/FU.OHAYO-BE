@@ -21,6 +21,7 @@ import vn.fu_ohayo.repository.AnswerQuestionRepository;
 import vn.fu_ohayo.repository.ExerciseQuestionRepository;
 import vn.fu_ohayo.repository.LessonExerciseRepository;
 import vn.fu_ohayo.repository.LessonRepository;
+import vn.fu_ohayo.service.ExerciseQuestionService;
 import vn.fu_ohayo.service.LessonExerciseService;
 
 import java.util.ArrayList;
@@ -34,15 +35,17 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     private final AnswerQuestionRepository answerQuestionRepository;
     private final LessonExerciseRepository lessonExerciseRepository;
     private final ExerciseQuestionMapper exerciseQuestionMapper;
+    private final ExerciseQuestionService exerciseQuestionService;
 
     public LessonExerciseServiceImp(LessonRepository lessonRepository, ExerciseQuestionRepository exerciseQuestionRepository,
                                     AnswerQuestionRepository answerQuestionRepository,
-                                    LessonExerciseRepository lessonExerciseRepository, ExerciseQuestionMapper exerciseQuestionMapper) {
+                                    LessonExerciseRepository lessonExerciseRepository, ExerciseQuestionMapper exerciseQuestionMapper, ExerciseQuestionService exerciseQuestionService) {
         this.lessonRepository = lessonRepository;
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.lessonExerciseRepository = lessonExerciseRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;
+        this.exerciseQuestionService = exerciseQuestionService;
     }
 
 
@@ -90,62 +93,19 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
         lessonExercise.setLesson(lesson);
         lessonExercise = lessonExerciseRepository.save(lessonExercise);
         List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
-        if (lessonExerciseRequest.getContent() != null && !lessonExerciseRequest.getContent().isEmpty()) {
-            List<ExerciseQuestion> existingQuestions = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
-            //delete existing exercise questions and their answers
-            for (ExerciseQuestion question : existingQuestions) {
-                List<AnswerQuestion> oldAnswers = answerQuestionRepository.findByExerciseQuestion(question);
-                answerQuestionRepository.deleteAll(oldAnswers);
-            }
-            exerciseQuestionRepository.deleteAll(existingQuestions);
-            //create new exercise questions and answers
-            for (ExerciseQuestionRequest questionRequest : lessonExerciseRequest.getContent()) {
-                List<AnswerQuestionRequest> answerRequests = questionRequest.getAnswerQuestions();
-                int countCorrectAnswers = 0;
-                for (AnswerQuestionRequest answerRequest : answerRequests) {
-                    if (Boolean.TRUE.equals(answerRequest.getIsCorrect())) {
-                        countCorrectAnswers++;
-                    }
-                }
-                if (countCorrectAnswers != 1) {
-                    throw new AppException(ErrorEnum.INVALID_ANSWER_CORRECT_COUNT);
-                }
-                //create exercise question and save it
-                ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
-                        .questionText(questionRequest.getQuestionText())
-                        .lessonExercise(lessonExercise)
-                        .build();
-                exerciseQuestion = exerciseQuestionRepository.save(exerciseQuestion);
-                //create answer questions and save them
-                for (AnswerQuestionRequest answerRequest : answerRequests) {
-                    AnswerQuestion answerQuestion = AnswerQuestion.builder()
-                            .answerText(answerRequest.getAnswerText())
-                            .isCorrect(answerRequest.getIsCorrect())
-                            .exerciseQuestion(exerciseQuestion)
-                            .build();
-                    answerQuestionRepository.save(answerQuestion);
-                }
-                // add to response
-                exerciseQuestionResponses.add(ExerciseQuestionResponse.builder()
-                        .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
-                        .questionText(exerciseQuestion.getQuestionText())
-                        .createdAt(exerciseQuestion.getCreatedAt())
-                        .updatedAt(exerciseQuestion.getUpdatedAt())
-                        .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
-                        .build());
+        if (lessonExerciseRequest.getQuestionIds() != null && !lessonExerciseRequest.getQuestionIds().isEmpty()) {
+            exerciseQuestionRepository.deleteByExerciseId(lessonExercise.getExerciseId());
+            for (Integer questionId : lessonExerciseRequest.getQuestionIds()) {
+                ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+                        .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+                exerciseQuestion.setLessonExercise(lessonExercise);
+                exerciseQuestionRepository.save(exerciseQuestion);
+                ExerciseQuestionResponse response = exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
+                exerciseQuestionResponses.add(response);
             }
         } else {
-            List<ExerciseQuestion> exerciseQuestions = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
-            for (ExerciseQuestion question : exerciseQuestions) {
-                ExerciseQuestionResponse ex = ExerciseQuestionResponse.builder()
-                        .exerciseQuestionId(question.getExerciseQuestionId())
-                        .questionText(question.getQuestionText())
-                        .createdAt(question.getCreatedAt())
-                        .updatedAt(question.getUpdatedAt())
-                        .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(question))
-                        .build();
-                exerciseQuestionResponses.add(ex);
-            }
+            // If no questions are provided, return an empty content list
+            exerciseQuestionResponses = new ArrayList<>();
         }
         return LessonExerciseResponse.builder()
                 .id(lessonExercise.getExerciseId())
@@ -169,31 +129,9 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
         lessonExercise = lessonExerciseRepository.save(lessonExercise);
         List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
         // Validate that there is at least one question with one correct answer
-        if (lessonExerciseRequest.getContent() != null) {
-            // Check if there is at least one question with one correct answer
-            for (ExerciseQuestionRequest exerciseQuestionRequest : lessonExerciseRequest.getContent()) {
-                ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
-                        .questionText(exerciseQuestionRequest.getQuestionText())
-                        .lessonExercise(lessonExercise)
-                        .build();
-                exerciseQuestion = exerciseQuestionRepository.save(exerciseQuestion);
-                List<AnswerQuestionRequest> answerQuestionRequests = exerciseQuestionRequest.getAnswerQuestions();
-                for (AnswerQuestionRequest answerQuestionRequest : answerQuestionRequests) {
-                    AnswerQuestion answerQuestion = AnswerQuestion.builder()
-                            .answerText(answerQuestionRequest.getAnswerText())
-                            .isCorrect(answerQuestionRequest.getIsCorrect())
-                            .exerciseQuestion(exerciseQuestion)
-                            .build();
-                    answerQuestionRepository.save(answerQuestion);
-                }
-                // Add to response
-                exerciseQuestionResponses.add(ExerciseQuestionResponse.builder()
-                        .exerciseQuestionId(exerciseQuestion.getExerciseQuestionId())
-                        .questionText(exerciseQuestion.getQuestionText())
-                        .createdAt(exerciseQuestion.getCreatedAt())
-                        .updatedAt(exerciseQuestion.getUpdatedAt())
-                        .answerQuestions(answerQuestionRepository.findAllByExerciseQuestion(exerciseQuestion))
-                        .build());
+        if(lessonExerciseRequest.getQuestionIds() != null && !lessonExerciseRequest.getQuestionIds().isEmpty()) {
+            for (Integer questionId : lessonExerciseRequest.getQuestionIds()) {
+                exerciseQuestionService.addQuestionIntoExercise(questionId, lessonExercise.getExerciseId());
             }
         }
         // If no content is provided, return an empty response

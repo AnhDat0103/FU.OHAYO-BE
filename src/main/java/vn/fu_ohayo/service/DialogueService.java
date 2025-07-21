@@ -13,11 +13,12 @@ public interface DialogueService {
     Dialogue getDialogueById(long id);
     Dialogue handleSaveDialogue(DialogueRequest dialogueRequest);
     void deleteDialogueById(long id);
-//    Dialogue updatePutDialogue(Dialogue dialogue, long id);
     Dialogue updatePatchDialogue(long id, Dialogue dialogue);
     List<DialogueResponse> getDialoguesByContentSpeakingId(long contentSpeakingId);
     Page<DialogueResponse> getDialoguePage(int page, int size,long contentSpeakingId);
     void deleteDialogueByContenSpeaking(ContentSpeaking contentSpeaking);
     Page<DialogueResponse> getAllDialoguePage(int page, int size);
-
+    Page<DialogueResponse> getAllDialogueEmpty(int page, int size);
+    DialogueResponse addDialogueIntoContentSpeaking(long dialogueId, long contentSpeakingId);
+    void removeDialogueFromContentSpeaking(long dialogueId);
 }

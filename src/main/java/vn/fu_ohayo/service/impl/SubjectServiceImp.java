@@ -120,10 +120,9 @@ public class SubjectServiceImp implements SubjectService {
         if(subject.getLessons().isEmpty()) {
             throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
         }
-        for(Lesson lesson : subject.getLessons()) {
-            if(lesson.getGrammars().isEmpty() || lesson.getLessonExercises().isEmpty() || lesson.getVocabularies().isEmpty()) {
-                throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
-            }
+        int count  = lessonRepository.countAllBySubject_SubjectIdAndStatus(subject.getSubjectId(), LessonStatus.PUBLIC);
+        if(count == 0) {
+            throw new AppException(ErrorEnum.SUBJECT_CONTENT_EMPTY);
         }
         if (subject.getStatus() == SubjectStatus.DRAFT) {
             subject.setStatus(SubjectStatus.PUBLIC);

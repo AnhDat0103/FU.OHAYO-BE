@@ -6,6 +6,7 @@ import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.ProgressLesson;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
+import vn.fu_ohayo.enums.LessonStatus;
 import vn.fu_ohayo.enums.ProgressStatus;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ProgressLessonMapper;
@@ -103,7 +104,7 @@ public class ProgressLessonServiceImp  implements ProgressLessonService {
     public boolean isAllLessonsCompleted(long userId, int subjectId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
-        int countLesson = lessonRepository.countAllBySubject_SubjectId(subjectId);
+        int countLesson = lessonRepository.countAllBySubject_SubjectIdAndStatus(subjectId, LessonStatus.PUBLIC);
         int countProgressLesson = progressLessonRepository.countAllByUserAndLesson_Subject_SubjectIdAndStatus(
                 user, subjectId, ProgressStatus.COMPLETED);
         return countLesson == countProgressLesson;

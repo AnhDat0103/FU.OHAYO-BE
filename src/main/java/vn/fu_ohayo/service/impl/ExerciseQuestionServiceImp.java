@@ -31,7 +31,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     private final LessonExerciseRepository lessonExerciseRepository;
 
     public ExerciseQuestionServiceImp(ExerciseQuestionRepository exerciseQuestionRepository,
-                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService, LessonExerciseRepository lessonExerciseRepository) {
+                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseRepository lessonExerciseRepository) {
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;

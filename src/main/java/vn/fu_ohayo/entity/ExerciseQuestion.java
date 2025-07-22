@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.enums.ContentStatus;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+@Where(clause = "is_deleted = false")
 @Table(name = "Exercise_Questions")
 public class ExerciseQuestion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +41,12 @@ public class ExerciseQuestion {
 //    @Size(min = 2, message = "The list must contain at least 2 answer")
     private List<AnswerQuestion> answerQuestions;
 
-    @Enumerated(EnumType.STRING)
-    private ContentStatus status = ContentStatus.DRAFT;
-
     @Column(name = "created_at")
     private Date createdAt;
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    private String type;
 
     @PrePersist
     public void onCreate() {
@@ -56,5 +57,8 @@ public class ExerciseQuestion {
     public void onUpdate() {
         this.updatedAt = new Date();
     }
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
 }

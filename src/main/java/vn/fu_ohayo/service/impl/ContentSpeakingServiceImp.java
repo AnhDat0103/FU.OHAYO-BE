@@ -153,9 +153,7 @@ public class ContentSpeakingServiceImp implements ContentSpeakingService {
     @Override
     public ContentSpeakingResponse acceptContentSpeaking(long id) {
         ContentSpeaking contentSpeaking = getContentSpeakingById(id);
-        boolean hasPublicDialogue = contentSpeaking.getDialogues()
-                .stream()
-                .anyMatch(d -> ContentStatus.PUBLIC.equals(d.getStatus()));
+        boolean hasPublicDialogue = contentSpeaking.getDialogues() !=null  && !contentSpeaking.getDialogues().isEmpty();
 
         if (!hasPublicDialogue) {
             throw new AppException(ErrorEnum.CAN_NOT_ACCEPT);

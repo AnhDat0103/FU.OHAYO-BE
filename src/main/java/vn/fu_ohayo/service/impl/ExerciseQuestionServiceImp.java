@@ -15,10 +15,9 @@ import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.ExerciseQuestionMapper;
 import vn.fu_ohayo.repository.AnswerQuestionRepository;
 import vn.fu_ohayo.repository.ExerciseQuestionRepository;
+import vn.fu_ohayo.repository.LessonExerciseRepository;
 import vn.fu_ohayo.service.ContentListeningService;
 import vn.fu_ohayo.service.ExerciseQuestionService;
-import vn.fu_ohayo.service.LessonExerciseService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,25 +28,31 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     private final AnswerQuestionRepository answerQuestionRepository;
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final ContentListeningService contentListeningService;
-    private final LessonExerciseService lessonExerciseService;
+    private final LessonExerciseRepository lessonExerciseRepository;
 
     public ExerciseQuestionServiceImp(ExerciseQuestionRepository exerciseQuestionRepository,
-                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseService lessonExerciseService) {
+                                      AnswerQuestionRepository answerQuestionRepository, ExerciseQuestionMapper exerciseQuestionMapper, ContentListeningService contentListeningService, LessonExerciseRepository lessonExerciseRepository) {
         this.exerciseQuestionRepository = exerciseQuestionRepository;
         this.answerQuestionRepository = answerQuestionRepository;
         this.exerciseQuestionMapper = exerciseQuestionMapper;
         this.contentListeningService = contentListeningService;
-        this.lessonExerciseService = lessonExerciseService;
+        this.lessonExerciseRepository = lessonExerciseRepository;
     }
 
     @Override
-    public Page<ExerciseQuestionResponse> getExerciseQuestionByContentListeingPage(int page, int size, long contentListeningId) {
-        Pageable pageable = PageRequest.of(page, size);
+    public List<ExerciseQuestionResponse> getExerciseQuestionByContentListening(long contentListeningId) {
         ContentListening contentListening = contentListeningService.getContentListeningById(contentListeningId);
-        Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByContentListening(contentListening, pageable);
-        Page<ExerciseQuestionResponse> responsePage = prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);
+        List<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByContentListening(contentListening);
+        List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
         return responsePage;
     }
+
+    @Override
+    public List<ExerciseQuestionResponse> getExerciseQuestionByExercise(int exerciseId) {
+        LessonExercise lessonExercise = lessonExerciseRepository.findById(exerciseId).get();
+        List<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByLessonExercise(lessonExercise);
+        List<ExerciseQuestionResponse> responsePage = prs.stream().map(exerciseQuestionMapper::toExerciseQuestionResponse).toList();
+        return responsePage;    }
 
     @Override
     public ExerciseQuestionResponse getExerciseQuestionById(int id) {
@@ -58,9 +63,9 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
 
     @Override
     public ExerciseQuestionResponse handleCreateExerciseQuestion(ExerciseQuestionRequest exerciseQuestionRequest) {
-        if (exerciseQuestionRequest.getExerciseId() == null && exerciseQuestionRequest.getContentListeningId() == null) {
-            throw new AppException(ErrorEnum.EXIST_AT_LEAST_CONTENT_LISTENING_OR_EXERCISE);
-        }
+//        if (exerciseQuestionRequest.getExerciseId() == null && exerciseQuestionRequest.getContentListeningId() == null) {
+//            throw new AppException(ErrorEnum.EXIST_AT_LEAST_CONTENT_LISTENING_OR_EXERCISE);
+//        }
         List<AnswerQuestionRequest> answerRequests = exerciseQuestionRequest.getAnswerQuestions();
         int correctCount = 0;
         for (AnswerQuestionRequest answerRequest : answerRequests) {
@@ -73,12 +78,12 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
         }
         ExerciseQuestion.ExerciseQuestionBuilder builder = ExerciseQuestion.builder()
                 .questionText(exerciseQuestionRequest.getQuestionText())
-                .status(ContentStatus.DRAFT);
+                .type(exerciseQuestionRequest.getType());
         Optional.ofNullable(exerciseQuestionRequest.getContentListeningId())
                 .ifPresent(id -> builder.contentListening(contentListeningService.getContentListeningById(id)));
 
         Optional.ofNullable(exerciseQuestionRequest.getExerciseId())
-                .ifPresent(id -> builder.lessonExercise(lessonExerciseService.getLessonExerciseById(id)));
+                .ifPresent(id -> builder.lessonExercise(lessonExerciseRepository.findById(id).get()));
 
         ExerciseQuestion exerciseQuestion = builder.build();
 
@@ -95,7 +100,14 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
     }
 
     @Override
-    public void deleteExerciseQuestionById(int id) {
+    public void softDeleteExerciseQuestionById(int id) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setDeleted(true);
+        exerciseQuestionRepository.save(exerciseQuestion);
+    }
+
+    @Override
+    public void hardDeleteExerciseQuestionById(int id) {
         exerciseQuestionRepository.deleteById(id);
     }
 
@@ -121,14 +133,13 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
             exerciseQuestion.setQuestionText(exerciseQuestionRequest.getQuestionText());
         }
         if (exerciseQuestionRequest.getExerciseId() != null) {
-            exerciseQuestion.setLessonExercise(lessonExerciseService.getLessonExerciseById(exerciseQuestionRequest.getExerciseId()));
+            exerciseQuestion.setLessonExercise(lessonExerciseRepository.findById((exerciseQuestionRequest.getExerciseId())).get());
             exerciseQuestion.setContentListening(null);
         }
         if (exerciseQuestionRequest.getContentListeningId() != null) {
             exerciseQuestion.setContentListening(contentListeningService.getContentListeningById(exerciseQuestionRequest.getContentListeningId()));
             exerciseQuestion.setLessonExercise(null);
         }
-        exerciseQuestion.setStatus(ContentStatus.DRAFT);
         // Xóa tất cả answer hiện tại
         List<AnswerQuestion> oldAnswers = answerQuestionRepository.findByExerciseQuestion(exerciseQuestion);
         for (AnswerQuestion oldAnswer : oldAnswers) {
@@ -168,7 +179,7 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
             ExerciseQuestion exerciseQuestion = ExerciseQuestion.builder()
                     .questionText(exerciseQuestionRequest.getQuestionText())
                     .contentListening(contentListeningService.getContentListeningById(exerciseQuestionRequest.getContentListeningId()))
-                    .lessonExercise(lessonExerciseService.getLessonExerciseById(exerciseQuestionRequest.getExerciseId()))
+                    .lessonExercise(lessonExerciseRepository.findById((exerciseQuestionRequest.getExerciseId())).get())
 
                     .answerQuestions(answerQuestionSet)
                     .build();
@@ -188,41 +199,48 @@ public class ExerciseQuestionServiceImp implements ExerciseQuestionService {
 
     @Override
     public Page<ExerciseQuestionResponse> getExerciseQuestionPageByType(int page, int size, String type) {
-        if (type.equalsIgnoreCase("exercise")) {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByLessonExerciseIsNotNull(pageable);
-            return prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);
-        } else if (type.equalsIgnoreCase("contentListening")) {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByContentListeningIsNotNull(pageable);
-            return prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);
-        } else {
-            throw new AppException(ErrorEnum.INVALID_TYPE);
-        }
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByType(pageable, type);
+        return prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);
     }
 
     @Override
-    public ExerciseQuestionResponse acceptExerciseQuestion(int id) {
-        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
-        exerciseQuestion.setStatus(ContentStatus.PUBLIC);
+    public Page<ExerciseQuestionResponse> getExerciseQuestionEmptyPageByType(int page, int size, String type) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ExerciseQuestion> prs = exerciseQuestionRepository.findAllByTypeAndLessonExerciseIsNullAndContentListeningIsNull(pageable, type);
+        return prs.map(exerciseQuestionMapper::toExerciseQuestionResponse);    }
+
+    @Override
+    public ExerciseQuestionResponse addQuestionIntoExercise(int questionId, int exerciseId) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setLessonExercise(lessonExerciseRepository.findById(exerciseId).get());
         exerciseQuestionRepository.save(exerciseQuestion);
         return exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
     }
 
     @Override
-    public ExerciseQuestionResponse rejectExerciseQuestion(int id) {
-        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
-        exerciseQuestion.setStatus(ContentStatus.REJECT);
+    public ExerciseQuestionResponse addQuestionIntoContentListening(int questionId, long contentListeningId) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setContentListening(contentListeningService.getContentListeningById(contentListeningId));
         exerciseQuestionRepository.save(exerciseQuestion);
         return exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
     }
 
     @Override
-    public ExerciseQuestionResponse inActiveExerciseQuestion(int id) {
-        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
-        exerciseQuestion.setStatus(ContentStatus.IN_ACTIVE);
+    public void removeQuestionFromExercise(int questionId) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setLessonExercise(null);
         exerciseQuestionRepository.save(exerciseQuestion);
-        return exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
     }
 
+    @Override
+    public void removeQuestionFromContentListening(int questionId) {
+        ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+        exerciseQuestion.setContentListening(null);
+        exerciseQuestionRepository.save(exerciseQuestion);
+    }
 }

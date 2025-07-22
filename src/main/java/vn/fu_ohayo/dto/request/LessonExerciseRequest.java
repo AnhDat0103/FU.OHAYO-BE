@@ -19,6 +19,6 @@ public class LessonExerciseRequest {
     @NotNull(message = ErrorEnum.NOT_EMPTY_TITLE)
     private String title;
     private long duration;
-    private List<ExerciseQuestionRequest> content;
+    private List<Integer> questionIds;
     private int lessonId;
 }

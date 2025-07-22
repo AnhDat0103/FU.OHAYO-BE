@@ -14,11 +14,14 @@ import vn.fu_ohayo.enums.ContentStatus;
 import vn.fu_ohayo.enums.ErrorEnum;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.DialogueMapper;
+import vn.fu_ohayo.repository.ContentRepository;
+import vn.fu_ohayo.repository.ContentSpeakingRepository;
 import vn.fu_ohayo.repository.DialogueRepository;
 import vn.fu_ohayo.service.ContentSpeakingService;
 import vn.fu_ohayo.service.DialogueService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DialogueServiceImp implements DialogueService {
@@ -26,12 +29,14 @@ public class DialogueServiceImp implements DialogueService {
     private final DialogueRepository dialogueRepository;
     private final ContentSpeakingService contentSpeakingService;
     private final DialogueMapper dialogueMapper;
+    private final ContentSpeakingRepository contentSpeakingRepository;
 
     //    @Lazy khiến Spring chỉ khởi tạo ContentSpeakingService khi thật sự cần, tránh lỗi vòng tròn.
-    public DialogueServiceImp(DialogueRepository dialogueRepository, @Lazy ContentSpeakingService contentSpeakingService, DialogueMapper dialogueMapper) {
+    public DialogueServiceImp(DialogueRepository dialogueRepository, @Lazy ContentSpeakingService contentSpeakingService, DialogueMapper dialogueMapper, ContentSpeakingRepository contentSpeakingRepository) {
         this.dialogueRepository = dialogueRepository;
         this.contentSpeakingService = contentSpeakingService;
         this.dialogueMapper = dialogueMapper;
+        this.contentSpeakingRepository = contentSpeakingRepository;
     }
 
 
@@ -48,18 +53,26 @@ public class DialogueServiceImp implements DialogueService {
     @Override
     public Dialogue handleSaveDialogue(DialogueRequest dialogueRequest) {
         Dialogue newDialogue = Dialogue.builder()
-                .contentSpeaking(contentSpeakingService.getContentSpeakingById(dialogueRequest.getContentSpeakingId()))
                 .answerJp(dialogueRequest.getAnswerJp())
                 .answerVn(dialogueRequest.getAnswerVn())
                 .questionJp(dialogueRequest.getQuestionJp())
                 .questionVn(dialogueRequest.getQuestionVn())
-                .status(ContentStatus.DRAFT) // Mặc định trạng thái là DRAFT
                 .build();
+        if(dialogueRequest.getContentSpeakingId() > 0) {
+            newDialogue.setContentSpeaking(contentSpeakingService.getContentSpeakingById(dialogueRequest.getContentSpeakingId()));
+        }
         return dialogueRepository.save(newDialogue);
     }
 
     @Override
-    public void deleteDialogueById(long id) {
+    public void softDeleteDialogueById(long id) {
+        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
+        dialogue.setDeleted(true);
+        dialogueRepository.save(dialogue);
+    }
+
+    @Override
+    public void hardDeleteDialogueById(long id) {
         dialogueRepository.deleteById(id);
     }
 
@@ -92,17 +105,14 @@ public class DialogueServiceImp implements DialogueService {
                 dialogue.setQuestionVn(dialogueRequest.getQuestionVn());
                 isUpdated = true;
             }
-            if (isUpdated) {
-                dialogue.setStatus(ContentStatus.DRAFT); // Trạng thái sẽ được đặt lại là DRAFT khi có thay đổi
-            }
         }
         return dialogueRepository.save(dialogue);
     }
 
     @Override
-    public List<Dialogue> getDialoguesByContentSpeakingId(long contentSpeakingId) {
+    public List<DialogueResponse> getDialoguesByContentSpeakingId(long contentSpeakingId) {
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
-        return dialogueRepository.findByContentSpeaking(contentSpeaking);
+        return dialogueRepository.findByContentSpeaking(contentSpeaking).stream().map(dialogueMapper::toDialogueResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -127,36 +137,26 @@ public class DialogueServiceImp implements DialogueService {
     }
 
     @Override
-    public DialogueResponse acceptDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.PUBLIC);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
+    public Page<DialogueResponse> getAllDialogueEmpty(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Dialogue> dialoguePage = dialogueRepository.findByContentSpeakingIsNull(pageable);
+        return dialoguePage.map(dialogueMapper::toDialogueResponse);
     }
 
     @Override
-    public DialogueResponse rejectDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.REJECT);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
-    }
-
-    @Override
-    public DialogueResponse inActiveDialogue(long id) {
-        Dialogue dialogue = dialogueRepository.findById(id).orElseThrow(() -> new AppException(ErrorEnum.DIALOGUE_NOT_FOUND));
-        dialogue.setStatus(ContentStatus.IN_ACTIVE);
-        dialogueRepository.save(dialogue);
-        return dialogueMapper.toDialogueResponse(dialogue);
-    }
-
-    @Override
-    public List<DialogueResponse> getDialoguesPublicByContentSpeakingId(long contentSpeakingId) {
+    public DialogueResponse addDialogueIntoContentSpeaking(long dialogueId, long contentSpeakingId) {
         ContentSpeaking contentSpeaking = contentSpeakingService.getContentSpeakingById(contentSpeakingId);
-        return dialogueRepository.findByContentSpeakingAndStatus(contentSpeaking, ContentStatus.PUBLIC)
-                .stream()
-                .map(dialogueMapper::toDialogueResponse)
-                .toList();
+        Dialogue dialogue = getDialogueById(dialogueId);
+        dialogue.setContentSpeaking(contentSpeaking);
+        dialogueRepository.save(dialogue);
+        return dialogueMapper.toDialogueResponse(dialogue);
+    }
+
+    @Override
+    public void removeDialogueFromContentSpeaking(long dialogueId) {
+        Dialogue dialogue = getDialogueById(dialogueId);
+        dialogue.setContentSpeaking(null);
+        dialogueRepository.save(dialogue);
     }
 
 }

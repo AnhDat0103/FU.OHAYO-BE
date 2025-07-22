@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fu_ohayo.dto.request.DialogueRequest;
 import vn.fu_ohayo.dto.response.ApiResponse;
 import vn.fu_ohayo.dto.response.DialogueResponse;
+import vn.fu_ohayo.dto.response.DialogueResponse;
 import vn.fu_ohayo.entity.Dialogue;
 import vn.fu_ohayo.service.DialogueService;
 
@@ -65,6 +66,19 @@ public class DialogueController {
                 .build();
     }
 
+    @GetMapping("/empty")
+    public ApiResponse<Page<DialogueResponse>> getDialoguesEmpty(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<DialogueResponse> dialogues = dialogueService.getAllDialogueEmpty(page, size);
+        return ApiResponse.<Page<DialogueResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("Get dialogues by content speaking id successfully")
+                .data(dialogues)
+                .build();
+    }
+
     @GetMapping("/page/all")
     public ApiResponse<Page<DialogueResponse>> getDialoguesAllPage(
             @RequestParam(defaultValue = "1") int page,
@@ -79,9 +93,9 @@ public class DialogueController {
     }
 
     @GetMapping("/content_speakingAll/{contentSpeakingId}")
-    public ApiResponse<List<Dialogue>> getDialoguesByContentSpeakingId(@PathVariable long contentSpeakingId) {
-        List<Dialogue> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentSpeakingId);
-        return ApiResponse.<List<Dialogue>>builder()
+    public ApiResponse<List<DialogueResponse>> getDialoguesByContentSpeakingId(@PathVariable long contentSpeakingId) {
+        List<DialogueResponse> dialogues = dialogueService.getDialoguesByContentSpeakingId(contentSpeakingId);
+        return ApiResponse.<List<DialogueResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("Get dialogues by content speaking id successfully")
@@ -102,50 +116,35 @@ public class DialogueController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Dialogue> deleteDialogue(@PathVariable int id) {
-        dialogueService.deleteDialogueById(id);
+        dialogueService.softDeleteDialogueById(id);
         return ApiResponse.<Dialogue>builder()
                 .code("200")
                 .status("success")
                 .message("Deleted dialogue successfully")
                 .build();
     }
-
-    @PatchMapping("/accept/{id}")
-    public ApiResponse<DialogueResponse> acceptDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.acceptDialogue(id);
+    @PatchMapping("/{dialogueId}/addContentSpeaking/{contentSpeakingId}")
+    public ApiResponse<DialogueResponse> addDialogueIntoContentSpeaking(
+            @PathVariable int dialogueId,
+            @PathVariable long contentSpeakingId) {
+        DialogueResponse dialogueResponse = dialogueService.addDialogueIntoContentSpeaking(dialogueId, contentSpeakingId);
         return ApiResponse.<DialogueResponse>builder()
                 .code("200")
                 .status("success")
-                .message("Accept successfully")
-                .data(response)
+                .message("Added exercise dialogue into lesson successfully")
+                .data(dialogueResponse)
+                .build();
+    }
+    @PatchMapping("/{dialogueId}/removeFromContentSpeaking")
+    public ApiResponse<Void> removeDialogueFromSpeaking(
+            @PathVariable int dialogueId) {
+        dialogueService.removeDialogueFromContentSpeaking(dialogueId);
+        return ApiResponse.<Void>builder()
+                .code("200")
+                .status("success")
+                .message("Added exercise dialogue into lesson successfully")
                 .build();
     }
 
-    @PatchMapping("/reject/{id}")
-    public ApiResponse<DialogueResponse> rejectDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.rejectDialogue(id);
-        return ApiResponse.<DialogueResponse>builder()
-                .code("200")
-                .status("success")
-                .message("Accept successfully")
-                .data(response)
-                .build();
-    }
 
-    @PatchMapping("/inactive/{id}")
-    public ApiResponse<DialogueResponse> inActiveDialogue(
-            @PathVariable Integer id
-    ) {
-        DialogueResponse response = dialogueService.inActiveDialogue(id);
-        return ApiResponse.<DialogueResponse>builder()
-                .code("200")
-                .status("success")
-                .message("Inactive successfully")
-                .data(response)
-                .build();
-    }
 }

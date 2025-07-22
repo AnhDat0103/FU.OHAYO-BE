@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import vn.fu_ohayo.entity.ContentListening;
 import vn.fu_ohayo.entity.LessonExercise;
 
@@ -26,5 +27,8 @@ public class ExerciseQuestionRequest {
     private List<AnswerQuestionRequest> answerQuestions;
     private Long contentListeningId;
     private Integer exerciseId;
+    @NotNull(message = "Type cannot be null or blank")
+    @NotBlank(message = "Type cannot be null or blank")
+    private String type;
 
 }

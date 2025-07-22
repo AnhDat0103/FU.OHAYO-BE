@@ -17,7 +17,7 @@ import static vn.fu_ohayo.constant.ConstantGolbal.READ_SUCCESS_MESSAGE;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/system-logs")
+@RequestMapping("/super-admin/system-logs")
 public class SystemLogController {
 
     private final SystemLogService systemLogService;

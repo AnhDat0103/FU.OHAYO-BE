@@ -24,15 +24,38 @@ public class ExerciseQuestionController {
     }
 
     @GetMapping("/content_listening/{contentListeningId}")
-    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionByContentListeningPage(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
+    public ApiResponse<List<ExerciseQuestionResponse>> getExerciseQuestionByContentListening(
             @PathVariable long contentListeningId) {
-        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+        return ApiResponse.<List<ExerciseQuestionResponse>>builder()
                 .code("200")
                 .status("success")
                 .message("get page of exercise questions by content listening id")
-                .data(exerciseQuestionService.getExerciseQuestionByContentListeingPage(page - 1, size, contentListeningId))
+                .data(exerciseQuestionService.getExerciseQuestionByContentListening(contentListeningId))
+                .build();
+    }
+
+    @GetMapping("/exercise/{exerciseId}")
+    public ApiResponse<List<ExerciseQuestionResponse>> getExerciseQuestionByExercise(
+            @PathVariable int exerciseId) {
+        return ApiResponse.<List<ExerciseQuestionResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("get page of exercise questions by exercise id")
+                .data(exerciseQuestionService.getExerciseQuestionByExercise(exerciseId))
+                .build();
+    }
+
+    @GetMapping("/empty")
+    public ApiResponse<Page<ExerciseQuestionResponse>> getExerciseQuestionEmptyPageByType(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam String type
+    ) {
+        return ApiResponse.<Page<ExerciseQuestionResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("get page of exercise questions")
+                .data(exerciseQuestionService.getExerciseQuestionEmptyPageByType(page - 1, size, type))
                 .build();
     }
 
@@ -96,7 +119,7 @@ public class ExerciseQuestionController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<ExerciseQuestion> deleteExerciseQuestion(@PathVariable int id) {
-        exerciseQuestionService.deleteExerciseQuestionById(id);
+        exerciseQuestionService.softDeleteExerciseQuestionById(id);
         return ApiResponse.<ExerciseQuestion>builder()
                 .code("200")
                 .status("success")
@@ -117,42 +140,48 @@ public class ExerciseQuestionController {
                 .build();
     }
 
-    @PatchMapping("/{id}/accept")
-    public ApiResponse<ExerciseQuestionResponse> acceptExerciseQuestion(
-            @PathVariable Integer id
-    ) {
-        ExerciseQuestionResponse response = exerciseQuestionService.acceptExerciseQuestion(id);
+    @PatchMapping("/{questionId}/addExercise/{exerciseId}")
+    public ApiResponse<ExerciseQuestionResponse> addQuestionIntoExercise(
+            @PathVariable int questionId,
+            @PathVariable int exerciseId) {
+        ExerciseQuestionResponse exerciseQuestionResponse = exerciseQuestionService.addQuestionIntoExercise(questionId, exerciseId);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")
                 .status("success")
-                .message("Accept successfully")
-                .data(response)
+                .message("Added exercise question into lesson successfully")
+                .data(exerciseQuestionResponse)
                 .build();
     }
-
-    @PatchMapping("/{id}/reject")
-    public ApiResponse<ExerciseQuestionResponse> rejectExerciseQuestion(
-            @PathVariable Integer id
-    ) {
-        ExerciseQuestionResponse response = exerciseQuestionService.rejectExerciseQuestion(id);
+    @PatchMapping("/{questionId}/addContentListening/{contentListeningId}")
+    public ApiResponse<ExerciseQuestionResponse> addQuestionIntoContentListening(
+            @PathVariable int questionId,
+            @PathVariable long contentListeningId) {
+        ExerciseQuestionResponse exerciseQuestionResponse = exerciseQuestionService.addQuestionIntoContentListening(questionId, contentListeningId);
         return ApiResponse.<ExerciseQuestionResponse>builder()
                 .code("200")
                 .status("success")
-                .message("Accept successfully")
-                .data(response)
+                .message("Added exercise question into lesson successfully")
+                .data(exerciseQuestionResponse)
                 .build();
     }
-
-    @PatchMapping("/inactive/{id}")
-    public ApiResponse<ExerciseQuestionResponse> inActiveExerciseQuestion(
-            @PathVariable Integer id
-    ) {
-        ExerciseQuestionResponse response = exerciseQuestionService.inActiveExerciseQuestion(id);
-        return ApiResponse.<ExerciseQuestionResponse>builder()
+    @PatchMapping("/{questionId}/removeFromExercise")
+    public ApiResponse<Void> removeQuestionFromExercise(
+            @PathVariable int questionId) {
+        exerciseQuestionService.removeQuestionFromExercise(questionId);
+        return ApiResponse.<Void>builder()
                 .code("200")
                 .status("success")
-                .message("Inactive successfully")
-                .data(response)
+                .message("Added exercise question into lesson successfully")
+                .build();
+    }
+    @PatchMapping("/{questionId}/removeFromContentListening")
+    public ApiResponse<Void> removeQuestionFromListening(
+            @PathVariable int questionId) {
+        exerciseQuestionService.removeQuestionFromContentListening(questionId);
+        return ApiResponse.<Void>builder()
+                .code("200")
+                .status("success")
+                .message("Added exercise question into lesson successfully")
                 .build();
     }
 

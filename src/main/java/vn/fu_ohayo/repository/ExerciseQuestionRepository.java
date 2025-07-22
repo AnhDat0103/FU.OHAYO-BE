@@ -16,7 +16,7 @@ import java.util.List;
 
 @Repository
 public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuestion, Integer> {
-    Page<ExerciseQuestion> findAllByContentListening(ContentListening contentListening, Pageable page);
+    List<ExerciseQuestion> findAllByContentListening(ContentListening contentListening);
     List<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise);
     Page<ExerciseQuestion> findAllByLessonExercise(LessonExercise lessonExercise, Pageable pageable);
     @Modifying
@@ -53,6 +53,7 @@ public interface ExerciseQuestionRepository extends JpaRepository<ExerciseQuesti
     + " (SELECT eq2.exerciseId FROM Lesson le JOIN le.lessonExercises eq2 WHERE le.lessonId = :lessonId)")
     Page<ExerciseQuestion> findAllAvailableExerciseQuestions(Long lessonId, Pageable pageable);
 
-    Page<ExerciseQuestion> findAllByLessonExerciseIsNotNull(Pageable pageable);
-    Page<ExerciseQuestion> findAllByContentListeningIsNotNull(Pageable pageable);
+    Page<ExerciseQuestion> findAllByType(Pageable pageable, String type);
+
+    Page<ExerciseQuestion> findAllByTypeAndLessonExerciseIsNullAndContentListeningIsNull(Pageable pageable, String type);
 }

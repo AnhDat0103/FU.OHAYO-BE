@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Lesson;
 import vn.fu_ohayo.entity.ProgressLesson;
 import vn.fu_ohayo.entity.User;
+import vn.fu_ohayo.enums.ProgressStatus;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,4 +15,6 @@ public interface ProgressLessonRepository extends JpaRepository<ProgressLesson, 
     ProgressLesson findByUserAndLesson(User user, Lesson lesson);
 
     List<ProgressLesson> findAllByUserAndLessonIn(User user, List<Lesson> lessons);
+
+    int countAllByUserAndLesson_Subject_SubjectIdAndStatus(User user, int lessonSubjectSubjectId, ProgressStatus status);
 }

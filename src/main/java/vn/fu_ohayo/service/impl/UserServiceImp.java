@@ -163,15 +163,22 @@ public class UserServiceImp implements UserService {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findByParentEmail(emailParent).size() == 3) {
+        User a = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findValidChildrenByParentId(a.getUserId()).size() == 3) {
             throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         User user = null;
         if (!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-            user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).role(roleRepository.findByName(RoleEnum.USER)).provider(Provider.LOCAL).password(password).build());
+            if(userRepository.findByEmailIncludingDeleted(initialRegisterRequest.getEmail()) != null) {
+                user = userRepository.findByEmailIncludingDeleted(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+                user.setDeleted(false);
+            }
+            else {
+                user = userRepository.save(User.builder().email(initialRegisterRequest.getEmail()).status(UserStatus.INACTIVE).membershipLevel(MembershipLevel.NORMAL).role(roleRepository.findByName(RoleEnum.USER)).provider(Provider.LOCAL).password(password).build());
+            }
         } else {
-            user = userRepository.findByEmail(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+          throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
         if (!emailParent.equals("anonymousUser")) {
             User parent = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
@@ -200,7 +207,9 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         log.info(String.valueOf(completeProfileRequest.getRole()));
-
+        if(userRepository.existsByPhone(completeProfileRequest.getPhone())) {
+            throw new AppException(ErrorEnum.PHONE_EXIST);
+        }
         user.setStatus(UserStatus.ACTIVE);
         user.setFullName(completeProfileRequest.getFullName());
         user.setGender(completeProfileRequest.getGender());
@@ -260,7 +269,7 @@ public class UserServiceImp implements UserService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
 
         UserResponse userResponse = userMapper.toUserResponse(user);
-        List<ParentStudent> filteredChildren = user.getChildren().stream().filter(parentStudent -> parentStudent.getStudent() != null && parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
+        List<ParentStudent> filteredChildren = parentStudentRepository.findValidChildrenByParentId(user.getUserId());
         List<ParentStudent> filterParent = user.getParents().stream().filter(parentStudent -> parentStudent.getParentCodeStatus() == ParentCodeStatus.CONFIRM).collect(Collectors.toList());
         if ("USER".equalsIgnoreCase(userResponse.getRoleName())) {
             List<ParentStudentDTO> list = new ArrayList<>();
@@ -273,11 +282,11 @@ public class UserServiceImp implements UserService {
         } else if ("PARENT".equalsIgnoreCase(userResponse.getRoleName())) {
             List<StudentDTO> list = new ArrayList<>();
             filteredChildren.forEach(parentStudent -> {
-                list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
-                        .userId(parentStudent.getStudent().getUserId())
-                        .fullName(parentStudent.getStudent().getFullName())
-                        .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel())
-                        .build()).build());
+                    list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
+                            .userId(parentStudent.getStudent().getUserId())
+                            .fullName(parentStudent.getStudent().getFullName())
+                            .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel())
+                            .build()).build());
             });
             userResponse.setChildren(list);
         }

@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByFullName(String fullName);
 
+
+
     boolean existsByEmail(String email);
 
     @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
@@ -46,6 +48,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("registeredTo") Date registeredTo,
             Pageable pageable
     );
+
 
     int countAllByStatus(UserStatus status);
 

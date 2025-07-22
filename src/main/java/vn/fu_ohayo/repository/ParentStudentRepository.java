@@ -44,4 +44,11 @@ public interface ParentStudentRepository extends JpaRepository<ParentStudent, In
             @Param("parentId") Long parentId,
             @Param("code") String code
     );
+
+    @Query("SELECT ps FROM ParentStudent ps " +
+            "JOIN FETCH ps.student s " +
+            "WHERE ps.parent.userId = :parentId " +
+            "AND ps.parentCodeStatus = 'CONFIRM' " +
+            "AND s.isDeleted = false")
+    List<ParentStudent> findValidChildrenByParentId(@Param("parentId") Long parentId);
 }

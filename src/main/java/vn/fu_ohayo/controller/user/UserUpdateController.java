@@ -23,8 +23,8 @@ public class UserUpdateController {
         user.setFullName(request.getName());
         user.setPhone(request.getPhoneNumber());
         user.setAddress(request.getAddress());
-//        user.setDob(request.getDateOfBirth());
-//        user.setGender(request.getGender());
+        user.setDob(request.getDateOfBirth());
+        user.setGender(request.getGender());
         userRepository.save(user);
         return ResponseEntity.ok("Profile updated successfully");
     }

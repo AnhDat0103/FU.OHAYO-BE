@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.fu_ohayo.config.VnPayProperties;
 import vn.fu_ohayo.entity.MembershipLevelOfUser;
+import vn.fu_ohayo.entity.Notification;
 import vn.fu_ohayo.entity.Payment;
 import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -41,6 +42,7 @@ public class VnpayService {
     public String createPaymentUrl(HttpServletRequest request, long amount, Long orderInfo) {
         // Build các tham số
         String id = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        Notification notification = notificationRepository.findById(orderInfo).orElseThrow();
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
         params.put("vnp_Command", "pay");
@@ -54,7 +56,7 @@ public class VnpayService {
         params.put("vnp_ReturnUrl", vnPayProperties.getReturnUrl());
         params.put("vnp_IpAddr", request.getRemoteAddr());
         params.put("vnp_CreateDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-        User user = userRepository.findById(orderInfo)
+        User user = userRepository.findById(notification.getUserSend().getUserId())
                 .orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
         Payment payment = Payment.builder()
                 .amount(amount)

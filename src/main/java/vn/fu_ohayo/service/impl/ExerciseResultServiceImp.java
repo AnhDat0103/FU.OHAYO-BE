@@ -18,6 +18,7 @@ import vn.fu_ohayo.service.ExerciseResultService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseResultServiceImp implements ExerciseResultService {
@@ -77,8 +78,9 @@ public class ExerciseResultServiceImp implements ExerciseResultService {
         return subjects.stream()
                 .map(subject -> {
                     List<LessonExercise> exercises = getExercisesEachSubjectInProgress(user, subject);
+                    List<Integer> exerciseIds = exercises.stream().map(le -> le.getExerciseId()).collect(Collectors.toList());
                     int countLearn = exerciseResultRepository
-                            .countByUserAndLessonExerciseIn(user, exercises);
+                            .countDistinctByUserAndLessonExerciseIn(user.getUserId(), exerciseIds);
                     int countAll = exercises.size();
 
                     return CountLearnBySubjectResponse.builder()
@@ -102,8 +104,8 @@ public class ExerciseResultServiceImp implements ExerciseResultService {
     @Override
     public int countExerciseDoneSubjectInProgressByUserId(long userId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorEnum.USER_NOT_FOUND));
-        List<LessonExercise> lessonExercises = getLessonExercisesOfSubjectsInProgress(user);
-        return exerciseResultRepository.countByUserAndLessonExerciseIn(user, lessonExercises);
+        List<LessonExercise> exercises = getLessonExercisesOfSubjectsInProgress(user);
+        return exerciseResultRepository.countDistinctByUserAndLessonExerciseIn(user.getUserId(), exercises.stream().map(le -> le.getExerciseId()).collect(Collectors.toList()));
     }
 
     @Override

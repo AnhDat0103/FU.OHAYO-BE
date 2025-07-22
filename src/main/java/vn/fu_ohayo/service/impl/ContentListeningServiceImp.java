@@ -119,6 +119,13 @@ public class ContentListeningServiceImp implements ContentListeningService {
         Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
         return responsePage;
     }
+    @Override
+    public Page<ContentListeningResponse> getContentListeningPublicPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ContentListening> prs = contentListeningRepository.findAllByStatusAndDeleted(ContentStatus.PUBLIC, false, pageable);
+        Page<ContentListeningResponse> responsePage = prs.map(contentMapper::toContentListeningResponse);
+        return responsePage;
+    }
 
     @Override
     public ContentListeningResponse acceptContentListening(long id) {

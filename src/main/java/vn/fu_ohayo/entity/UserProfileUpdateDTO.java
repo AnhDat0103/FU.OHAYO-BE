@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.fu_ohayo.enums.Gender;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Getter

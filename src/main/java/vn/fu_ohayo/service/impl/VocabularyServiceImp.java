@@ -146,6 +146,7 @@ public class VocabularyServiceImp implements VocabularyService {
         }
         Vocabulary vocabulary = vocabularyMapper.toVocabulary(vocabularyRequest);
         vocabulary.setDeleted(false);
+        vocabulary.setIsSystem(true);
         return vocabularyMapper.toVocabularyResponse(vocabularyRepository.save(vocabulary));
     }
 

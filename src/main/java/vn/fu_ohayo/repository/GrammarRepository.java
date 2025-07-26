@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import vn.fu_ohayo.entity.Grammar;
 import vn.fu_ohayo.entity.Lesson;
@@ -17,10 +18,7 @@ import java.util.Optional;
 
 @Repository
 public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
-
-    @Query(
-            value = "SELECT * from grammars where title_jp = :titleJp", nativeQuery = true
-    )
+    @Query(value = "SELECT g FROM Grammar g WHERE g.titleJp = :titleJp AND g.deleted in (false, true)")
     Grammar findByTitleJp(String titleJp);
 
     boolean existsByTitleJpAndMeaningAndGrammarIdNot(String titleJp, String meaning, int grammarId);
@@ -48,6 +46,8 @@ public interface GrammarRepository extends JpaRepository<Grammar, Integer> {
     )
     void saveGrammarIntoLesson(int lessonId, int grammarId);
 
-    @Query("SELECT g FROM Grammar g JOIN g.lessons l WHERE l.lessonId = :lessonId")
+    @Query("SELECT g FROM Grammar g JOIN g.lessons l WHERE l.lessonId = :lessonId AND g.deleted = false")
     List<Grammar> findAllByLessonId(int lessonId);
+
+    Page<Grammar> findAllByDeletedIs(Boolean deleted, Pageable pageable);
 }

@@ -29,8 +29,7 @@ public class GrammarServiceImp implements GrammarService {
 
     @Override
     public GrammarResponse saveGrammar(GrammarRequest grammarRequest) {
-        String normalizedTitleJp = grammarRequest.getTitleJp().replace("〜", "~").replace("～", "~").trim();
-        Grammar grammarOptional = grammarRepository.findByTitleJp(normalizedTitleJp);
+        Grammar grammarOptional = grammarRepository.findByTitleJp(grammarRequest.getTitleJp());
         if (grammarOptional != null) {
             if(grammarOptional.getDeleted()) {
                 grammarOptional.setDeleted(false);
@@ -129,7 +128,7 @@ public class GrammarServiceImp implements GrammarService {
 
     @Override
     public Page<GrammarResponse> getAllGrammarsPage(int page, int size) {
-        return grammarRepository.findAll(PageRequest.of(page, size))
+        return grammarRepository.findAllByDeletedIs(false, PageRequest.of(page, size))
                 .map(grammarMapper::toGrammarResponse);    }
 
     @Override

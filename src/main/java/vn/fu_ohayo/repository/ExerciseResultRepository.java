@@ -10,8 +10,12 @@ import java.util.List;
 @Repository
 public interface ExerciseResultRepository extends JpaRepository<ExerciseResult, Integer> {
     List<ExerciseResult> findAllByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
-
-     int countByUserAndLessonExerciseIn(User user, List<LessonExercise> lessonExercises);
+    @Query(
+            value = "SELECT COUNT(DISTINCT exercise_id) " +
+                    "FROM exercise_results " +
+                    "WHERE user_id = :userId AND exercise_id IN (:lessonExercises)",
+            nativeQuery = true)
+     int countDistinctByUserAndLessonExerciseIn(long userId, List<Integer> lessonExercises);
 
     @Query(value = "SELECT er FROM ExerciseResult er " +
             "WHERE er.user = :user " +

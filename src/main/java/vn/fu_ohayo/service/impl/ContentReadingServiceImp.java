@@ -135,6 +135,13 @@ public class ContentReadingServiceImp implements ContentReadingService {
         return responsePage;    }
 
     @Override
+    public Page<ContentReadingResponse> getContentReadingPublicPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ContentReading> prs = contentReadingRepository.findAllByStatusAndDeleted(ContentStatus.PUBLIC, false, pageable);
+        return prs.map(contentMapper::toContentReadingResponse);
+    }
+
+    @Override
     public ContentReadingVocabularyResponse addVocabularyToContentReading(Long contentReadingId, int vocabularyId) {
         ContentReading contentReading = this.getContentReadingById(contentReadingId);
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId)

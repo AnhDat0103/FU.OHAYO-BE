@@ -26,7 +26,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Where(clause = "is_deleted = false")
+@Where(clause = "is_deleted = false AND is_system = true")
 @ToString(onlyExplicitlyIncluded = true)
 public class Vocabulary {
 
@@ -67,6 +67,8 @@ public class Vocabulary {
     @Column(name = "part_of_speech")
     private PartOfSpeech partOfSpeech;
 
+    @Column(name = "is_system")
+    private Boolean isSystem = true;
 
     @NotNull(message = ErrorEnum.NOT_EMPTY_JLPT_LEVEL)
     @Enumerated(EnumType.STRING)

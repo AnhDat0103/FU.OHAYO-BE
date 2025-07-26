@@ -24,11 +24,22 @@ public class ContentReadingController {
     public ApiResponse<Page<ContentReadingResponse>> getContentReadingPage(
             @RequestParam(defaultValue="1" ) int page,
             @RequestParam(defaultValue = "5") int size                                                                             ) {
-        return ApiResponse .    <Page<ContentReadingResponse>>builder()
+        return ApiResponse.<Page<ContentReadingResponse>>builder()
                 .code("200")
                 .status(success)
                 .message(success)
                 .data(contentReadingService.getContentReadingPage(page, size))
+                .build();
+    }
+    @GetMapping("/public")
+    public ApiResponse<Page<ContentReadingResponse>> getPublicContentReadingPage(
+            @RequestParam(defaultValue="1" ) int page,
+            @RequestParam(defaultValue = "5") int size                                                                             ) {
+        return ApiResponse.<Page<ContentReadingResponse>>builder()
+                .code("200")
+                .status(success)
+                .message(success)
+                .data(contentReadingService.getContentReadingPublicPage(page, size))
                 .build();
     }
 

@@ -38,6 +38,17 @@ public class ContentListeningController {
                 .data(contentListeningService.getContentListeningPage(page, size))
                 .build();
     }
+    @GetMapping("/public")
+    public ApiResponse<Page<ContentListeningResponse>> getPublicContentListeningPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        return ApiResponse.<Page<ContentListeningResponse>>builder()
+                .code("200")
+                .status("success")
+                .message("success")
+                .data(contentListeningService.getContentListeningPublicPage(page, size))
+                .build();
+    }
 
     @GetMapping("/details/{id}")
     public ApiResponse<ContentListeningResponse> getContentListening(@PathVariable long id) {

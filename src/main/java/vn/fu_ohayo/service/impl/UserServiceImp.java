@@ -163,14 +163,17 @@ public class UserServiceImp implements UserService {
             throw new AppException(ErrorEnum.EMAIL_EXIST);
         }
         String emailParent = SecurityContextHolder.getContext().getAuthentication().getName();
-        User a = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        User a = new User();
+        if(!emailParent.equals("anonymousUser")) {
+            a = userRepository.findByEmail(emailParent).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
+        }
         if (parentStudentRepository.findByParentEmail(emailParent) != null && parentStudentRepository.findValidChildrenByParentId(a.getUserId()).size() == 3) {
             throw new AppException(ErrorEnum.MAX_STUDENT_LIMIT);
         }
         var password = configuration.passwordEncoder().encode(initialRegisterRequest.getPassword());
         User user = null;
         if (!userRepository.existsByEmail(initialRegisterRequest.getEmail())) {
-            if(userRepository.findByEmailIncludingDeleted(initialRegisterRequest.getEmail()) != null) {
+            if(userRepository.findByEmailIncludingDeleted(initialRegisterRequest.getEmail()).isPresent()) {
                 user = userRepository.findByEmailIncludingDeleted(initialRegisterRequest.getEmail()).orElseThrow(() -> new AppException(ErrorEnum.USER_NOT_FOUND));
                 user.setDeleted(false);
             }

@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
     Role findByName(RoleEnum role);
-
+    Role getByRoleId(Integer roleId);
     List<Role> findAllByNameIn(List<RoleEnum> codes);
 }

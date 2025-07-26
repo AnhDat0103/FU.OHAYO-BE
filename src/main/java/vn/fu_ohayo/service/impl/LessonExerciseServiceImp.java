@@ -37,6 +37,7 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
     private final ExerciseQuestionMapper exerciseQuestionMapper;
     private final ExerciseQuestionService exerciseQuestionService;
 
+
     public LessonExerciseServiceImp(LessonRepository lessonRepository, ExerciseQuestionRepository exerciseQuestionRepository,
                                     AnswerQuestionRepository answerQuestionRepository,
                                     LessonExerciseRepository lessonExerciseRepository, ExerciseQuestionMapper exerciseQuestionMapper, ExerciseQuestionService exerciseQuestionService) {
@@ -93,17 +94,26 @@ public class LessonExerciseServiceImp implements LessonExerciseService {
         lessonExercise.setLesson(lesson);
         lessonExercise = lessonExerciseRepository.save(lessonExercise);
         List<ExerciseQuestionResponse> exerciseQuestionResponses = new ArrayList<>();
-        if (lessonExerciseRequest.getQuestionIds() != null && !lessonExerciseRequest.getQuestionIds().isEmpty()) {
-            exerciseQuestionRepository.deleteByExerciseId(lessonExercise.getExerciseId());
-            for (Integer questionId : lessonExerciseRequest.getQuestionIds()) {
-                ExerciseQuestion exerciseQuestion = exerciseQuestionRepository.findById(questionId)
+// Xóa những câu hỏi bị gỡ khỏi bài tập
+        if (lessonExerciseRequest.getQuestionIdsToRemove() != null) {
+            for (Integer questionId : lessonExerciseRequest.getQuestionIdsToRemove()) {
+                ExerciseQuestion eq = exerciseQuestionRepository.findById(questionId)
                         .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
-                exerciseQuestion.setLessonExercise(lessonExercise);
-                exerciseQuestionRepository.save(exerciseQuestion);
-                ExerciseQuestionResponse response = exerciseQuestionMapper.toExerciseQuestionResponse(exerciseQuestion);
-                exerciseQuestionResponses.add(response);
+                eq.setLessonExercise(null); // hoặc xóa luôn nếu muốn
+                exerciseQuestionRepository.save(eq);
             }
-        } else {
+        }
+
+// Thêm câu hỏi mới vào bài tập
+        if (lessonExerciseRequest.getQuestionIdsToAdd() != null) {
+            for (Integer questionId : lessonExerciseRequest.getQuestionIdsToAdd()) {
+                ExerciseQuestion eq = exerciseQuestionRepository.findById(questionId)
+                        .orElseThrow(() -> new AppException(ErrorEnum.QUESTION_NOT_FOUND));
+                eq.setLessonExercise(lessonExercise);
+                exerciseQuestionRepository.save(eq);
+            }
+        }
+        else {
             // If no questions are provided, return an empty content list
             exerciseQuestionResponses = new ArrayList<>();
         }

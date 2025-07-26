@@ -31,6 +31,7 @@ import vn.fu_ohayo.entity.User;
 import vn.fu_ohayo.enums.*;
 import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.repository.AdminRepository;
+import vn.fu_ohayo.repository.RoleRepository;
 import vn.fu_ohayo.repository.UserRepository;
 import vn.fu_ohayo.service.AuthenticationService;
 import vn.fu_ohayo.service.JwtService;
@@ -71,13 +72,15 @@ public class AuthenticationServiceImp implements AuthenticationService {
     final  AdminRepository adminRepository;
     final AuthenticationManager authenticationManager;
     final SimpMessagingTemplate messagingTemplate;
+    final RoleRepository roleRepository;
 
-    public AuthenticationServiceImp(UserRepository userRepository, JwtService jwtService, AdminRepository adminRepository, AuthenticationManager authenticationManager, SimpMessagingTemplate messagingTemplate) {
+    public AuthenticationServiceImp(UserRepository userRepository, JwtService jwtService, AdminRepository adminRepository, AuthenticationManager authenticationManager, SimpMessagingTemplate messagingTemplate, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.adminRepository = adminRepository;
         this.authenticationManager = authenticationManager;
         this.messagingTemplate = messagingTemplate;
+        this.roleRepository = roleRepository;
     }
 
 
@@ -304,6 +307,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         user.setEmail(email);
         user.setProvider(providerEnum);
         user.setStatus(UserStatus.ACTIVE);
+        user.setRole(roleRepository.getByRoleId(1));
         userRepository.save(user);
         return UserFromProvider.builder().email(email).isExist(false).build();
     }

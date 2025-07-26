@@ -865,6 +865,150 @@ INSERT INTO admins (username, password) VALUES
 ('useradmin', '$2a$10$tlxYMRLv8RGohvhwpCmiJei.AqFQpctpYOh0eqTHjegZzb3g2GXnC');
 
 INSERT INTO admin_roles(admin_id, role_id) VALUES
+                                               (1,5),
                                                (3,3),
                                                (4,4),
                                                (2,6);
+
+INSERT INTO `fu-ohayo`.`exercise_questions`
+(`exercise_question_id`, `question_text`, `type`) VALUES
+                                                      (31, '「こんにちは」は英語で何と言いますか？', 'contentListening'),
+                                                      (32, '東京はどこにありますか？', 'exercise'),
+                                                      (33, '「ありがとう」の意味は何ですか？', 'contentListening'),
+                                                      (34, '「すみません」はどんな時に使いますか？', 'contentListening'),
+                                                      (35, '一日は何時間ですか？', 'exercise'),
+                                                      (36, '「おはよう」はいつ使いますか？', 'contentListening'),
+                                                      (37, '「さようなら」は何の意味ですか？', 'contentListening'),
+                                                      (38, '日曜日は週の何日目ですか？', 'exercise'),
+                                                      (39, '電車はどこで乗りますか？', 'exercise'),
+                                                      (40, '「いただきます」はいつ言いますか？', 'contentListening'),
+                                                      (41, '一週間は何日ですか？', 'exercise'),
+                                                      (42, '「こんばんわ」の意味は？', 'contentListening'),
+                                                      (43, 'どこで本を借りますか？', 'exercise'),
+                                                      (44, '「もしもし」は何の時に使いますか？', 'contentListening'),
+                                                      (45, '「がんばって」はどういう意味ですか？', 'contentListening');
+INSERT INTO `fu-ohayo`.`answer_questions`
+(`answer_text`, `is_correct`, `exercise_question_id`) VALUES
+
+-- 31
+('Hello', TRUE, 31),
+('Goodbye', FALSE, 31),
+('Thank you', FALSE, 31),
+('Yes', FALSE, 31),
+
+-- 32
+('大阪にあります', FALSE, 32),
+('日本にあります', TRUE, 32),
+('韓国にあります', FALSE, 32),
+('ベトナムにあります', FALSE, 32),
+
+-- 33
+('Cảm ơn', TRUE, 33),
+('Xin lỗi', FALSE, 33),
+('Tạm biệt', FALSE, 33),
+('Xin chào', FALSE, 33),
+
+-- 34
+('Khi cảm ơn', FALSE, 34),
+('Khi xin lỗi hoặc gọi ai đó', TRUE, 34),
+('Khi chào tạm biệt', FALSE, 34),
+('Khi giới thiệu bản thân', FALSE, 34),
+
+-- 35
+('24時間', TRUE, 35),
+('12時間', FALSE, 35),
+('10時間', FALSE, 35),
+('36時間', FALSE, 35),
+
+-- 36
+('Buổi sáng', TRUE, 36),
+('Buổi tối', FALSE, 36),
+('Lúc đi ngủ', FALSE, 36),
+('Lúc ăn cơm', FALSE, 36),
+
+-- 37
+('Tạm biệt', TRUE, 37),
+('Cảm ơn', FALSE, 37),
+('Xin lỗi', FALSE, 37),
+('Chúc ngủ ngon', FALSE, 37),
+
+-- 38
+('Ngày thứ 6', FALSE, 38),
+('Ngày thứ 7', FALSE, 38),
+('Ngày đầu tuần', TRUE, 38),
+('Ngày cuối tháng', FALSE, 38),
+
+-- 39
+('Ở ga tàu', TRUE, 39),
+('Ở trường học', FALSE, 39),
+('Ở công viên', FALSE, 39),
+('Ở hiệu sách', FALSE, 39),
+
+-- 40
+('Trước khi ăn', TRUE, 40),
+('Sau khi ăn', FALSE, 40),
+('Khi chào buổi sáng', FALSE, 40),
+('Khi ngủ dậy', FALSE, 40),
+
+-- 41
+('7日間', TRUE, 41),
+('6日間', FALSE, 41),
+('5日間', FALSE, 41),
+('8日間', FALSE, 41),
+
+-- 42
+('Chào buổi tối', TRUE, 42),
+('Chúc ngủ ngon', FALSE, 42),
+('Chào buổi sáng', FALSE, 42),
+('Cảm ơn', FALSE, 42),
+
+-- 43
+('Ở thư viện', TRUE, 43),
+('Ở nhà ga', FALSE, 43),
+('Ở tiệm cà phê', FALSE, 43),
+('Ở nhà hàng', FALSE, 43),
+
+-- 44
+('Khi gọi điện thoại', TRUE, 44),
+('Khi gặp mặt trực tiếp', FALSE, 44),
+('Khi ăn cơm', FALSE, 44),
+('Khi học bài', FALSE, 44),
+
+-- 45
+('Cố lên!', TRUE, 45),
+('Xin lỗi', FALSE, 45),
+('Chào tạm biệt', FALSE, 45),
+('Chúc ngủ ngon', FALSE, 45);
+
+INSERT INTO `fu-ohayo`.`dialogues` (
+    `answer_jp`, `answer_vn`, `created_at`, `question_jp`, `question_vn`, `is_deleted`
+) VALUES
+-- 1
+('はい、少し話せます。', 'Vâng, tôi có thể nói một chút.', '2025-07-01 11:00:00', '日本語を話せますか？', 'Bạn có thể nói tiếng Nhật không?', 0),
+
+-- 2
+('会社員です。', 'Tôi là nhân viên công ty.', '2025-07-01 11:01:00', 'お仕事は何ですか？', 'Bạn làm nghề gì?', 0),
+
+-- 3
+('コーヒーをください。', 'Cho tôi một ly cà phê.', '2025-07-01 11:02:00', 'ご注文は？', 'Bạn muốn gọi món gì?', 0),
+
+-- 4
+('はい、元気です。', 'Vâng, tôi khỏe.', '2025-07-01 10:03:00', 'お元気ですか？', 'Bạn khỏe không?', 0),
+
+-- 5
+('日本語を勉強しています。', 'Tôi đang học tiếng Nhật.', '2025-07-01 10:04:00', '何を勉強していますか？', 'Bạn đang học gì?', 0),
+
+-- 6
+('いいえ、まだ行ったことがありません。', 'Chưa, tôi chưa từng đi.', '2025-07-01 10:05:00', '日本へ行ったことがありますか？', 'Bạn đã từng đến Nhật chưa?', 0),
+
+-- 7
+('カフェで友達に会います。', 'Tôi gặp bạn ở quán cà phê.', '2025-07-01 10:06:00', 'どこで友達に会いますか？', 'Bạn gặp bạn ở đâu?', 0),
+
+-- 8
+('土曜日に買い物に行きます。', 'Tôi đi mua sắm vào thứ Bảy.', '2025-07-01 10:07:00', 'いつ買い物に行きますか？', 'Khi nào bạn đi mua sắm?', 0),
+
+-- 9
+('ご飯を食べました。', 'Tôi đã ăn cơm rồi.', '2025-07-01 10:08:00', 'もうご飯を食べましたか？', 'Bạn đã ăn cơm chưa?', 0),
+
+-- 10
+('はい、日本が大好きです。', 'Vâng, tôi rất thích Nhật Bản.', '2025-07-01 10:09:00', '日本が好きですか？', 'Bạn có thích Nhật Bản không?', 0);

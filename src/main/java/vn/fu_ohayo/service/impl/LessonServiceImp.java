@@ -58,7 +58,7 @@ public class LessonServiceImp implements LessonService {
                 .description(lessonRequest.getDescription())
                 .subject(subject)
                 .videoUrl(lessonRequest.getVideoUrl())
-                .status(lessonRequest.getStatus())
+                .status(LessonStatus.DRAFT)
                 .build();
         return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
     }
@@ -159,12 +159,10 @@ public class LessonServiceImp implements LessonService {
         if(lessonRequest.getDescription() != null) {
             lesson.setDescription(lessonRequest.getDescription());
         }
-        if(lessonRequest.getStatus() != null) {
-            lesson.setStatus(lessonRequest.getStatus());
-        }
         if(lessonRequest.getVideoUrl() != null) {
             lesson.setVideoUrl(lessonRequest.getVideoUrl());
         }
+        lesson.setStatus(LessonStatus.DRAFT);
         return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
     }
 

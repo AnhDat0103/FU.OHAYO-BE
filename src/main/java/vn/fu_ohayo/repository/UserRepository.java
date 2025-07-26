@@ -22,11 +22,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByFullName(String fullName);
 
 
-
     boolean existsByEmail(String email);
 
     @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
     Optional<User> findByEmailIncludingDeleted(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
+    User getByEmail(String email);
 
     Optional<User> findByEmailAndProvider(String email, Provider provider);
     @Query(value = "SELECT * FROM users WHERE user_id = :userId", nativeQuery = true)

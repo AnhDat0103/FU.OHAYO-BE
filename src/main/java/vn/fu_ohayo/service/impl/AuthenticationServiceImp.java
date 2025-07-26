@@ -232,7 +232,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
-        String url;
+        String url = "";
         switch (provider.toLowerCase()) {
             case "google":
                 url = "https://oauth2.googleapis.com/token";
@@ -243,15 +243,23 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 body.add("code", code);
                 break;
             case "facebook":
-                url = "https://graph.facebook.com/v12.0/oauth/access_token?" +
-                        "client_id=" + facebookClientId +
-                        "&client_secret=" + facebookClientSecret +
-                        "&redirect_uri=" + facebookRedirectUri +
-                        "&code=" + code;
-                return restTemplate.getForObject(url, Map.class).get("access_token").toString();
-
-            default:
-                throw new IllegalArgumentException("Unsupported OAuth provider: " + provider);
+                try {
+                    url = "https://graph.facebook.com/v12.0/oauth/access_token?" +
+                            "client_id=" + facebookClientId +
+                            "&client_secret=" + facebookClientSecret +
+                            "&redirect_uri=" + facebookRedirectUri +
+                            "&code=" + code;
+                    ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+                    if (response.getStatusCode().is2xxSuccessful()) {
+                        return response.getBody().get("access_token").toString();
+                    } else {
+                        log.error("Facebook token request failed: {}", response);
+                        throw new AppException(ErrorEnum.AUTH_FAILED);
+                    }
+                } catch (Exception e) {
+                    log.error("Facebook OAuth error: {}", e.getMessage());
+                    throw new AppException(ErrorEnum.AUTH_FAILED); // Your custom exception
+                }
         }
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         log.info("Requesting access token from {} with code: {}", provider, code);
@@ -284,11 +292,15 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         Map<String, Object> userInfo = response.getBody();
         String email = (String) userInfo.get("email");
-        boolean userExist = userRepository.existsByEmail(email);
-        User user = new User();
-        if(userExist) {
+
+        User user = userRepository.getByEmail(email);
+        if( userRepository.existsByEmail(email)) {
             return UserFromProvider.builder().email(email).isExist(true).build();
         }
+        if(user != null) {
+            user.setDeleted(false);
+        }
+        else user = new User();
         user.setEmail(email);
         user.setProvider(providerEnum);
         user.setStatus(UserStatus.ACTIVE);

@@ -44,8 +44,10 @@ public class PasswordForgotImp implements PasswordForgotService {
             logger.warn("Email not found.");
             return;
         }
+        tokenStore.entrySet().removeIf(entry -> entry.getValue().getEmail().equals(email));
+
         String token = generateToken(email);
-        LocalDateTime expiryTime = LocalDateTime.now().plusSeconds(29);
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
         tokenStore.put(token, new TokenInfo(email, expiryTime));
 
         SimpleMailMessage message = new SimpleMailMessage();

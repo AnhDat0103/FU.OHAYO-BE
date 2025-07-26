@@ -21,4 +21,6 @@ public class LessonExerciseRequest {
     private long duration;
     private List<Integer> questionIds;
     private int lessonId;
+    private List<Integer> questionIdsToAdd;
+    private List<Integer> questionIdsToRemove;
 }

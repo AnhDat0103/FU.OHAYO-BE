@@ -49,4 +49,5 @@ public interface ProgressSubjectRepository extends JpaRepository<ProgressSubject
     int countAllBySubject(Subject subject);
     ProgressSubject findBySubjectAndUserAndProgressStatusIn(Subject subject,User user, List<ProgressStatus> statuses);
 
+    List<ProgressSubject> findAllBySubject_SubjectId(int subjectSubjectId);
 }

@@ -103,6 +103,18 @@ public class ProgressSubjectServiceImp implements ProgressSubjectService {
         return null;
     }
 
+    @Override
+    public void updateAllProgressSubjectToComplete(int subjectId) {
+       List<ProgressSubject> progressSubjects = progressSubjectRepository.findAllBySubject_SubjectId(subjectId);
+       if( progressSubjects.isEmpty()) {
+           return;
+       }
+       for (ProgressSubject progressSubject : progressSubjects) {
+           progressSubject.setProgressStatus(ProgressStatus.IN_PROGRESS);
+           progressSubjectRepository.save(progressSubject);
+       }
+    }
+
     public void markLessonComplete(Subject subject, User user) {
         List<Lesson> lessons = subject.getLessons();
 

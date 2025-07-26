@@ -9,6 +9,7 @@ import vn.fu_ohayo.dto.response.GrammarResponse;
 import vn.fu_ohayo.dto.response.LessonResponse;
 import vn.fu_ohayo.dto.response.VocabularyResponse;
 import vn.fu_ohayo.entity.Lesson;
+import vn.fu_ohayo.entity.ProgressSubject;
 import vn.fu_ohayo.entity.Subject;
 import vn.fu_ohayo.entity.Vocabulary;
 import vn.fu_ohayo.enums.ErrorEnum;
@@ -17,11 +18,9 @@ import vn.fu_ohayo.exception.AppException;
 import vn.fu_ohayo.mapper.GrammarMapper;
 import vn.fu_ohayo.mapper.LessonMapper;
 import vn.fu_ohayo.mapper.VocabularyMapper;
-import vn.fu_ohayo.repository.GrammarRepository;
-import vn.fu_ohayo.repository.LessonRepository;
-import vn.fu_ohayo.repository.SubjectRepository;
-import vn.fu_ohayo.repository.VocabularyRepository;
+import vn.fu_ohayo.repository.*;
 import vn.fu_ohayo.service.LessonService;
+import vn.fu_ohayo.service.ProgressSubjectService;
 
 import java.util.List;
 
@@ -33,16 +32,19 @@ public class LessonServiceImp implements LessonService {
     private final SubjectRepository subjectRepository;
     private final VocabularyMapper vocabularyMapper;
     private final GrammarMapper grammarMapper;
+    private final ProgressSubjectService progressSubjectService;
 
     public LessonServiceImp(LessonRepository lessonRepository, LessonMapper lessonMapper,
                             SubjectRepository subjectRepository,
                             VocabularyMapper vocabularyMapper,
-                            GrammarMapper grammarMapper) {
+                            GrammarMapper grammarMapper,
+                            ProgressSubjectService progressSubjectService) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
         this.subjectRepository = subjectRepository;
         this.vocabularyMapper = vocabularyMapper;
         this.grammarMapper = grammarMapper;
+        this.progressSubjectService = progressSubjectService;
     }
 
     @Override
@@ -60,6 +62,7 @@ public class LessonServiceImp implements LessonService {
                 .videoUrl(lessonRequest.getVideoUrl())
                 .status(LessonStatus.DRAFT)
                 .build();
+        progressSubjectService.updateAllProgressSubjectToComplete(subject.getSubjectId());
         return lessonMapper.toLessonResponse(lessonRepository.save(lesson));
     }
 

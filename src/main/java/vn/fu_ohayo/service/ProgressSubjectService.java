@@ -8,4 +8,6 @@ public interface ProgressSubjectService {
     ProgressSubjectResponse getProgressSubject(String email, int subjectId);
 
     ProgressSubjectResponse markSubjectComplete(String username, int subjectId);
+
+    void updateAllProgressSubjectToComplete(int subjectId);
 }

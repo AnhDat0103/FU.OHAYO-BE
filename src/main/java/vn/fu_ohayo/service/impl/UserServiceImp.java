@@ -285,7 +285,7 @@ public class UserServiceImp implements UserService {
                     list.add(StudentDTO.builder().id(parentStudent.getId()).user(SimpleUserDTO.builder()
                             .userId(parentStudent.getStudent().getUserId())
                             .fullName(parentStudent.getStudent().getFullName())
-                            .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel())
+                            .gender(parentStudent.getStudent().getGender()).membershipLevel(parentStudent.getStudent().getMembershipLevel()).status(parentStudent.getStudent().getStatus())
                             .build()).build());
             });
             userResponse.setChildren(list);
